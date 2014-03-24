@@ -244,14 +244,17 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
               output_options,
               Target_layer=0, search_top_obs=0, search_top_target=0,
               z_obs_field=0, z_target_field=0): 
-
+    
     def search_top_z (pt_x, pt_y, search_top):
+        z_top = data[pt_y,pt_x]
+        x_top, y_top = pt_x, pt_y
         for i in range(pt_x - search_top, pt_x + search_top):
             for j in range(pt_y - search_top, pt_y + search_top):
                 try: k = data [j, i] # it may fall out of raster
                 except: continue
-                if k > z: x,y,z = i,j,k
-        return (x,y,z)
+                if k > z_top: x_top,y_top,z_top = i,j,k
+        return (x_top,y_top,z_top)
+        
 
     start = time.clock(); start_etape=start
     test_rpt= "Start: " + str(start)
@@ -361,7 +364,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
         x = x- x_offset; y = y - y_offset
 
         if search_top_obs:
-            s = search_top_z (x_geog, y_geog, search_top_obs)
+            s = search_top_z (x, y, search_top_obs)
             x,y,z = s
         else: z= data[y,x]
                 
