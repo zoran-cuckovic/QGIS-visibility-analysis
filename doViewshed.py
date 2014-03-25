@@ -347,9 +347,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
         if raster_x_min < x_geog < raster_x_max and raster_y_min < y_geog < raster_y_max:   
             x = int((x_geog - raster_x_min) / pix) # not float !
             y = int((raster_y_max - y_geog) / pix) #reversed !
-        else:
-            QMessageBox.information(None, "podatak:", "tu je")
-            continue
+        else: continue
        
         #  ---------- addition for extraction of a chunk of data ---------------
        
@@ -385,9 +383,11 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                 id2 = feat2["ID"] if targ_has_ID else feat2.id()
                 geom2 = feat2.geometry()
                 x_geog, y_geog = geom2.asPoint()
-
-                x2 = int((x_geog - raster_x_min) / pix)- x_offset #round vraca float!!
-                y2 = int((raster_y_max - y_geog) / pix)- y_offset #pazi: obratno!!
+                
+                if raster_x_min < x_geog < raster_x_max and raster_y_min < y_geog < raster_y_max:
+                    x2 = int((x_geog - raster_x_min) / pix)- x_offset #round vraca float!!
+                    y2 = int((raster_y_max - y_geog) / pix)- y_offset #pazi: obratno!!
+                else: continue
 
                 if search_top_target:
                     s = search_top_z (x2,y2, search_top_target)
