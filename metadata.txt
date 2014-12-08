@@ -14,9 +14,9 @@ category=Plugins
 name=Viewshed Analysis
 qgisMinimumVersion=2.0
 description=Advanced visibility analysis tool.
-version=0.1
+version=0.3
 author=Zoran Čučković
-email=zoran.cuckovic@edu.univ-fcomte.fr
+email=cuckovic.zoran@google.com
 
 
 # end of mandatory metadata
@@ -34,7 +34,7 @@ tracker=http://hub.qgis.org/projects/viewshed/issues
 repository=https://github.com/zoran14/viewshed
 icon=./icon.png
 # experimental flag
-experimental=True
+experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version
 deprecated=False
