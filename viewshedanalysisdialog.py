@@ -99,14 +99,13 @@ class ViewshedAnalysisDialog(QtGui.QDialog):
             opt[0] = "Binary"
             if self.ui.chkCumulative.isChecked(): opt [1]= "cumulative" 
         if self.ui.chkInvisibility.isChecked(): opt[0] = "Invisibility" 
-        if self.ui.chkHorizon.isChecked(): opt [0]= "Horizon"
+        #if self.ui.chkHorizon.isChecked(): opt [0]= "Horizon"
         if self.ui.chkIntervisibility.isChecked():
             opt [0]= "Intervisibility"
 ##            if self.ui.chkCSV.isChecked(): opt [1]= "csv"
 ##         
         return opt
 
-    #NOT IMPLEMENTED
     def fileOutput(self): #problem je ekstenzija!!!!
         homedir = os.path.expanduser('~') # ...works on at least windows and linux. 
         
@@ -119,6 +118,13 @@ class ViewshedAnalysisDialog(QtGui.QDialog):
             fname.close()
         except: pass
         
+    def returnCurvature (self): # and refraction
+        if self.ui.chkCurvature.isChecked():
+            try: r=float(self.ui.txtRefraction.text())
+            except: r=0
+            return (True, r)
+        else: return None
+
     def OpenPDFfile(self):
         
         filepath = os.path.dirname(os.path.abspath(__file__)) + "/help/Advanced viewshed analysis.pdf" 
