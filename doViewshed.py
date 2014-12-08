@@ -4,8 +4,6 @@
 /***************************************************************************
 ViewshedAnalysis
 A QGIS plugin
-------description-------
--------------------
 begin : 2013-05-22
 copyright : (C) 2013 by Zoran Čučković
 email : /
@@ -92,158 +90,243 @@ def bresenham_circle(x0,y0,radius):
         lst.append([x0 - y+1, y0 + x])
         lst.append([x0 + y-1, y0 - x])
         lst.append([x0 - y+1, y0 - x])
-        
-
-           
+   
     return lst
 
 
-#works with global data array
-def visibility(x0, y0, z0_offset, target_list, target_offset=0, options = None, mask = False):
-                                  #target_list : [x,y , (target_offset, target_id for intervisibility)]
-
-    
-    def target_angle (tg_offset, z_pt, distance): # the idea is to avoid unnecessary calculation
-                                                    # by providing this value only when needed,
-                                                    # which makes a messy code ...
-        z_off = z_pt + tg_offset
-        if z_off == z0: z_off = z0-0.001
-        return (z_off-z0)/distance
-    
-    
-    z0= data[y0,x0] + z0_offset
-    i=0
-    ary=[]
-    window_y = len(data); window_x = len(data[0])
-    for n in target_list:
-        x,y = x0 , y0
-        x2, y2= n[0:2]
-        if options == "Intervisibility" :# individual settings for each target point
-            target_offset, id_target = n[2:4]
-                
-        dx = abs(x2 - x0); dy = abs(y2 - y0)
-        steep = (dy > dx)
-        #direction of movement : plus or minus in the coord. system
-        sx = 1 if (x2 - x0) > 0 else -1
-        sy = 1 if (y2 - y0) > 0 else -1
-        
-        if steep: # if the line is steep: change x and y
-            x,y = y,x
-            x2,y2 = y2,x2
-            dx,dy = dy,dx
-            sx,sy = sy,sx
-
-        slope = dy / dx *sx *sy #!! the operators for negative quadrants (we do need dx, dy as absolute to verify steepness, to search distances...)
-
-        #begins with the minimum possible angle for the observer pix,
-        #thus the first pixel next to observer is always visible!
-        visib = True
-        angle_block = -9999999999999999
-        insert_horizon=False
-
-        for i in range(0, int(dx)): # dx is integter but not so for Python...
-
-        # -------- linear equation (error estimation) --------
-            if i == dx-1: #the target pixel is a special case
-                x,y = x2,y2
-                err=0; interpolated=0
-            else:
-                x += sx
-                y_dec = slope * (x-x2) + y2
-                y = int(round(y_dec)) #it considers rounded as float...
-                err = y-y_dec
-
-                interpolated = y-1 if err > 0 else y+1 #inverse : if the good pixel is above the line then search down
-                                                    # we don't need to y+sy because the slope has already been multiplied by sy
-        # --------- unpack coordinates ------------
-            if not steep:
-                x_pix,y_pix = x,y
-                x_pix_interp, y_pix_interp = x, interpolated
-            else:
-                x_pix,y_pix = y,x
-                x_pix_interp, y_pix_interp = interpolated, x
-                
-            # we have to restrain the extents (1 additional for the interpolated value)
-            if not window_x-1 > x_pix > 0 or not window_y-1 > y_pix > 0: break
-
-        # ------------- interpolation ----------------
-            z = data[y_pix][x_pix]
-            d = dist(x_pix,y_pix,x0,y0)
-            
-            if err :
-                z2= data [y_pix_interp][x_pix_interp]
-                z = z + (z2 - z) * abs(err) #has to be absolute because of coordinate swapping
-                
-            if z == z0: z = z0-0.001 # BUG : division with zero
-
-        # ------------ core calculation ----------------------
-            angle = (z-z0)/d
-            if angle <= angle_block:
-                # ------- target height calculation ----------------
-                # speeding up:
-                # - evaluate invisible pixels only
-                # - in case of intervisibility restrain to the last pixel only
-                if target_offset:
-                    if options <> "Intervisibility" or (options == "Intervisibility" and i == dx-1):
-                        angle = target_angle(target_offset, z, d)
-                visib = (angle > angle_block)
-                
-            else:
-                visib = True
-                angle_block = angle
-                
-        # ----------- skip all but the last one if mask is used -----------------
-            if mask and i < dx-1: continue
-            
-        # --------------- processing output ----------------
-            if options == 'Horizon':
-                if i > 0: #skip first to intialise 'old' variable
-                    if old_visib <> visib: # break-points are all we need
-                        if visib: # passing from invisible to visible
-                            ary.append([last_x, last_y, abs(err), (d - last_dist) * pix ] )
-                        else: # passing from visible to invisible : catch the breakpoint
-                            last_x, last_y = x_pix, y_pix
-                            last_dist = d
-                old_visib = visib # catch the old value
-                
-                # add the -1 code to the "real" horizon (dx-1 = last pixel)
-                if i == dx-1 and not visib: ary.append([last_x, last_y, 0, -1] )
-
-            elif options == 'Binary':
-                if visib: ary.append([x_pix,y_pix, abs(err), 1])
-
-            elif options == 'Invisibility':
-                if not visib: ary.append([x_pix,y_pix, abs(err), (angle - angle_block)* d])
-                
-        
-        #out of inner loop : it registers the last pixel only
-        if options =='Intervisibility':
-            if angle == angle_block: #if they are the same and visib=True the previous pixel was visible : target is entirely visible
-                if visib: hgt = target_offset
-                else: hgt = 0 #may happen very rarely: angles exactly the same
-            else: hgt = (angle - angle_block) * d
-                   
-            ary.append([id_target, x_pix, y_pix, visib, hgt, d])
-
-    # the first pixel has not been registered...
-    # when mask is provided the observer is not important!
-    if options == 'Binary' and not mask: ary.append([x0,y0, 0, 1])
-            
-   # QMessageBox.information(None, "podatak:", str())
-    return ary
-
-
-        
 def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
               output_options,
               Target_layer=0, search_top_obs=0, search_top_target=0,
-              z_obs_field=0, z_target_field=0):
+              z_obs_field=0, z_target_field=0,
+              curvature=0, refraction=0):
+
+
+    
+
+    # large nested function : using the same variables..
+    def visibility(x0, y0, target_list, options,
+                   target_offset = False,
+                    mask = False):
+                        
+        def write2matrix (x,y,error,value):
+            if error <  mx_err[y, x]:
+                        mx_vis[y, x]= value  
+                        mx_err[y, x]= error
+
+        
+        
+
+        ary=[]
+        mx_vis = numpy.zeros ( (window_size_y , window_size_x)) # cannot be = data: it ovrewrites it!
+        mx_err = numpy.ones ( (window_size_y , window_size_x)) # the initial error    
+        
+        q=0 #test
+        l=[] #testiranje
+    # ----------------------------------------------------------Horizon - on hold... ------------------------------   
+        Break=False 
+        last_x, last_y = x0, y0
+        last_err = 0
+    #--------------------------------------------------------------------------------------------------------------
+            
+        for n in target_list:
+            #test
+            q+=1
+            x,y = x0 , y0
+            x2, y2= n[0:2]
+            if options == "Intervisibility" :# individual settings for each target point
+                target_offset, id_target = n[2:4]
+                                
+            dx = abs(x2 - x0); dy = abs(y2 - y0)
+            steep = (dy > dx)
+            #direction of movement : plus or minus in the coord. system
+            sx = 1 if (x2 - x0) > 0 else -1
+            sy = 1 if (y2 - y0) > 0 else -1
+            
+            if steep: # if the line is steep: change x and y
+                x,y = y,x
+                x2,y2 = y2,x2
+                dx,dy = dy,dx
+                sx,sy = sy,sx
+            D = 0
+          
+            #for interpolation
+           # slope = dy / dx *sx *sy #!! the operators for negative quadrants (we do need dx, dy as absolute to verify steepness, to search distances...)
+
+            #begins with the minimum possible angle for the observer pix,
+            #thus the first pixel next to observer is always visible!
+            visib = True
+            angle_block = -99999999999
+            angle_block2 = angle_block
+            angle_hor_max = angle_block
+            angle_hor_min = angle_block
+
+            for i in xrange (0, dx):
+    ##                y_dec = slope * (x-x2) + y2
+    ##                y = int(round(y_dec)) #it considers rounded as float...
+    ##                err = y - y_dec
+    ##
+    ##                interpolated = y-1 if err > 0 else y+1 #inverse : if the good pixel is above the line then search down
+    ##                                                    # we don't need to y+sy because the slope has already been multiplied by sy
+            # ---- Bresenham's algorithm (understandable variant)
+            # http://www.cs.helsinki.fi/group/goa/mallinnus/lines/bresenh.html       
+                x += sx
+                if 2* (D + dy) < dx:
+                    D += dy # y remains
+                else:
+                    y += sy
+                    D += dy - dx
+                      
+
+            #----- interpolation..
+                err= abs(D/dx) if D else 0 # D can be a very good substitute (2-3% differences)
+                  
+                sD = -1 if D < 0 else 1 #inverse : if the good pixel is above the line then search down
+                interpolated = y  + sD * sy
+                
+                # --------- unpack coordinates ------------
+                if not steep:
+                    x_pix,y_pix = x,y
+                    x_pix_interp, y_pix_interp = x, interpolated
+                    
+                else:
+                    x_pix,y_pix = y,x
+                    x_pix_interp, y_pix_interp = interpolated, x
+                    
+                # we have to restrain the extents (1 additional for the interpolated value)
+                if not window_size_x-1 > x_pix > 0 or not window_size_y-1 > y_pix > 0: break
+
+                angle = data[y_pix, x_pix]
+                angle2= data [y_pix_interp, x_pix_interp] if D else angle            
+                angle_exact=0
+                
+            # ------------ core calculation ----------------------
+            
+    # perhaps a minor speed-up - less > < evaluations ...
+    ##            if angle2 > angle :
+    ##                angle,a=angle2,angle
+    ##                swapped=1
+    ##            else: swapped=0
+            
+                #it is not correct to test non-interpolated against interpolated horizon angle!!
+                # nor to test max>max and min>min, because of possible interpolation shift!
+                #only : min angle > max old_angle (and vice versa...)
+                if angle < angle_hor_min and angle2 < angle_hor_min: visib= False
+                elif angle > angle_hor_max and angle2 > angle_hor_max: visib= True
+                else: #optimisation: interpolate only when really needed
+
+                    angle_exact = angle + (angle2 - angle) * err
+                    if not angle_hor_exact: 
+                        angle_hor_exact = angle_block + (angle_block2 - angle_block) * block_err
+                    
+                    visib=(angle_exact > angle_hor_exact)
+                
+                # catch old values 
+                if visib :
+                    angle_block, angle_block2, block_err = angle, angle2, err
+                    angle_hor_exact = angle_exact #mostly is 0 !
+
+                    if angle > angle2:
+
+                        angle_hor_max, angle_hor_min = angle, angle2
+
+                    else: angle_hor_max, angle_hor_min = angle2, angle
+                        
+                else : # ADDITIONAL TARGET HEIGHT: FOR INVISIBLES ONLY!! (otherwise reset horizon...)
+                    # - in case of intervisibility restrain to the last pixel only
+                    if target_offset and options != "Intervisibility":
+                        
+##                        QMessageBox.information(None, "podatak:", str(dx))
+##                        return
+                        angle = mx_target[y_pix, x_pix]
+                        angle2= mx_target[y_pix_interp, x_pix_interp] if D else angle            
+                        angle_exact=0
+                        
+                        if angle < angle_hor_min and angle2 < angle_hor_min: visib= False
+                        elif angle > angle_hor_max and angle2 > angle_hor_max: visib= True
+                        else:
+                            angle_exact = angle + (angle2 - angle) * err
+                            #optimisation: interpolate only when really needed
+                            if not angle_hor_exact: 
+                                angle_hor_exact = angle_block + (angle_block2 - angle_block) * block_err
+                            
+                            visib=(angle_exact > angle_hor_exact)
+       
+                
+            # ----------- skip all but the last one if mask is used  NOT USED-----------------
+             #   if mask and i < dx-1: continue
+                
+                # --------------- processing output ----------------
+                if options == 'Horizon':
+               #NOT USED FOR THE MOMENT : AMBIGUITY IN OUTPUT!
+                    if not visib and 1 > 0:
+                        Break=True # break-points are all we need --> passing from invisible to visible 
+                        write2matrix(x, y, err, 0) # has to enable to overwrite with 0 if error is lower !
+                    else: #there's a bug if the first pix (next to the observer) is invisible (i.e. non-existant) because it's normally always visible
+                         
+                        dst = distance_matrix[y_pix,x_pix] 
+                        if Break:
+                            d = -1 if i==0 else dst - last_dist #if i=0 : we have jumed into an another line (depth is unknown)
+                            write2matrix(last_x, last_y, last_err, d)                             
+                        Break = False
+                        
+                        last_x, last_y = x_pix, y_pix
+                        last_err=err
+                        last_dist = dst                
+                    
+                elif options == 'Binary':
+                    #if visib: ary.append([x_pix,y_pix, abs(err), 1])
+                   # mora provjeriti i visib i non-visib !!
+
+                    write2matrix( x_pix,y_pix, err, 1 if visib else 0)
+
+                elif options == 'Invisibility':
+                # repetition : into a function... ?
+                    if not visib:
+                        if not angle_exact: angle_exact = angle + (angle2 - angle) * err
+                        if not angle_hor_exact: angle_hor_exact = angle_block + (angle_block2 - angle_block) * block_err
+                        angle_diff = angle_exact - angle_hor_exact
+                    else: angle_diff=0
+                    
+                    write2matrix(x_pix,y_pix, err, angle_diff)
+                    
+            #out of inner loop : it verifies the last pixel only
+            if options =='Intervisibility':
+                d = mx_dist[y_pix,x_pix]
+
+                if visib : # there is no ambiguity, visible!
+                    hgt = target_offset
+                else:
+                    angle_off = target_offset/d if target_offset else 0
+#provjeriti printanjem!!
+                    angle_exact = angle + angle_off # ERROR (err) IS NOT POSSIBLE !
+                    # here it is probable..
+                    if not angle_hor_exact:
+                        angle_hor_exact = angle_block + (angle_block2 - angle_block) * block_err
+
+                    hgt = (angle_exact - angle_hor_exact) * d
+                    
+                ary.append([id_target, x_pix, y_pix, (hgt >0),  hgt, d, err ])
+                
+                #QMessageBox.information(None, "podatak:", str(ary))
+
+        #finishing
+        
+        # the first pixel has not been registered...
+        # when mask is provided the observer is not important!
+        if options == 'Binary': mx_vis [y0,x0] = 1 #ary.append([x0,y0, 0, 1])
+        elif options == 'Invisibility': mx_vis = mx_vis * mx_dist
+
+        if options =='Intervisibility': return ary 
+        else: return mx_vis
+
+#            QMessageBox.information(None, "podatak:", str(window_size_x) +"  " + str( window_size_y))
+        
     
     def search_top_z (pt_x, pt_y, search_top):
         z_top = data[pt_y,pt_x]
         x_top, y_top = pt_x, pt_y
-        for i in range(pt_x - search_top, pt_x + search_top):
-            for j in range(pt_y - search_top, pt_y + search_top):
+        for i in range(pt_x - search_top, pt_x + search_top +1):
+            for j in range(pt_y - search_top, pt_y + search_top+1):
                 try: k = data [j, i] # it may fall out of raster
                 except: continue
                 if k > z_top: x_top,y_top,z_top = i,j,k
@@ -256,19 +339,44 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
     out_files=[];rpt=[];connection_list=[]; intervisibility = False
 
     RasterPath= str(QgsMapLayerRegistry.instance().mapLayer(Raster_layer).dataProvider().dataSourceUri())
-    
+    # TO BE ADDED TO THE DIALOG DIRECTLY (??)
+    if curvature:
+        # we need ellipsiod for curvature (and crs for output)
+        R_layer=QgsMapLayerRegistry.instance().mapLayer(Raster_layer)
+        raster_crs = R_layer.crs().toWkt() #messy.. have to parse textual description...
+        inx =raster_crs.find("SPHEROID") #(...)spheroid["name",semi_major, minor, etc...]
+        inx2 = raster_crs.find(",", inx) +1
+        inx3 = raster_crs.find(",", inx2 )
+        try:
+            semi_major= float(raster_crs[inx2:inx3])
+            if not 6000000 < semi_major < 7000000 : semi_major=6378137#WGS 84
+        except: semi_major=6378137  
+
+        inx4 = raster_crs.find(",", inx3 +1 )
+        try:
+            flattening =  float(raster_crs[inx3 +1:inx4-1])
+            if not 296 <flattening < 301 : flattening= 298.257223563#WGS 84
+        except: flattening= 298.257223563
+        
+        semi_minor=  semi_major - semi_major* (1/flattening)
+        # a compromise for 45 deg latitude, ArcGis seems to have a fixed earth diameter?
+        Diameter = semi_major + semi_minor 
+        
+##        QMessageBox.information(None, "podatak:", str(semi_minor))
+##        return
+# ------------------------------------------------------------------------------
     gdal_raster=gdal.Open(RasterPath)
     gt=gdal_raster.GetGeoTransform()#daje podatke o rasteru (metadata)
-    global data # set below, after choosing whether to read in chunks
-    global pix; pix=gt[1]
+    projection= gdal_raster.GetProjection()
+    global pix; pix=gt[1] # there's a bug in Python: globals cannot be avoided by a nested function (??)
     global raster_x_min; raster_x_min = gt[0]
-    global raster_y_max ;raster_y_max = gt[3] # it's top left y, so maximum!
+    global raster_y_max; raster_y_max = gt[3] # it's top left y, so maximum!
 
-    input_raster_columns = gdal_raster.RasterYSize
-    input_raster_rows = gdal_raster.RasterXSize
+    window_size_y = gdal_raster.RasterYSize
+    window_size_x = gdal_raster.RasterXSize
 
-    raster_y_min = raster_y_max - input_raster_columns * pix
-    raster_x_max = raster_x_min + input_raster_rows * pix
+    raster_y_min = raster_y_max - window_size_y * pix
+    raster_x_max = raster_x_min + window_size_x * pix
 
     #adfGeoTransform[0] /* top left x */
     #adfGeoTransform[1] /* w-e pixel resolution */
@@ -277,10 +385,10 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
     #adfGeoTransform[4] /* rotation, 0 if image is "north up" */
     #adfGeoTransform[5] /* n-s pixel resolution */
 
-    radius_pix = int(round(radius/pix))
+    radius_pix = int(radius/pix)
 
     gtiff = gdal.GetDriverByName('GTiff')#for creting new rasters
-    projection = gdal_raster.GetProjection()
+    #projection = gdal_raster.GetProjection() #not good ? better to use crs from the project (may override the original)
     rb=gdal_raster.GetRasterBand(1)#treba li to?
 
     #progress report
@@ -291,40 +399,32 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
     if Obs_layer.isValid():
         # returns 0-? for indexes or -1 if doesn't exist
         obs_has_ID = bool( Obs_layer.fieldNameIndex ("ID") + 1)
-        read_chunks = True # some heuristic here (if raster size < ____ : False)
     else: return # abandon function
   
     if output_options == ["Binary","cumulative"]:
-        matrix_final = numpy.zeros ( (input_raster_columns, input_raster_rows) )
-        # THIS IS BAD !!! a better handling of array addition is necessary
-        # -> matrix_final[1:5,1:4] = matrix_final[1:5,1:4] + vis_matrix
-        # http://stackoverflow.com/questions/9886303/adding-different-sized-shaped-displaced-numpy-matrices
-        read_chunks=False
+        matrix_final = numpy.zeros ( (gdal_raster.RasterYSize, gdal_raster.RasterXSize) )
         
 
     #initialise target points and create spatial index for speed
     if Target_layer:
         
-        Target_layer=QgsMapLayerRegistry.instance().mapLayer(Target_layer)
+        Target_layer = QgsMapLayerRegistry.instance().mapLayer(Target_layer)
         if Target_layer.isValid():
             
             targ_has_ID = bool(Target_layer.fieldNameIndex ("ID") + 1)
-            read_chunks = False # also heuristic if raster size < _____ do it in chunks (too complicated...)
-
+          
             targ_index = QgsSpatialIndex()
             for f in Target_layer.getFeatures():
                 targ_index.insertFeature(f)
                 
         else: return # abandon function
+        
 
-    if not read_chunks:
-        data = gdal_raster.ReadAsArray()
-        x_offset = 0; y_offset = 0
+#PAZI AKO JE POLJE U TABELI ZA TARGET HGT!!! DODATI
 
     #count features
     #ViewshedAnalysisDialog.setProgressBar(self.dlg, vlayer.featureCount()) ???
    
-
     # ----------------- POINT LOOP -------------------------
     
     for feat in Obs_layer.getFeatures():
@@ -343,16 +443,16 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
             y = int((raster_y_max - y_geog) / pix) #reversed !
         else: continue
        
-        # ---------- addition for extraction of a chunk of data ---------------
-       
-        if read_chunks:
-            window_size = int((radius_pix + search_top_obs + search_top_target) * 2)
-            x_offset = max(0, int(x - window_size/2))
-            y_offset = max(0, int(y - window_size/2))
-            window_size_x = min(input_raster_rows - x_offset, x_offset + window_size)
-            window_size_y = min(input_raster_columns - y_offset, y_offset + window_size)
-            data = gdal_raster.ReadAsArray(x_offset, y_offset, window_size_x, window_size_y)# global variable
+        # ----------  extraction of a chunk of data ---------------
+        # for each observer a new matrix is calculated... (NOT OPTIMAL FOR INTERVISIBILITY !!)
+        half_size = int(radius_pix + search_top_obs + search_top_target )
+        x_offset = max(0, int(x - half_size -1))
+        y_offset = max(0, int(y - half_size -1))
+        window_size_x = min(gdal_raster.RasterXSize - x_offset,  half_size * 2 + 3)
+        window_size_y = min(gdal_raster.RasterYSize - y_offset,  half_size * 2 + 3)
+        data = gdal_raster.ReadAsArray(x_offset, y_offset, window_size_x, window_size_y)# global variable
          # ---------------------------------------------------------------------
+
         x = x- x_offset; y = y - y_offset
 
         if search_top_obs:
@@ -404,38 +504,72 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                 target_list.append ([x2,y2, z_target, id2])
           
         else:
-           
             target_list = bresenham_circle(x,y,radius_pix)#this is the list of target points
-            
 
         # ------------ main point loop ----------------------
-        vis = visibility (x, y, z_obs, target_list, z_target, output_options[0], (Target_layer <> 0))
+
+ 
+        # now convert heights to angles
+
+        #QMessageBox.information(None, "podatak:", str(data))
+
+        z0= data[y,x] + z_obs
+
+        temp_x= ((numpy.arange(window_size_y) - y) * pix) **2
+        temp_y= ((numpy.arange(window_size_x) - x) * pix) **2
+        
+        # formula from http://resources.arcgis.com/en/help/main/10.1/index.html#//009z000000v8000000
+        #                        Dist2               Dist2    
+        # Zactual = Zsurface - --------- + Rrefr * ---------
+        #                      Diamearth           Diamearth
+
+        # Which is the same as Dist2/Diam * (1-refraction) 
+        if curvature:
+            curvature = (temp_x[:,None]  + temp_y[None,:]) / Diameter    
+            data = (data - z0) - curvature * (1 - refraction)
+            curvature = None #free memory!
+        else: data = data- z0
+        
+        mx_dist = numpy.sqrt(temp_x[:,None]  + temp_y[None,:])
+        
+        data = data / mx_dist #data = data / (temp_x[:,None]  + temp_y[None,:]) #This is nice (avoid sqroot) but it doesn't work for angles ??(<1 values, large deco
+
+        # ------  create an array of additional angles (parallel existing surface) ----------
+        if z_target > 0 and output_options[0]!= "Intervisibility" : #for intervisibilty offsets may differ for each target -> they are calculated individually
+            mx_target = data +  z_target / mx_dist
+        else: mx_target=None
+
+        #hypot = hypothenouse, where each array is the length of each side of a straight angle (array1 [0,0]= 3, array2 [0,0] = 4 --> hypot=5)
+        #numpy.hypot (t_x[:,None] - t_x[x], t_y[None,:]-t_y[y])
+        
+        
+        if output_options[0]== "Binary": mx_dist = None #free some memory                
+        
+        matrix_vis = visibility (x, y, target_list, output_options[0], z_target)
         
         if output_options[0] == "Intervisibility": #skip raster stuff
-            if vis :
-                for n in vis: connection_list.append([id1, x,y]+ n)
+            if matrix_vis : # it'a list actually..
+                for n in matrix_vis:
+                    n[1] += x_offset #each new point, new offsets...
+                    n[2] += y_offset
+                    connection_list.append([id1, x + x_offset ,y + y_offset]+ n)
         else:
             # ~~~~~~~~~~~~~~~ Finalizing raster output ~~~~~~~~~~~~~~~~~~~~~~~
             out=str(output + "_" + str(id1))
-            matrix_vis = numpy.zeros ( (len(data) , len(data[0])) ) # cannot be = data: it ovrewrites it!
             
             #OUTPUT is generic: x, y, error, value
-            v = sorted(vis, key=itemgetter(0,1,2)) #sort on x,y and error
+  ##          v = sorted(vis, key=itemgetter(0,1,2)) #sort on x,y and error
             
             if output_options[0] == 'Binary': num_format=gdal.GDT_Byte
             else : num_format=gdal.GDT_Float32
-
-            for k in v:
-                #insert only pixels with lower error (the top ones in the list)
-                if matrix_vis [k[1],k[0]] == 0:
-                    matrix_vis [k[1],k[0]] = k[3]
      
-            if output_options [1] == "cumulative":
-                matrix_final = matrix_final + matrix_vis
+            if output_options [1] == "cumulative":               
+                matrix_final [ y_offset : y_offset + matrix_vis.shape[1] , x_offset : x_offset + matrix_vis.shape[0] ] += matrix_vis
             else:
+                
                 file_name = out + "_" + output_options[0]
 
-                success = write_raster (matrix_vis, file_name, input_raster_rows, input_raster_columns,
+                success = write_raster (matrix_vis, file_name, gdal_raster.RasterXSize, gdal_raster.RasterYSize,
                                         x_offset, y_offset, gt, projection, num_format)
                 if success : out_files.append(success)
                 else: QMessageBox.information(None, "Error writing file !", str(file_name + ' cannot be saved'))
@@ -447,8 +581,8 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
 
     #exiting the main points loop : write cumulative....
     if output_options [1]== "cumulative":
-        success = write_raster (matrix_final, output+'_cumulative',input_raster_rows, input_raster_columns,
-                                x_offset, y_offset, gt, projection, gdal.GDT_Int32)
+        success = write_raster (matrix_final, output+'_cumulative',gdal_raster.RasterXSize, gdal_raster.RasterYSize,
+                                0, 0, gt, projection, gdal.GDT_Int32)
         if success : out_files.append(success)
         else: QMessageBox.information(None, "Error writing file !", str(output + '_cumulative cannot be saved'))
 
@@ -458,10 +592,11 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
 
         if not success : 1# do something smart ?
 
-        
+    
     matrix_final = None; data = None; connections_list=None; v=None; vis=None
     test_rpt += "\n Total time: " + str (time.clock()- start)
-## QMessageBox.information(None, "Timing report:", str(test_rpt))
+    #QMessageBox.information(None, "Timing report:", str(test_rpt))
+
     return out_files
 
 
@@ -485,6 +620,8 @@ def write_raster (matrix, file_name,columns_no, rows_no , offset_x, offset_y,
     return file_name +'.tiff'
 
 def write_intervisibility_line (file_name, data_list, coordinate_ref_system):
+
+    QMessageBox.information(None, "Timing report:", str(data_list))
     
     fields = QgsFields() #there's a BUG in QGIS here (?), normally : fields = ....
     fields.append(QgsField("Source", QVariant.String ))
@@ -507,8 +644,8 @@ def write_intervisibility_line (file_name, data_list, coordinate_ref_system):
     for r in data_list:
         # create a new feature
         feat = QgsFeature()
-        l_start=QgsPoint(r[1]*pix + raster_x_min + half_pix, raster_y_max - half_pix- r[2]*pix)
-        l_end = QgsPoint(r[4]*pix + raster_x_min + half_pix, raster_y_max - half_pix- r[5]*pix)
+        l_start=QgsPoint(raster_x_min  + r[1]*pix + half_pix, raster_y_max - r[2]*pix - half_pix )
+        l_end = QgsPoint(raster_x_min  + r[4]*pix + half_pix, raster_y_max - r[5]*pix - half_pix)
          
         feat.setGeometry(QgsGeometry.fromPolyline([l_start, l_end]))
         # do not cast ID to string: unicode problem -- angle * distance in pixels -- distance * pixel_size
@@ -518,7 +655,7 @@ def write_intervisibility_line (file_name, data_list, coordinate_ref_system):
         feat['Target'] = r[3]
         feat['Visible'] = 'True' if r[6] else 'False'
         feat['TargetSize'] = float(r[7])
-        feat['Distance'] = float(r[8] * pix)
+        feat['Distance'] = float(r[8])
         
         writer.addFeature(feat)
         del feat
