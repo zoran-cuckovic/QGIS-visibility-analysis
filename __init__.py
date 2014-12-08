@@ -6,8 +6,8 @@
  ------description-------
                              -------------------
         begin                : 2013-05-22
-        copyright            : (C) 2013 by Z
-        email                : reee
+        copyright            : (C) 2013 by Zoran Čučković 
+        email                : 
  ***************************************************************************/
 
 /***************************************************************************
@@ -27,11 +27,11 @@ def name():
 
 
 def description():
-    return "Calculates binary viewshed for multiple points."
+    return "Calculates viewsheds, invisibility depth and intervisibility networks for multiple points."
 
 
 def version():
-    return "Version 0.13"
+    return "Version 0.3"
 
 
 def icon():
@@ -39,7 +39,7 @@ def icon():
 
 
 def qgisMinimumVersion():
-    return "1.8"
+    return "2.0"
 
 def author():
     return "Zoran Čučković"
