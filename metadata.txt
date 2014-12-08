@@ -10,7 +10,7 @@
 
 [general]
 
-category=Plugins
+category=Raster
 name=Viewshed Analysis
 qgisMinimumVersion=2.0
 description=Advanced visibility analysis tool.
