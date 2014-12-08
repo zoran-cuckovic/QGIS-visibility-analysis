@@ -163,22 +163,23 @@ class ViewshedAnalysis:
             ly_target = ViewshedAnalysisDialog.returnTargetLayer(self.dlg)
             ly_dem = ViewshedAnalysisDialog.returnRasterLayer(self.dlg)
 
-            z_obs = ViewshedAnalysisDialog.returnObserverHeight(self.dlg)# pazi ako su već u bazi uračunate visine observatora! 
+            z_obs = ViewshedAnalysisDialog.returnObserverHeight(self.dlg) 
             z_obs_field = self.dlg.ui.cmbObsField.itemData(
                 self.dlg.ui.cmbObsField.currentIndex())#table columns are indexed 0-n 
 
-            z_target = ViewshedAnalysisDialog.returnTargetHeight(self.dlg) #isti ako nije recipročna analiza
+            z_target = ViewshedAnalysisDialog.returnTargetHeight(self.dlg) 
             z_target_field =self.dlg.ui.cmbTargetField.itemData(
                 self.dlg.ui.cmbTargetField.currentIndex())       
-            #angle_target= ViewshedAnalysisDialog.returnTargetSize(self.dlg)
+            
             Radius = ViewshedAnalysisDialog.returnRadius(self.dlg)
 
             search_top_obs = ViewshedAnalysisDialog.returnSearchTopObserver(self.dlg)
             search_top_target = ViewshedAnalysisDialog.returnSearchTopTarget(self.dlg)
             
             output_options = ViewshedAnalysisDialog.returnOutputOptions(self.dlg)
-
-             
+                
+            curv=ViewshedAnalysisDialog.returnCurvature(self.dlg)
+            refraction = curv[1] if curv else 0 
             
             if not output_options [0]:
                 QMessageBox.information(self.iface.mainWindow(), "Error!", str("Select an output option")) 
@@ -190,7 +191,7 @@ class ViewshedAnalysis:
             out_raster = Viewshed(ly_obs, ly_dem, z_obs, z_target, Radius,outPath,
                                   output_options,
                                   ly_target, search_top_obs, search_top_target,
-                                  z_obs_field, z_target_field)
+                                  z_obs_field, z_target_field, curv, refraction)
             
             for r in out_raster:
                 #QMessageBox.information(self.iface.mainWindow(), "debug", str(r))
@@ -220,8 +221,14 @@ class ViewshedAnalysis:
 ##
 ##                    # make sure the layer is redrawn
 ##                    layer.triggerRepaint()
+
+                    #NOT WORKING 
                     
-                    # NOT WORKING PROPERLY ??!!
+##                    x = QgsRasterTransparency.TransparentSingleValuePixel()
+##                    x.pixelValue = 0
+##                    x.transparencyPercent = 100
+##                    layer.setTransparentSingleValuePixelList( [ x ] )
+                    
                     layer.setContrastEnhancement(QgsContrastEnhancement.StretchToMinimumMaximum)
 
                     #rlayer.setDrawingStyle(QgsRasterLayer.SingleBandPseudoColor)
@@ -239,7 +246,7 @@ class ViewshedAnalysis:
 ##                    url.addQueryItem('xField  <-or-> yField','longitude')
 ##                    url.addQueryItem('crs','epsg:4723')
 ##                    url.addQueryItem('wktField','WKT')
-### -> Problem
+## -> Problem
 ##                    #layer_uri=Qstring.fromAscii(url.toEncoded())
 ##                    layer_uri= str(url)
 ##                    layer=QgsVectorLayer(r, lyName[0],"delimitedtext")
