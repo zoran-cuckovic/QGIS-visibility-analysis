@@ -27,11 +27,11 @@ def name():
 
 
 def description():
-    return "Calculates viewsheds, invisibility depth and intervisibility networks for multiple points."
+    return "Calculates viewsheds, intervisibility networks, invisibility depth and visible horizon for multiple points."
 
 
 def version():
-    return "Version 0.3"
+    return "Version 0.4"
 
 
 def icon():
