@@ -94,16 +94,18 @@ class ViewshedAnalysisDialog(QtGui.QDialog):
     
     def returnOutputOptions(self):
         #the idea is to loop through checkboxes, but how ???
-        opt = [0,0]# list to accomodate for sub options (cumulative, horizon min distance etc)
-        if self.ui.chkBinary.isChecked():
-            opt[0] = "Binary"
-            if self.ui.chkCumulative.isChecked(): opt [1]= "cumulative" 
-        if self.ui.chkInvisibility.isChecked(): opt[0] = "Invisibility" 
-        #if self.ui.chkHorizon.isChecked(): opt [0]= "Horizon"
-        if self.ui.chkIntervisibility.isChecked():
-            opt [0]= "Intervisibility"
-##            if self.ui.chkCSV.isChecked(): opt [1]= "csv"
-##         
+        opt = [0,0,0]# list to accomodate for sub options (cumulative, horizon min distance etc)
+
+        if self.ui.chkBinary.isChecked(): opt[0] = "Binary"
+        elif self.ui.chkInvisibility.isChecked(): opt[0] = "Invisibility" 
+        elif self.ui.chkHorizon.isChecked():
+            opt [0]= "Horizon"
+  #          try: opt [2]= float(self.ui.txtHorizonDepth.text())
+   #         except: pass #will be 0
+        elif self.ui.chkIntervisibility.isChecked():  opt [0]= "Intervisibility"
+
+        if self.ui.chkCumulative.isChecked(): opt [1]= "cumulative" 
+    
         return opt
 
     def fileOutput(self): #problem je ekstenzija!!!!
