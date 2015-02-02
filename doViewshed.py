@@ -29,7 +29,6 @@ from osgeo import osr, gdal, ogr
 from array import * 
 
 import time
-import csv 
 from operator import itemgetter 
 import numpy
 from math import sqrt, degrees, atan, atan2, tan
@@ -79,7 +78,7 @@ def bresenham_circle(x0,y0,radius):
         lst.append([x0 - y, y0 - x])
 
         #addition for a thicker line
-            #!! screen y descends
+            #! screen y descends
             #steep
         lst.append([x0 + x, y0 + y-1])
         lst.append([x0 - x, y0 + y-1])
@@ -106,7 +105,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
     # large nested function : using the same variables..
     def visibility(x0, y0, target_list, options,
                    target_offset = False,
-                    mask = False):
+                    mask = False, interpolate=True):
                         
         def write2matrix (x,y,error,value):
             if error <  mx_err[y, x]:
@@ -123,11 +122,12 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
         q=0 #test
         l=[] #testiranje
     # ----------------------------------------------------------Horizon - on hold... ------------------------------   
-        Break=False 
-        last_x, last_y = x0, y0
-        last_err = 0
+        if options == "Horizon":
+            Break=False 
+            last_x, last_y = x0, y0
+            last_err = 0
     #--------------------------------------------------------------------------------------------------------------
-            
+               
         for n in target_list:
             #test
             q+=1
@@ -147,6 +147,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                 x2,y2 = y2,x2
                 dx,dy = dy,dx
                 sx,sy = sy,sx
+                
             D = 0
           
             #for interpolation
@@ -155,7 +156,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
             #begins with the minimum possible angle for the observer pix,
             #thus the first pixel next to observer is always visible!
             visib = True
-            angle_block = -99999999999
+            angle_block = None
             angle_block2 = angle_block
             angle_hor_max = angle_block
             angle_hor_min = angle_block
@@ -175,41 +176,42 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                 else:
                     y += sy
                     D += dy - dx
-                      
+                               
+                #unfortunately, numpy allows for negative values...
+                # when x or y are too large, the break is on try-except below
+                if x < 0 or y < 0 : break
 
-            #----- interpolation..
-                err= abs(D/dx) if D else 0 # D can be a very good substitute (2-3% differences)
-                  
-                sD = -1 if D < 0 else 1 #inverse : if the good pixel is above the line then search down
-                interpolated = y  + sD * sy
-                
                 # --------- unpack coordinates ------------
-                if not steep:
-                    x_pix,y_pix = x,y
-                    x_pix_interp, y_pix_interp = x, interpolated
-                    
-                else:
-                    x_pix,y_pix = y,x
-                    x_pix_interp, y_pix_interp = interpolated, x
-                    
-                # we have to restrain the extents (1 additional for the interpolated value)
-                if not window_size_x-1 > x_pix > 0 or not window_size_y-1 > y_pix > 0: break
+                if not steep : x_pix,y_pix = x,y
+                else: x_pix,y_pix = y,x
+                                                  
+                try: angle = data[y_pix, x_pix]
+                except: break
 
-                angle = data[y_pix, x_pix]
-                angle2= data [y_pix_interp, x_pix_interp] if D else angle            
-                angle_exact=0
+                angle_exact=0#initiate/reset
                 
-            # ------------ core calculation ----------------------
-            
-    # perhaps a minor speed-up - less > < evaluations ...
-    ##            if angle2 > angle :
-    ##                angle,a=angle2,angle
-    ##                swapped=1
-    ##            else: swapped=0
-            
+                if D: 
+                    err= abs(D/dx)  # D can be a very good substitute (2-3% differences)
+                  
+                    sD = -1 if D < 0 else 1 #inverse : if the good pixel is above the line then search down
+                    interpolated = y  + sD * sy
+
+                    #if interpolate<0: break
+
+                    if not steep: x_pix_interp, y_pix_interp = x, interpolated
+                    else: x_pix_interp, y_pix_interp = interpolated, x
+
+                    try:    angle2= data [y_pix_interp, x_pix_interp]
+                    except: break
+
+                else:
+                    err=0
+                    angle2=angle
+
                 #it is not correct to test non-interpolated against interpolated horizon angle!!
-                # nor to test max>max and min>min, because of possible interpolation shift!
+                # ... nor to test max>max and min>min, because of possible interpolation shift!
                 #only : min angle > max old_angle (and vice versa...)
+                
                 if angle < angle_hor_min and angle2 < angle_hor_min: visib= False
                 elif angle > angle_hor_max and angle2 > angle_hor_max: visib= True
                 else: #optimisation: interpolate only when really needed
@@ -219,6 +221,8 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                         angle_hor_exact = angle_block + (angle_block2 - angle_block) * block_err
                     
                     visib=(angle_exact > angle_hor_exact)
+
+   
                 
                 # catch old values 
                 if visib :
@@ -226,7 +230,6 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                     angle_hor_exact = angle_exact #mostly is 0 !
 
                     if angle > angle2:
-
                         angle_hor_max, angle_hor_min = angle, angle2
 
                     else: angle_hor_max, angle_hor_min = angle2, angle
@@ -237,10 +240,11 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                         
 ##                        QMessageBox.information(None, "podatak:", str(dx))
 ##                        return
-                        angle = mx_target[y_pix, x_pix]
-                        angle2= mx_target[y_pix_interp, x_pix_interp] if D else angle            
-                        angle_exact=0
-                        
+                        angle = mx_target[y_pix, x_pix]          
+
+                        if D: angle2= mx_target[y_pix_interp, x_pix_interp]
+                        else: angle2= angle
+                            
                         if angle < angle_hor_min and angle2 < angle_hor_min: visib= False
                         elif angle > angle_hor_max and angle2 > angle_hor_max: visib= True
                         else:
@@ -250,35 +254,60 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                                 angle_hor_exact = angle_block + (angle_block2 - angle_block) * block_err
                             
                             visib=(angle_exact > angle_hor_exact)
-       
+                      
+           
                 
             # ----------- skip all but the last one if mask is used  NOT USED-----------------
              #   if mask and i < dx-1: continue
                 
                 # --------------- processing output ----------------
-                if options == 'Horizon':
-               #NOT USED FOR THE MOMENT : AMBIGUITY IN OUTPUT!
-                    if not visib and 1 > 0:
-                        Break=True # break-points are all we need --> passing from invisible to visible 
-                        write2matrix(x, y, err, 0) # has to enable to overwrite with 0 if error is lower !
-                    else: #there's a bug if the first pix (next to the observer) is invisible (i.e. non-existant) because it's normally always visible
-                         
-                        dst = distance_matrix[y_pix,x_pix] 
-                        if Break:
-                            d = -1 if i==0 else dst - last_dist #if i=0 : we have jumed into an another line (depth is unknown)
-                            write2matrix(last_x, last_y, last_err, d)                             
+                              
+                if options == 'Horizon': 
+
+                    if not visib:
+                        Break = True
+                        write2matrix(x_pix, y_pix, err, 0)
+                        #overwrite points on the invisible side 
+
+                    else:
+                        if Break and i==0:
+                            write2matrix(last_x, last_y, last_err, 1)
+
+                        # overwrite spurious points : horizon on smaller error only
+                        # DELTES TOO MUCH ?
+                        else:
+                            write2matrix(x_pix, y_pix, err + 0.0001, 0)
+                            #+0.001 to enable to be overwritten with the last_err!
+##                    
+##                    # ADVANCED VERSION WITH HORIZON DEPTH
+##                    dst = mx_dist[y_pix,x_pix] 
+##                    if not visib : Break=True
+##                    # break-points are all we need --> passing from invisible to visible
+##                    #there's a bug if the first pix (next to the observer) is invisible (i.e. non-existant) because it's normally always visible  
+##                    else:
+##                        
+##                        if Break:       
+##                            if i==0 or dst - last_dist > hor_min: d=1
+##                            else: d=0
+##                            #i= 0: we have jumed into an another line (depth is unknown)
+##                            write2matrix(last_x, last_y, last_err, d)                      
                         Break = False
                         
                         last_x, last_y = x_pix, y_pix
                         last_err=err
-                        last_dist = dst                
+                        #last_dist = dst              
+                    #write all pix : to overwrite on smaller error    
+                    
                     
                 elif options == 'Binary':
-                    #if visib: ary.append([x_pix,y_pix, abs(err), 1])
-                   # mora provjeriti i visib i non-visib !!
-
-                    write2matrix( x_pix,y_pix, err, 1 if visib else 0)
-
+                    
+                # faster than calling the function!!!
+                   if err <  mx_err[y_pix,x_pix]:
+                        mx_vis[y_pix,x_pix]= 1 if visib else 0  
+                        mx_err[y_pix,x_pix]= err
+                # nicer, but slower:
+                  #  write2matrix( x_pix,y_pix, err, 1 if visib else 0)
+                   
                 elif options == 'Invisibility':
                 # repetition : into a function... ?
                     if not visib:
@@ -295,17 +324,25 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
 
                 if visib : # there is no ambiguity, visible!
                     hgt = target_offset
+                    
                 else:
-                    angle_off = target_offset/d if target_offset else 0
-#provjeriti printanjem!!
-                    angle_exact = angle + angle_off # ERROR (err) IS NOT POSSIBLE !
+                     # repeat to calculate height (even without target
+                    angle_off =  target_offset/d if target_offset else 0
+
+                    angle += angle_off # ERROR (err) IS NOT POSSIBLE !
                     # here it is probable..
                     if not angle_hor_exact:
                         angle_hor_exact = angle_block + (angle_block2 - angle_block) * block_err
 
-                    hgt = (angle_exact - angle_hor_exact) * d
-                    
-                ary.append([id_target, x_pix, y_pix, (hgt >0),  hgt, d, err ])
+                    hgt = (angle - angle_hor_exact) * d
+                    visib=(hgt >0)
+                        
+                    if hgt>target_offset: hgt=target_offset
+                    #in case when the pixel is preceeded by an invisible one and becomes visible only on exact horizon angle,
+                    # hgt can get augmented by the relative target pixel height 
+
+
+                ary.append([id_target, x_pix, y_pix, visib,  hgt, d, err ])
                 
                 #QMessageBox.information(None, "podatak:", str(ary))
 
@@ -321,17 +358,47 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
 
 #            QMessageBox.information(None, "podatak:", str(window_size_x) +"  " + str( window_size_y))
         
-    
     def search_top_z (pt_x, pt_y, search_top):
-        z_top = data[pt_y,pt_x]
-        x_top, y_top = pt_x, pt_y
-        for i in range(pt_x - search_top, pt_x + search_top +1):
-            for j in range(pt_y - search_top, pt_y + search_top+1):
-                try: k = data [j, i] # it may fall out of raster
-                except: continue
-                if k > z_top: x_top,y_top,z_top = i,j,k
-        return (x_top,y_top,z_top)
+
+        # global variables
         
+        x_off1 = max(0, pt_x - search_top)# SOMETIMES THERE IT SKIPS for -1 - projection problems??
+        x_off2 = min(pt_x+ search_top +1, raster_x_size) #could be enormus radius, theoretically
+        
+        y_off1 = max(0, pt_y - search_top)
+        y_off2 = min(pt_y + search_top +1, raster_y_size )
+
+        y_size = y_off2 - y_off1; x_size = x_off2 - x_off1
+
+        dt = gdal_raster.ReadAsArray( x_off1, y_off1, x_size,y_size)
+        
+        # we cannot know the position of the observer! if it is not in the center ...
+        z_top = None
+        
+        for j in xrange(0, y_size): 
+            for i in xrange(0, x_size):
+                try: k = dt [j, i] # it may be an empty cell or whatever...
+                except: continue
+               
+                if k > z_top: x_top,y_top,z_top = i,j,k
+
+# PREFFERED TECHNIQUE : SOME PROBLEMS ....
+##        loc=numpy.argmax(dt, axis=1)
+ #       QMessageBox.information(None, "podatak:", str(dt))
+##        
+##        y_top=loc[0]; x_top = loc[1]
+##        z_top= dt [y_top, x_top]
+
+        if x_off1: x_top = pt_x + (x_top - search_top)
+        else: x_top = pt_x - (search_top - x_top)
+        
+        if y_off1: y_top = pt_y + (y_top - search_top)
+        else: y_top = pt_y - (search_top - y_top)
+        
+            
+        return (x_top,y_top,z_top)
+    
+# -------------- MAIN ----------------------------
 
     start = time.clock(); start_etape=start
     test_rpt= "Start: " + str(start)
@@ -372,11 +439,11 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
     global raster_x_min; raster_x_min = gt[0]
     global raster_y_max; raster_y_max = gt[3] # it's top left y, so maximum!
 
-    window_size_y = gdal_raster.RasterYSize
-    window_size_x = gdal_raster.RasterXSize
+    raster_y_size = gdal_raster.RasterYSize
+    raster_x_size = gdal_raster.RasterXSize
 
-    raster_y_min = raster_y_max - window_size_y * pix
-    raster_x_max = raster_x_min + window_size_x * pix
+    raster_y_min = raster_y_max - raster_y_size * pix
+    raster_x_max = raster_x_min + raster_x_size * pix
 
     #adfGeoTransform[0] /* top left x */
     #adfGeoTransform[1] /* w-e pixel resolution */
@@ -385,11 +452,9 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
     #adfGeoTransform[4] /* rotation, 0 if image is "north up" */
     #adfGeoTransform[5] /* n-s pixel resolution */
 
-    radius_pix = int(radius/pix)
-
     gtiff = gdal.GetDriverByName('GTiff')#for creting new rasters
     #projection = gdal_raster.GetProjection() #not good ? better to use crs from the project (may override the original)
-    rb=gdal_raster.GetRasterBand(1)#treba li to?
+ #   rb=gdal_raster.GetRasterBand(1)#treba li to?
 
     #progress report
     test_rpt += "\n GDAL functions : " + str (time.clock()- start_etape)
@@ -401,7 +466,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
         obs_has_ID = bool( Obs_layer.fieldNameIndex ("ID") + 1)
     else: return # abandon function
   
-    if output_options == ["Binary","cumulative"]:
+    if output_options[1] == "cumulative":
         matrix_final = numpy.zeros ( (gdal_raster.RasterYSize, gdal_raster.RasterXSize) )
         
 
@@ -418,7 +483,26 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                 targ_index.insertFeature(f)
                 
         else: return # abandon function
+    
+
+    # -------- precalculate distance matrix, curvature etc -------------------------------
+    radius_pix = int(radius/pix)
+    if output_options[0] == 'Intervisibility': #messy : need a larger window than usual..
+        radius_pix += 1 + search_top_target #accomodate for all potential targets in a single array
+        #account for posssible one pixel shift because points are not in pixel centres 
+       
+    full_window_size = radius_pix *2 + 1
         
+    temp_x= ((numpy.arange(full_window_size) - radius_pix) * pix) **2
+    temp_y= ((numpy.arange(full_window_size) - radius_pix) * pix) **2
+
+    mx_dist = numpy.sqrt(temp_x[:,None] + temp_y[None,:])
+
+    if curvature:
+        mx_curv = (temp_x[:,None] + temp_y[None,:]) / Diameter 
+    
+    if not Target_layer:
+        target_list = bresenham_circle(radius_pix,radius_pix,radius_pix)    
 
 #PAZI AKO JE POLJE U TABELI ZA TARGET HGT!!! DODATI
 
@@ -428,8 +512,6 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
     # ----------------- POINT LOOP -------------------------
     
     for feat in Obs_layer.getFeatures():
-        
-        target_list=[]; vis=[]
 
         geom = feat.geometry()
         t = geom.asPoint()
@@ -442,29 +524,67 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
             x = int((x_geog - raster_x_min) / pix) # not float !
             y = int((raster_y_max - y_geog) / pix) #reversed !
         else: continue
-       
+        
+        #move everything..
+        if search_top_obs: x,y,z = search_top_z (x, y, search_top_obs)  
+        else: z = 0 #reset !!
+
         # ----------  extraction of a chunk of data ---------------
         # for each observer a new matrix is calculated... (NOT OPTIMAL FOR INTERVISIBILITY !!)
-        half_size = int(radius_pix + search_top_obs + search_top_target )
-        x_offset = max(0, int(x - half_size -1))
-        y_offset = max(0, int(y - half_size -1))
-        window_size_x = min(gdal_raster.RasterXSize - x_offset,  half_size * 2 + 3)
-        window_size_y = min(gdal_raster.RasterYSize - y_offset,  half_size * 2 + 3)
+
+        if x <= radius_pix:  #cropping from the front
+            x_offset =0
+            x_offset_dist_mx = radius_pix - x
+        else:               #cropping from the back
+            x_offset = x - radius_pix
+            x_offset_dist_mx= 0
+                            
+        x_offset2 = min(x + radius_pix +1, raster_x_size) #could be enormus radius, so check both ends always
+            
+        if y <= radius_pix:
+            y_offset =0
+            y_offset_dist_mx= radius_pix - y
+        else:
+            y_offset = y - radius_pix
+            y_offset_dist_mx= 0
+
+        y_offset2 = min(y + radius_pix + 1, raster_y_size )
+
+        window_size_y = y_offset2 - y_offset; window_size_x = x_offset2 - x_offset
+
+        # realign coords
+        x -= x_offset; y -= y_offset
+
         data = gdal_raster.ReadAsArray(x_offset, y_offset, window_size_x, window_size_y)# global variable
-         # ---------------------------------------------------------------------
 
-        x = x- x_offset; y = y - y_offset
-
-        if search_top_obs:
-            s = search_top_z (x, y, search_top_obs)
-            x,y,z = s
-        else: z= data[y,x]
-                
         if z_obs_field:
             try: z_obs= float(feat[z_obs_field])
             except: pass #"nothing, will conserve main z_obs"
 
+        z = data [y,x] + z_obs #actually search_top provides z as well...    
+        
+        data -= z # level all according to observer
+        if curvature:
+            data  -= (mx_curv[y_offset_dist_mx : y_offset_dist_mx +  window_size_y,
+                             x_offset_dist_mx : x_offset_dist_mx + window_size_x]
+                        * (1 - refraction)      )
+              
+        data = data / mx_dist[y_offset_dist_mx : y_offset_dist_mx +  window_size_y,
+                             x_offset_dist_mx : x_offset_dist_mx + window_size_x]
+        #data = data / (temp_x[:,None]  + temp_y[None,:]) #This is nice (avoid sqroot) but it doesn't work for angles ??(<1 values, large deco
+
+        
+        # ------  create an array of additional angles (parallel existing surface) ----------
+        if z_target > 0 and output_options[0]!= "Intervisibility" : #for intervisibilty offsets may differ for each target -> they are calculated individually
+            mx_target = data +  z_target / mx_dist
+        else: mx_target=None
+
+        #hypot = hypothenouse, where each array is the length of each side of a straight angle (array1 [0,0]= 3, array2 [0,0] = 4 --> hypot=5)
+        #numpy.hypot (t_x[:,None] - t_x[x], t_y[None,:]-t_y[y])
+        
+        
         if Target_layer:
+            target_list=[]
             # maximum posibility (the new observer coordinate is not translated to geographic)
             diameter = radius + search_top_obs*pix + search_top_target*pix 
             areaOfInterest= QgsRectangle (x_geog -diameter , y_geog -diameter, x_geog +diameter, y_geog +diameter)
@@ -478,19 +598,19 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                 geom2 = feat2.geometry()
                 x2_geog, y2_geog = geom2.asPoint()
                 
-                #normally they have to be inside the data window : unless they fall out of the entire raster
-                if raster_x_min < x2_geog < raster_x_max and raster_y_min < y2_geog < raster_y_max:
-                    x2 = int((x2_geog - raster_x_min) / pix)- x_offset #round vraca float!!
-                    y2 = int((raster_y_max - y2_geog) / pix)- y_offset #pazi: obratno!!
+                # they may fall out of the entire raster
+                if raster_x_min <= x2_geog <= raster_x_max and raster_y_min <= y2_geog <= raster_y_max:
+                    #re-align to relative pixel coords of the data matrix
+                    x2 = int((x2_geog - raster_x_min) / pix)  #round vraca float!!
+                    y2 = int((raster_y_max - y2_geog) / pix)  #pazi: obratno!!
                 else: continue
 
-                if search_top_target:
+                if search_top_target: #works with data matrix : True!!
                     s = search_top_z (x2,y2, search_top_target)
                     x2,y2,z2 = s
-                else : z2 = data[y2,x2]
-                
-                #only after the adaptation to the highest point
-                # has been made for both observer and target can we verify distances
+
+                x2 -= x_offset; y2 -= y_offset
+
                 if x2==x and y2==y : continue #skip same pixels!
                 
                 #this eliminates distance calculation for each point (x+y < radius is always OK)
@@ -502,49 +622,12 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                     except: pass #do nothing, already given above
                 
                 target_list.append ([x2,y2, z_target, id2])
-          
-        else:
-            target_list = bresenham_circle(x,y,radius_pix)#this is the list of target points
+            
 
         # ------------ main point loop ----------------------
 
  
-        # now convert heights to angles
-
-        #QMessageBox.information(None, "podatak:", str(data))
-
-        z0= data[y,x] + z_obs
-
-        temp_x= ((numpy.arange(window_size_y) - y) * pix) **2
-        temp_y= ((numpy.arange(window_size_x) - x) * pix) **2
-        
-        # formula from http://resources.arcgis.com/en/help/main/10.1/index.html#//009z000000v8000000
-        #                        Dist2               Dist2    
-        # Zactual = Zsurface - --------- + Rrefr * ---------
-        #                      Diamearth           Diamearth
-
-        # Which is the same as Dist2/Diam * (1-refraction) 
-        if curvature:
-            curvature = (temp_x[:,None]  + temp_y[None,:]) / Diameter    
-            data = (data - z0) - curvature * (1 - refraction)
-            curvature = None #free memory!
-        else: data = data- z0
-        
-        mx_dist = numpy.sqrt(temp_x[:,None]  + temp_y[None,:])
-        
-        data = data / mx_dist #data = data / (temp_x[:,None]  + temp_y[None,:]) #This is nice (avoid sqroot) but it doesn't work for angles ??(<1 values, large deco
-
-        # ------  create an array of additional angles (parallel existing surface) ----------
-        if z_target > 0 and output_options[0]!= "Intervisibility" : #for intervisibilty offsets may differ for each target -> they are calculated individually
-            mx_target = data +  z_target / mx_dist
-        else: mx_target=None
-
-        #hypot = hypothenouse, where each array is the length of each side of a straight angle (array1 [0,0]= 3, array2 [0,0] = 4 --> hypot=5)
-        #numpy.hypot (t_x[:,None] - t_x[x], t_y[None,:]-t_y[y])
-        
-        
-        if output_options[0]== "Binary": mx_dist = None #free some memory                
-        
+               
         matrix_vis = visibility (x, y, target_list, output_options[0], z_target)
         
         if output_options[0] == "Intervisibility": #skip raster stuff
@@ -560,7 +643,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
             #OUTPUT is generic: x, y, error, value
   ##          v = sorted(vis, key=itemgetter(0,1,2)) #sort on x,y and error
             
-            if output_options[0] == 'Binary': num_format=gdal.GDT_Byte
+            if output_options[0] in ['Binary','Horizon']: num_format=gdal.GDT_Byte
             else : num_format=gdal.GDT_Float32
      
             if output_options [1] == "cumulative":               
@@ -621,7 +704,7 @@ def write_raster (matrix, file_name,columns_no, rows_no , offset_x, offset_y,
 
 def write_intervisibility_line (file_name, data_list, coordinate_ref_system):
 
-    QMessageBox.information(None, "Timing report:", str(data_list))
+    #QMessageBox.information(None, "Timing report:", str(data_list))
     
     fields = QgsFields() #there's a BUG in QGIS here (?), normally : fields = ....
     fields.append(QgsField("Source", QVariant.String ))
