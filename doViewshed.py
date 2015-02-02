@@ -665,7 +665,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
     #exiting the main points loop : write cumulative....
     if output_options [1]== "cumulative":
         success = write_raster (matrix_final, output+'_cumulative',gdal_raster.RasterXSize, gdal_raster.RasterYSize,
-                                0, 0, gt, projection, gdal.GDT_Int32)
+                                0, 0, gt, projection)
         if success : out_files.append(success)
         else: QMessageBox.information(None, "Error writing file !", str(output + '_cumulative cannot be saved'))
 
