@@ -257,8 +257,8 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                       
            
                 
-            # ----------- skip all but the last one if mask is used  NOT USED-----------------
-             #   if mask and i < dx-1: continue
+            # ----------- skip all but the last one if mask is used 
+                if mask and i < dx-1: continue
                 
                 # --------------- processing output ----------------
                               
@@ -618,17 +618,17 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                     if round(dist(x,y,x2,y2)) > radius_pix : continue
 
                 if z_target_field:
-                    try: z_target = float(feat[z_target_field])
+                    try: z_target = float(feat2[z_target_field])
                     except: pass #do nothing, already given above
                 
                 target_list.append ([x2,y2, z_target, id2])
             
+                #test_rpt += "\n - point "+ str(z_obs) + " - " + str(z_target) + " calculations + dumping: " + str (time.clock()- start_etape)
 
         # ------------ main point loop ----------------------
-
- 
                
-        matrix_vis = visibility (x, y, target_list, output_options[0], z_target)
+        matrix_vis = visibility (x, y, target_list, output_options[0], 
+										z_target, mask = (Target_layer))
         
         if output_options[0] == "Intervisibility": #skip raster stuff
             if matrix_vis : # it'a list actually..
@@ -659,7 +659,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
 
                 matrix_vis= None
                     
-    test_rpt += "\n - point " + str(id1) + " calculations + dumping: " + str (time.clock()- start_etape)
+		
     start_etape=time.clock()
 
     #exiting the main points loop : write cumulative....
