@@ -121,13 +121,12 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
         
         q=0 #test
         l=[] #testiranje
-    # ----------------------------------------------------------Horizon - on hold... ------------------------------   
+        
         if options == "Horizon":
             Break=False 
             last_x, last_y = x0, y0
             last_err = 0
-    #--------------------------------------------------------------------------------------------------------------
-               
+
         for n in target_list:
             #test
             q+=1
@@ -222,8 +221,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                     
                     visib=(angle_exact > angle_hor_exact)
 
-   
-                
+
                 # catch old values 
                 if visib :
                     angle_block, angle_block2, block_err = angle, angle2, err
@@ -321,7 +319,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
             #out of inner loop : it verifies the last pixel only
             if options =='Intervisibility':
                 d = mx_dist[y_pix,x_pix]
-
+                                
                 if visib : # there is no ambiguity, visible!
                     hgt = target_offset
                     
@@ -362,7 +360,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
 
         # global variables
         
-        x_off1 = max(0, pt_x - search_top)# SOMETIMES THERE IT SKIPS for -1 - projection problems??
+        x_off1 = max(0, pt_x - search_top)
         x_off2 = min(pt_x+ search_top +1, raster_x_size) #could be enormus radius, theoretically
         
         y_off1 = max(0, pt_y - search_top)
@@ -390,11 +388,8 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
 ##        z_top= dt [y_top, x_top]
 
         if x_off1: x_top = pt_x + (x_top - search_top)
-        else: x_top = pt_x - (search_top - x_top)
-        
         if y_off1: y_top = pt_y + (y_top - search_top)
-        else: y_top = pt_y - (search_top - y_top)
-        
+
             
         return (x_top,y_top,z_top)
     
@@ -403,7 +398,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
     start = time.clock(); start_etape=start
     test_rpt= "Start: " + str(start)
     
-    out_files=[];rpt=[];connection_list=[]; intervisibility = False
+    out_files=[];rpt=[];connection_list=[]
 
     RasterPath= str(QgsMapLayerRegistry.instance().mapLayer(Raster_layer).dataProvider().dataSourceUri())
     # TO BE ADDED TO THE DIALOG DIRECTLY (??)
@@ -492,7 +487,9 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
         #account for posssible one pixel shift because points are not in pixel centres 
        
     full_window_size = radius_pix *2 + 1
-        
+
+    
+    
     temp_x= ((numpy.arange(full_window_size) - radius_pix) * pix) **2
     temp_y= ((numpy.arange(full_window_size) - radius_pix) * pix) **2
 
@@ -520,7 +517,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
         x_geog, y_geog = t[0], t[1]
         
         #check if the point is out of raster extents
-        if raster_x_min < x_geog < raster_x_max and raster_y_min < y_geog < raster_y_max:
+        if raster_x_min <= x_geog <= raster_x_max and raster_y_min <= y_geog <= raster_y_max:
             x = int((x_geog - raster_x_min) / pix) # not float !
             y = int((raster_y_max - y_geog) / pix) #reversed !
         else: continue
@@ -530,7 +527,6 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
         else: z = 0 #reset !!
 
         # ----------  extraction of a chunk of data ---------------
-        # for each observer a new matrix is calculated... (NOT OPTIMAL FOR INTERVISIBILITY !!)
 
         if x <= radius_pix:  #cropping from the front
             x_offset =0
@@ -556,7 +552,8 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
         x -= x_offset; y -= y_offset
 
         data = gdal_raster.ReadAsArray(x_offset, y_offset, window_size_x, window_size_y)# global variable
-
+        distances = mx_dist [y_offset_dist_mx : y_offset_dist_mx +  window_size_y,
+                             x_offset_dist_mx : x_offset_dist_mx + window_size_x] #this is supposed to return a 'view', not a copy of the array!
         if z_obs_field:
             try: z_obs= float(feat[z_obs_field])
             except: pass #"nothing, will conserve main z_obs"
@@ -569,14 +566,14 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                              x_offset_dist_mx : x_offset_dist_mx + window_size_x]
                         * (1 - refraction)      )
               
-        data = data / mx_dist[y_offset_dist_mx : y_offset_dist_mx +  window_size_y,
-                             x_offset_dist_mx : x_offset_dist_mx + window_size_x]
+        data = data / distances
         #data = data / (temp_x[:,None]  + temp_y[None,:]) #This is nice (avoid sqroot) but it doesn't work for angles ??(<1 values, large deco
 
         
         # ------  create an array of additional angles (parallel existing surface) ----------
         if z_target > 0 and output_options[0]!= "Intervisibility" : #for intervisibilty offsets may differ for each target -> they are calculated individually
-            mx_target = data +  z_target / mx_dist
+            mx_target = data +  z_target / distances
+
         else: mx_target=None
 
         #hypot = hypothenouse, where each array is the length of each side of a straight angle (array1 [0,0]= 3, array2 [0,0] = 4 --> hypot=5)
@@ -613,7 +610,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
 
                 if x2==x and y2==y : continue #skip same pixels!
                 
-                #this eliminates distance calculation for each point (x+y < radius is always OK)
+                #this eliminates distance calculation for each point (delta x + delta y < radius is always OK)
                 if (abs(x2-x) + abs (y2-y))> radius_pix:
                     if round(dist(x,y,x2,y2)) > radius_pix : continue
 
@@ -647,7 +644,8 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
             else : num_format=gdal.GDT_Float32
      
             if output_options [1] == "cumulative":               
-                matrix_final [ y_offset : y_offset + matrix_vis.shape[1] , x_offset : x_offset + matrix_vis.shape[0] ] += matrix_vis
+                matrix_final [ y_offset : y_offset + matrix_vis.shape[0] ,
+                               x_offset : x_offset + matrix_vis.shape[1] ] += matrix_vis
             else:
                 
                 file_name = out + "_" + output_options[0]
