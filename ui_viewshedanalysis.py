@@ -242,7 +242,7 @@ class Ui_ViewshedAnalysis(object):
         self.label_12.setText(_translate("ViewshedAnalysis", "Developed by Zoran Čučković\n"
 "Laboratoire Chrono-environnement – UMR 6249\n"
 "Université de Franche-Comté, Besançon (France)", None))
-        self.label_13.setText(_translate("ViewshedAnalysis", "Version 0.4", None))
+        self.label_13.setText(_translate("ViewshedAnalysis", "Version 0.4.1", None))
         self.label_14.setText(_translate("ViewshedAnalysis", "<html><head/><body><p><a href=\"http://hub.qgis.org/projects/viewshed/wiki\"><span style=\" text-decoration: underline; color:#0000ff;\">See project web page.</span></a></p></body></html>", None))
         self.label_18.setText(_translate("ViewshedAnalysis", "(cuckovic.zoran@gmail.com)", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.About_tab), _translate("ViewshedAnalysis", "About", None))
