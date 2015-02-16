@@ -574,7 +574,7 @@ Université de Franche-Comté, Besançon (France)</string>
       </font>
      </property>
      <property name="text">
-      <string>Version 0.4</string>
+      <string>Version 0.4.1</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_14">
