@@ -319,7 +319,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
             #out of inner loop : it verifies the last pixel only
             if options =='Intervisibility':
                 # d = mx_dist[y_pix,x_pix] THIS IS BETTER, but it cant work when the matrix is cropped (point close to border)
-                d= dist(x0,y0, x_pix, y_pix)                
+                d= dist(x0,y0, x_pix, y_pix)*pix                
                 if visib : # there is no ambiguity, visible!
                     hgt = target_offset
                     
