@@ -318,8 +318,8 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                     
             #out of inner loop : it verifies the last pixel only
             if options =='Intervisibility':
-                d = mx_dist[y_pix,x_pix]
-                                
+                # d = mx_dist[y_pix,x_pix] THIS IS BETTER, but it cant work when the matrix is cropped (point close to border)
+                d= dist(x0,y0, x_pix, y_pix)                
                 if visib : # there is no ambiguity, visible!
                     hgt = target_offset
                     
@@ -523,7 +523,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
         else: continue
         
         #move everything..
-        if search_top_obs: x,y,z = search_top_z (x, y, search_top_obs)  
+        if search_top_obs: x,y,z_UNUSED = search_top_z (x, y, search_top_obs)  
         else: z = 0 #reset !!
 
         # ----------  extraction of a chunk of data ---------------
@@ -551,14 +551,13 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
         # realign coords
         x -= x_offset; y -= y_offset
 
-        data = gdal_raster.ReadAsArray(x_offset, y_offset, window_size_x, window_size_y)# global variable
+        data = gdal_raster.ReadAsArray(x_offset, y_offset, window_size_x, window_size_y).astype(float)# global variable
         distances = mx_dist [y_offset_dist_mx : y_offset_dist_mx +  window_size_y,
                              x_offset_dist_mx : x_offset_dist_mx + window_size_x] #this is supposed to return a 'view', not a copy of the array!
         if z_obs_field:
-            try: z_obs= float(feat[z_obs_field])
-            except: pass #"nothing, will conserve main z_obs"
-
-        z = data [y,x] + z_obs #actually search_top provides z as well...    
+            try:    z = data [y,x] + float(feat[z_obs_field])
+            except: z = data [y,x] +  z_obs 
+	else:	    z = data [y,x] + z_obs  
         
         data -= z # level all according to observer
         if curvature:
@@ -566,7 +565,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                              x_offset_dist_mx : x_offset_dist_mx + window_size_x]
                         * (1 - refraction)      )
               
-        data = data / distances
+        data /= distances
         #data = data / (temp_x[:,None]  + temp_y[None,:]) #This is nice (avoid sqroot) but it doesn't work for angles ??(<1 values, large deco
 
         
