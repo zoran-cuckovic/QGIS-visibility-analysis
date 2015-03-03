@@ -509,6 +509,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
     # ----------------- POINT LOOP -------------------------
     
     for feat in Obs_layer.getFeatures():
+        targets=[]
 
         geom = feat.geometry()
         t = geom.asPoint()
@@ -546,7 +547,8 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
 
         y_offset2 = min(y + radius_pix + 1, raster_y_size )
 
-        window_size_y = y_offset2 - y_offset; window_size_x = x_offset2 - x_offset
+        window_size_y = y_offset2 - y_offset
+        window_size_x = x_offset2 - x_offset
 
         # realign coords
         x -= x_offset; y -= y_offset
@@ -581,7 +583,6 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
         
         
         if Target_layer:
-            target_list=[]
             # maximum posibility (the new observer coordinate is not translated to geographic)
             diameter = radius + search_top_obs*pix + search_top_target*pix 
             areaOfInterest= QgsRectangle (x_geog -diameter , y_geog -diameter, x_geog +diameter, y_geog +diameter)
@@ -618,14 +619,18 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                     try: z_target = float(feat2[z_target_field])
                     except: pass #do nothing, already given above
                 
-                target_list.append ([x2,y2, z_target, id2])
+                targets.append ([x2,y2, z_target, id2])
             
                 #test_rpt += "\n - point "+ str(z_obs) + " - " + str(z_target) + " calculations + dumping: " + str (time.clock()- start_etape)
 
         # ------------ main point loop ----------------------
-               
-        matrix_vis = visibility (x, y, target_list, output_options[0], 
-										z_target, mask = (Target_layer))
+        # last check: redo targets for matrix output when observer point is not in the matrix center  
+        elif x_offset == 0 or y_offset == 0 or x_offset2 == raster_x_size or y_offset2 == raster_y_size:
+            targets= bresenham_circle(x,y,radius_pix)
+        else: targets = target_list # standard circle, will save some time not to do it each time...
+        
+        matrix_vis = visibility (x, y, targets, output_options[0], 
+				z_target, mask = (Target_layer))
         
         if output_options[0] == "Intervisibility": #skip raster stuff
             if matrix_vis : # it'a list actually..
