@@ -14,7 +14,7 @@ category=Raster
 name=Viewshed Analysis
 qgisMinimumVersion=2.0
 description=Advanced visibility analysis tool.
-version=0.4.1
+version=0.4.2
 author=Zoran Čučković
 email=cuckovic.zoran@google.com
 
