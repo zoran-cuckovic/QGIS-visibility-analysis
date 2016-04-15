@@ -496,7 +496,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
             #this is neccesary because the target matrix is not interpolated!
             mx_vis[mx_vis>z_target]=z_target
         elif output_options[0]== "Binary":
-            mx_vis [radius_pix,radius_pix]=100
+            mx_vis [radius_pix,radius_pix]=1
         elif output_options[0]== "Intervisibility":
             #to make it fast : for each pair choose matrix in-between
             #e.g. linspace + stretch or y = m * x[:, np.newaxis] + b (y =m*x +b...)
