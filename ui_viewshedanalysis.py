@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'ui_viewshedanalysis.ui'
 #
-# Created: Tue Feb  3 11:42:22 2015
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Fri Apr 15 12:19:32 2016
+#      by: PyQt4 UI code generator 4.10.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -158,24 +158,15 @@ class Ui_ViewshedAnalysis(object):
         self.tabWidget.addTab(self.tab, _fromUtf8(""))
         self.About_tab = QtGui.QWidget()
         self.About_tab.setObjectName(_fromUtf8("About_tab"))
-        self.label_12 = QtGui.QLabel(self.About_tab)
-        self.label_12.setGeometry(QtCore.QRect(30, 90, 351, 61))
-        self.label_12.setObjectName(_fromUtf8("label_12"))
-        self.label_13 = QtGui.QLabel(self.About_tab)
-        self.label_13.setGeometry(QtCore.QRect(30, 50, 81, 17))
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setWeight(75)
-        self.label_13.setFont(font)
-        self.label_13.setObjectName(_fromUtf8("label_13"))
-        self.label_14 = QtGui.QLabel(self.About_tab)
-        self.label_14.setGeometry(QtCore.QRect(30, 180, 261, 41))
-        self.label_14.setTextFormat(QtCore.Qt.RichText)
-        self.label_14.setOpenExternalLinks(True)
-        self.label_14.setObjectName(_fromUtf8("label_14"))
-        self.label_18 = QtGui.QLabel(self.About_tab)
-        self.label_18.setGeometry(QtCore.QRect(30, 160, 231, 17))
-        self.label_18.setObjectName(_fromUtf8("label_18"))
+        self.textBrowser = QtGui.QTextBrowser(self.About_tab)
+        self.textBrowser.setGeometry(QtCore.QRect(0, 0, 411, 501))
+        self.textBrowser.setFocusPolicy(QtCore.Qt.WheelFocus)
+        self.textBrowser.setObjectName(_fromUtf8("textBrowser"))
+        self.label_20 = QtGui.QLabel(self.About_tab)
+        self.label_20.setGeometry(QtCore.QRect(50, 510, 301, 21))
+        self.label_20.setTextFormat(QtCore.Qt.RichText)
+        self.label_20.setOpenExternalLinks(True)
+        self.label_20.setObjectName(_fromUtf8("label_20"))
         self.tabWidget.addTab(self.About_tab, _fromUtf8(""))
         self.buttonBox = QtGui.QDialogButtonBox(ViewshedAnalysis)
         self.buttonBox.setGeometry(QtCore.QRect(270, 590, 161, 32))
@@ -228,7 +219,7 @@ class Ui_ViewshedAnalysis(object):
 "</style></head><body style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600;\">Raster layer:</span><span style=\" font-size:10pt;\"> any supported raster format. For better performance the extent of the raster should be cropped to the analysed area. Too large of a raster will saturate memory.</span></p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600;\">Observer points:</span><span style=\" font-size:10pt;\"> shapefile containing observer points. The coordinate reference systems of the elevation raster and the observer/target point(s) </span><span style=\" font-size:10pt; text-decoration: underline;\">must match</span><span style=\" font-size:10pt;\">. If field named</span><span style=\" font-size:10pt; font-weight:600;\"> ID </span><span style=\" font-size:10pt;\">exists</span><span style=\" font-size:10pt; font-weight:600;\">, </span><span style=\" font-size:10pt;\">it will be used for filenames and </span><span style=\" font-size:10pt; text-decoration: underline;\">should be unique</span><span style=\" font-size:10pt;\">. Otherwise, the internal Id is used.</span></p>\n"
-"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600;\">Target points:</span><span style=\" font-size:10pt;\"> this option is normally used for intervisibility analysis. If chosen with other otput options it behaves as a mask, i.e. only the pixels corresponding to target points are analysed.</span></p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600;\">Target points:</span><span style=\" font-size:10pt;\"> this option is used for intervisibility analysis only.</span></p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600;\">Search radius</span><span style=\" font-size:10pt;\">: size of the analyzed area around each observer point.</span></p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600;\">Adapt to highest point: </span><span style=\" font-size:10pt;\">search the highest point in the vicinity. The search is made in a quadrangular window where the observer point is in the middle.</span></p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600;\">Viewshed:</span><span style=\" font-size:10pt;\"> standard true/false (binary) viewshed. Multiple viewsheds can be combined in a one raster layer using the cumulative option.</span></p>\n"
@@ -239,20 +230,18 @@ class Ui_ViewshedAnalysis(object):
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:600;\">Atmospheric refraction:</span><span style=\" font-size:10pt;\">  coefficient used to calculate the bending down of the light due to the atmosphere.</span></p></body></html>", None))
         self.label_19.setText(_translate("ViewshedAnalysis", "<html><head/><body><p><a href=\"http://hub.qgis.org/projects/viewshed/wiki\"><span style=\" text-decoration: underline; color:#0000ff;\">See project web page for more information.</span></a></p></body></html>", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("ViewshedAnalysis", "Reference", None))
-        self.label_12.setText(_translate("ViewshedAnalysis", "Developed by Zoran Čučković\n"
-"Laboratoire Chrono-environnement – UMR 6249\n"
-"Université de Franche-Comté, Besançon (France)", None))
-        self.label_13.setText(_translate("ViewshedAnalysis", "Version 0.4.2", None))
-        self.label_14.setText(_translate("ViewshedAnalysis", "<html><head/><body><p><a href=\"http://hub.qgis.org/projects/viewshed/wiki\"><span style=\" text-decoration: underline; color:#0000ff;\">See project web page.</span></a></p></body></html>", None))
-        self.label_18.setText(_translate("ViewshedAnalysis", "(cuckovic.zoran@gmail.com)", None))
+        self.textBrowser.setHtml(_translate("ViewshedAnalysis", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Version 0.5</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; font-weight:600;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Developed by Zoran Čučković, Laboratoire Chrono-environnement – UMR 6249, Université de Franche-Comté, Besançon (France).</p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">This tool has been brought to you by an individual and is being developed through academic research: <span style=\" font-style:italic;\">please provide an appropriate reference</span>.</p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Contact: cuckovic.zoran@gmail.com</p></body></html>", None))
+        self.label_20.setText(_translate("ViewshedAnalysis", "<html><head/><body><p><a href=\"http://hub.qgis.org/projects/viewshed/wiki\"><span style=\" text-decoration: underline; color:#0000ff;\">See project web page for more information.</span></a></p></body></html>", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.About_tab), _translate("ViewshedAnalysis", "About", None))
 
-
-if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    ViewshedAnalysis = QtGui.QDialog()
-    ui = Ui_ViewshedAnalysis()
-    ui.setupUi(ViewshedAnalysis)
-    ViewshedAnalysis.show()
-    sys.exit(app.exec_())
