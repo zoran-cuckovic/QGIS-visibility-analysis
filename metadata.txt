@@ -17,6 +17,8 @@ description=Advanced visibility analysis tool.
 version=0.5
 author=Zoran Čučković
 email=cuckovic.zoran@google.com
+about=Viewshed analysis calculates visible surface from a given observer point over a digital elevation model. This plugin is native to QGIS and intended for more complex modelling, such as the depth below the visible horizon or generation of intervisibilty networks between groups of points. It is particularly performant for multiple viewshed calculations form a set of fixed points. For basic single point, large area viewsheds the algorithms already available in QGIS (GRASS r.los or SAGA viewshed module) would do the job as well. 
+
 
 
 # end of mandatory metadata
