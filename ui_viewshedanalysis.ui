@@ -508,7 +508,7 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Raster layer:&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt; any supported raster format. For better performance the extent of the raster should be cropped to the analysed area. Too large of a raster will saturate memory.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Observer points:&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt; shapefile containing observer points. The coordinate reference systems of the elevation raster and the observer/target point(s) &lt;/span&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline;&quot;&gt;must match&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;. If field named&lt;/span&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt; ID &lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;exists&lt;/span&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;, &lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;it will be used for filenames and &lt;/span&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline;&quot;&gt;should be unique&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;. Otherwise, the internal Id is used.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Target points:&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt; this option is normally used for intervisibility analysis. If chosen with other otput options it behaves as a mask, i.e. only the pixels corresponding to target points are analysed.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Target points:&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt; this option is used for intervisibility analysis only.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Search radius&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;: size of the analyzed area around each observer point.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Adapt to highest point: &lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;search the highest point in the vicinity. The search is made in a quadrangular window where the observer point is in the middle.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Viewshed:&lt;/span&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt; standard true/false (binary) viewshed. Multiple viewsheds can be combined in a one raster layer using the cumulative option.&lt;/span&gt;&lt;/p&gt;
@@ -543,70 +543,50 @@ p, li { white-space: pre-wrap; }
     <attribute name="title">
      <string>About</string>
     </attribute>
-    <widget class="QLabel" name="label_12">
+    <widget class="QTextBrowser" name="textBrowser">
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>90</y>
-       <width>351</width>
-       <height>61</height>
+       <x>0</x>
+       <y>0</y>
+       <width>411</width>
+       <height>501</height>
       </rect>
      </property>
-     <property name="text">
-      <string>Developed by Zoran Čučković
-Laboratoire Chrono-environnement – UMR 6249
-Université de Franche-Comté, Besançon (France)</string>
+     <property name="focusPolicy">
+      <enum>Qt::WheelFocus</enum>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Version 0.5&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Developed by Zoran Čučković, Laboratoire Chrono-environnement – UMR 6249, Université de Franche-Comté, Besançon (France).&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This tool has been brought to you by an individual and is being developed through academic research: &lt;span style=&quot; font-style:italic;&quot;&gt;please provide an appropriate reference&lt;/span&gt;.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Contact: cuckovic.zoran@gmail.com&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_13">
+    <widget class="QLabel" name="label_20">
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>50</y>
-       <width>81</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Version 0.4.2</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_14">
-     <property name="geometry">
-      <rect>
-       <x>30</x>
-       <y>180</y>
-       <width>261</width>
-       <height>41</height>
+       <x>50</x>
+       <y>510</y>
+       <width>301</width>
+       <height>21</height>
       </rect>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://hub.qgis.org/projects/viewshed/wiki&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;See project web page.&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://hub.qgis.org/projects/viewshed/wiki&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;See project web page for more information.&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="textFormat">
       <enum>Qt::RichText</enum>
      </property>
      <property name="openExternalLinks">
       <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_18">
-     <property name="geometry">
-      <rect>
-       <x>30</x>
-       <y>160</y>
-       <width>231</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>(cuckovic.zoran@gmail.com)</string>
      </property>
     </widget>
    </widget>
