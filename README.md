@@ -5,4 +5,4 @@ Viewshed analysis calculates visible surface from a given observer point over a 
 
 Viewshed analysis plugin is native to QGIS and intended for more complex modelling, such as the depth below the visible horizon or generation of intervisibilty networks between groups of points. It is reasonably performant for standard viewsheds as well (which is dependent on the amount of RAM memory as well). 
 
-
+A user manual is available at :  [http://zoran-cuckovic.from.hr/landscape-analysis/visibility/](http://zoran-cuckovic.from.hr/landscape-analysis/visibility/)
