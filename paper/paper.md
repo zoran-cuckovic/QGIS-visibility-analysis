@@ -23,9 +23,14 @@ The plug-in is coded in Python and is dependant of the Quantum GIS framework. Mo
 
 # References 
 Čučković, Z. 2015. Exploring intervisibility networks: a case study from Bronze and Iron Age Istria (Croatia and Slovenia). In F. Giligny, F. Djindjian, L. Costa, P. Moscati and S. Robert (eds.), _CAA 2014 - 21st Century Archaeology : Proceedings of the 42nd Annual Conference on Computer Applications and Quantitative Methods in Archaeology_, April 2014, Paris, France, 469 - 478.
+
 ERDAS 2015. ERDAS Imagine Suite 2015. Norcross: Hexagon Geospatial. 
+
 ESRI 2016. ArcGIS Desktop: Release 10.4. Redlands: Environmental Systems Research Institute.
+
 GRASS 2015. Geographic Resources Analysis Support System (GRASS) Software, Version 6.4. Open Source Geospatial Foundation.
+
 Higouchi, T. 1983. _Visual and Spatial Structure Of Landscapes_. Cambridge, Mass: MIT Press. 
+
 Llobera, M. 2003. Extending GIS-based visual analysis: the concept of visualscapes. International journal of geographical information science 17(1), 25-48.
 
