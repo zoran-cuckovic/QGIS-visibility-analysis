@@ -20,7 +20,6 @@ Advanced viewshed analysis plug-in for open source Quantum GIS software has been
 
 The plug-in is coded in Python and is dependant of the Quantum GIS framework. More specifically, it makes use of following libraries (bundled with Quantum GIS): numpy, gdal and QGIS core library.   
  
-
 # References 
 Čučković, Z. 2015. Exploring intervisibility networks: a case study from Bronze and Iron Age Istria (Croatia and Slovenia). In F. Giligny, F. Djindjian, L. Costa, P. Moscati and S. Robert (eds.), _CAA 2014 - 21st Century Archaeology : Proceedings of the 42nd Annual Conference on Computer Applications and Quantitative Methods in Archaeology_, April 2014, Paris, France, 469 - 478.
 
@@ -34,3 +33,6 @@ Higouchi, T. 1983. _Visual and Spatial Structure Of Landscapes_. Cambridge, Mass
 
 Llobera, M. 2003. Extending GIS-based visual analysis: the concept of visualscapes. International journal of geographical information science 17(1), 25-48.
 
+# Documentation
+
+[zoran-cuckovic.from.hr/landscape-analysis/visibility]
