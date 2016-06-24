@@ -33,6 +33,6 @@ Higouchi, T. 1983. _Visual and Spatial Structure Of Landscapes_. Cambridge, Mass
 
 Llobera, M. 2003. Extending GIS-based visual analysis: the concept of visualscapes. International journal of geographical information science 17(1), 25-48.
 
-# Documentation
+# User manual
 
-[zoran-cuckovic.from.hr/landscape-analysis/visibility]
+[zoran-cuckovic.from.hr/landscape-analysis/visibility](zoran-cuckovic.from.hr/landscape-analysis/visibility)
