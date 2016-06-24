@@ -35,4 +35,4 @@ Llobera, M. 2003. Extending GIS-based visual analysis: the concept of visualscap
 
 # User manual
 
-[zoran-cuckovic.from.hr/landscape-analysis/visibility](zoran-cuckovic.from.hr/landscape-analysis/visibility)
+[zoran-cuckovic.from.hr/landscape-analysis/visibility](http://zoran-cuckovic.from.hr/landscape-analysis/visibility)
