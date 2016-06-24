@@ -1,5 +1,5 @@
 {
-  "@context": "https://github.com/zoran-cuckovic/QGIS-visibility-analysis/papercodemeta.json",
+  "@context": "https://github.com/zoran-cuckovic/QGIS-visibility-analysis/master/paper/codemeta.json",
   "@type": "Code",
   "author": [
       {
