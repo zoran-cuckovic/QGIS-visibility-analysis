@@ -1,0 +1,25 @@
+{
+  "@context": "https://github.com/zoran-cuckovic/QGIS-visibility-analysis/papercodemeta.json",
+  "@type": "Code",
+  "author": [
+      {
+      "@id": "http://orcid.org/0000-0001-7626-4086",
+      "@type": "Person",
+      "email": "cuckovic.zoran@gmail.com",
+      "name": "Zoran  Čučković ",
+      "affiliation": "Université Bourgogne Fanche-Comté"
+      }
+  
+  
+  ],
+  "identifier": "",
+  "codeRepository": "https://github.com/zoran-cuckovic/QGIS-visibility-analysis",
+  "datePublished": "2016-06-24",
+  "dateModified": "2016-06-24",
+  "dateCreated": "2016-06-24",
+  "description": "Viewshed analysis calculates visible surface from a given observer point over a digital elevation model. This plugin is native to QGIS and intended for more complex modelling (eg. depth below the visible horizon, intervisibilty networks etc.).",
+  "keywords": "GIS, viewshed, visibility analysis",
+  "license": "GPL",
+  "title": "Advanced viewshed analysis for QGIS",
+  "version": "0.5.1"
+}
