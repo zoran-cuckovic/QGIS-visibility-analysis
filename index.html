@@ -43,15 +43,18 @@ Current experimental version: 0.5.1
  	<li><strong><a href="#3">Common problems</a></strong></li>
 </ol>
 <h2 id="1a">1. Instalation</h2>
+<p>
 The plugin is installed as any other from the official QGIS repository (In QGIS go to <em>Plugins -&gt; Manage and install</em> ... ). Be sure to enable experimental versions if the latest plugin version is labelled as experimental.
-
+</p>
+<p>
 In case the usual install doesn't work, the plugin can be installed manually.
-
+</p>
+<p>
 First you need to locate your QGIS plugins folder. On windows it would be in <code>C:\users\username\.qgis2\python\plugins </code>and on Linux something like <code>~/home/.qgis2/python/plugins</code>. (do a file search for <code>.qgis2</code>)
-
+</p>
 Plugin code can then be extracted in a new folder inside the plugins folder (you should name the folder ViewshedAnalysis). The code can be downloaded from <a href="https://plugins.qgis.org/plugins/ViewshedAnalysis/">QGIS plugins repository </a>(click on the latest version number).
 <h2>2. Input and features</h2>
-<div class="wiki">
+
 <h3>Data</h3>
 <p id="Raster-layer"><em>Raster layer</em></p>
 This can be any supported raster format, normally a terrain elevation model. Resulting viewshed model has the same resolution and extent as the original terrain data: for better performance and for convenience the <em>terrain model should be cropped</em> to the analysed area. Raster data format has to match the format of parameters: e.g. parameters specified in metres over a raster in degrees will not make a sensible result.
