@@ -30,4 +30,4 @@ Documentation:
 A *user manual* is available at:  [http://zoran-cuckovic.github.io/QGIS-visibility-analysis/](http://zoran-cuckovic.github.io/QGIS-visibility-analysis/)
 And more on *software use* at:
 [http://zoran-cuckovic.from.hr/landscape-analysis/visibility/](http://zoran-cuckovic.from.hr/landscape-analysis/visibility/)
-Bugs and issues can be submitted at [GitHub] (/zoran-cuckovic/QGIS-visibility-analysis/issues/) or reported directly through author's contact (above).
+Bugs and issues can be submitted at [GitHub] (https://github.com/zoran-cuckovic/QGIS-visibility-analysis/issues) or reported directly through author's contact (above).
