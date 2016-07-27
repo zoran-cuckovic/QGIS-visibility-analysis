@@ -5,7 +5,7 @@ Version: 0.5.1
 ------------
 Licence: GNU GPLv3
 -------------
-Author: Zoran Čučković [zoran-cuckovic.from.hr](contact) 
+Author: Zoran Čučković [contact page](http://zoran-cuckovic.from.hr/about/) 
 
 Introduction:
 -------------
@@ -30,4 +30,4 @@ Documentation:
 A *user manual* is available at:  [http://zoran-cuckovic.github.io/QGIS-visibility-analysis/](http://zoran-cuckovic.github.io/QGIS-visibility-analysis/)
 And more on *software use* at:
 [http://zoran-cuckovic.from.hr/landscape-analysis/visibility/](http://zoran-cuckovic.from.hr/landscape-analysis/visibility/)
-Bugs and issues can be submitted at [https://github.com/zoran-cuckovic/QGIS-visibility-analysis/issues] (GitHub) or reported directly at [zoran-cuckovic.from.hr/about/](author's web pages)
+Bugs and issues can be submitted at [https://github.com/zoran-cuckovic/QGIS-visibility-analysis/issues] (GitHub) or reported directly through author's contact (above).
