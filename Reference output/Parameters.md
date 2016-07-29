@@ -24,7 +24,7 @@ Radius of analysis: 5 000
 Observer height: 0  
 Target height: 1.6  
 Find higher point: 1 pixel  
-Output type: binary viewshed
+Output type: binary viewshed  
 Earth curvature: Yes  
 refraction: default  
 
