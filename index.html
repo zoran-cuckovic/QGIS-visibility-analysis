@@ -54,7 +54,17 @@ In case the usual install doesn't work, the plugin can be installed manually:
 <p>
 First you need to locate your QGIS plugins folder. On windows it would be <code>C:\users\username\.qgis2\python\plugins</code> and on Linux something like <code>~/home/.qgis2/python/plugins</code>. (do a file search for <code>.qgis2</code>)
 
-<p>Plugin code can then be extracted in a new folder inside the plugins folder (you should name the folder ViewshedAnalysis). Click above to download the latest version (older versions can be found at <a href="https://plugins.qgis.org/plugins/ViewshedAnalysis/">QGIS plugins repository </a>.
+<p>
+Plugin code can then be extracted in a new folder inside the plugins folder (you should name the folder ViewshedAnalysis). Take care that the code is not inside a subfolder - the folder structure should be like this: 
+
+<p>
+.qgis2\python\plugins<br>
+├─── [some QGIS plugin folders...]<br>
+├─── <strong>ViewshedAnalysis</strong><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ├── viewshedanalysis.py<br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ├── [other files and folders...]<br>
+
+<p>Click above to download the latest version (older versions can be found at <a href="https://plugins.qgis.org/plugins/ViewshedAnalysis/">QGIS plugins repository </a>.
 
 <p>Be sure to enable the plugin in Plugins manager: it should then be visible in <strong>Plugins menu</strong>.
 <img src="images/enable_plugin.jpg" alt="enable plugin screenshot" >
