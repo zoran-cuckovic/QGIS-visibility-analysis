@@ -5,7 +5,7 @@
 
 **Licence: GNU GPLv3**
 
-**Author: Zoran Čučković [contact page](http://zoran-cuckovic.from.hr/about/)** 
+**Author: Zoran Čučković ([contact](http://zoran-cuckovic.from.hr/about/))** 
 
 Introduction:
 -------------
