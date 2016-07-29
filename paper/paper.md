@@ -1,4 +1,4 @@
-﻿---
+---
 title: 'Advanced viewshed analysis: a Quantum GIS plug-in for the analysis of visual landscapes'
 tags:
   - GIS
