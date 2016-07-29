@@ -580,7 +580,11 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
         else:
             #np.take is  much more efficient than using "fancy" indexing (stack overflow says ...)
 
-            v= numpy.zeros((radius_pix+1, radius_pix)) #there are some problems with shapes (horizon) so we initialize a working array here
+            #there are some problems with shapes (horizon) so we initialize a working array here
+            if output_options[0]== "Horizon":
+                k = algorithm if algorithm else 1
+                v= numpy.zeros((radius_pix * k +1, radius_pix))
+            
 
             for steep in [False, True]: #- initially it's steep 0, 0
 
@@ -611,8 +615,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                         #target is non-interpolated: is it faster/better to interpolate target or to do a
                         #more accurate analysis (i.e. "fine" algorithm option)?
                         if z_target: interp = mx_target[mx,my] 
-                                
-                 
+                    
 
                         if output_options[0]== "Binary":
                             #if it's T/F then False is written as NoData by gdal (i.e. nothing is written)
@@ -623,8 +626,8 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                             #Should it be DATA - accum or interpolated - accumul ??
 
                         elif output_options[0]== "Horizon":
-                                
-                            #diff always returns one place less than full array!
+                            
+                            #diff always returns one place less than full array! 
                             v[:, :-1] = numpy.diff((interp >= test_val).astype(int)) *-1
                            
                                 # 1: make = True/False array;
