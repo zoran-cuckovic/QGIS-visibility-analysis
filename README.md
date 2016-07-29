@@ -28,6 +28,7 @@ The plugin is coded in Python 2.7 and does not require any additional libraries 
 Documentation:
 --------------
 A *user manual* is available at:  [http://zoran-cuckovic.github.io/QGIS-visibility-analysis/](http://zoran-cuckovic.github.io/QGIS-visibility-analysis/)
+Data for testing putposes can be found at [test data branch] (https://github.com/zoran-cuckovic/QGIS-visibility-analysis/tree/test-data).
 And more on *software use* at:
 [http://zoran-cuckovic.from.hr/landscape-analysis/visibility/](http://zoran-cuckovic.from.hr/landscape-analysis/visibility/)
 Bugs and issues can be submitted at [GitHub] (https://github.com/zoran-cuckovic/QGIS-visibility-analysis/issues) or reported directly through author's contact (above).
