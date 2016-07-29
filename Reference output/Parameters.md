@@ -27,5 +27,5 @@ Find higher point: 1 pixel
 Earth curvature: Yes  
 refraction: default  
 
-*NB. This ouptut is produced by a procedure described in [a use case] (http://zoran-cuckovic.from.hr/qgis-viewshed-plugin-a-tutorial/).
+*NB. This output is produced by a procedure described in [a use case] (http://zoran-cuckovic.from.hr/qgis-viewshed-plugin-a-tutorial/).
 Note the difference between normal and fine algorithm options.
