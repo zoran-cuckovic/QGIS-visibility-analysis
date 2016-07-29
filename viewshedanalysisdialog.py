@@ -92,6 +92,9 @@ class ViewshedAnalysisDialog(QtGui.QDialog):
         except: l=0
         return l
     
+    def returnAlgorithm(self):
+        return self.ui.cmbAlgorithm.currentIndex() 
+    
     def returnOutputOptions(self):
         #the idea is to loop through checkboxes, but how ???
         opt = [0,0,0]# list to accomodate for sub options (cumulative, horizon min distance etc)

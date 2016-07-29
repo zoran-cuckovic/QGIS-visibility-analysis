@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_viewshedanalysis.ui'
 #
-# Created: Sat Apr 23 16:44:57 2016
+# Created: Fri Jul 29 17:27:20 2016
 #      by: PyQt4 UI code generator 4.10.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -28,7 +28,8 @@ class Ui_ViewshedAnalysis(object):
         ViewshedAnalysis.setObjectName(_fromUtf8("ViewshedAnalysis"))
         ViewshedAnalysis.resize(448, 622)
         self.tabWidget = QtGui.QTabWidget(ViewshedAnalysis)
-        self.tabWidget.setGeometry(QtCore.QRect(10, 10, 427, 571))
+        self.tabWidget.setGeometry(QtCore.QRect(10, 10, 427, 581))
+        self.tabWidget.setAutoFillBackground(False)
         self.tabWidget.setObjectName(_fromUtf8("tabWidget"))
         self.General_tab = QtGui.QWidget()
         self.General_tab.setObjectName(_fromUtf8("General_tab"))
@@ -55,7 +56,7 @@ class Ui_ViewshedAnalysis(object):
         self.cmdBrowse.setGeometry(QtCore.QRect(320, 90, 75, 31))
         self.cmdBrowse.setObjectName(_fromUtf8("cmdBrowse"))
         self.Output_groupBox = QtGui.QGroupBox(self.General_tab)
-        self.Output_groupBox.setGeometry(QtCore.QRect(10, 350, 391, 91))
+        self.Output_groupBox.setGeometry(QtCore.QRect(10, 340, 391, 91))
         self.Output_groupBox.setObjectName(_fromUtf8("Output_groupBox"))
         self.chkBinary = QtGui.QRadioButton(self.Output_groupBox)
         self.chkBinary.setGeometry(QtCore.QRect(10, 30, 141, 22))
@@ -120,7 +121,7 @@ class Ui_ViewshedAnalysis(object):
         self.label_8.setGeometry(QtCore.QRect(10, 30, 91, 16))
         self.label_8.setObjectName(_fromUtf8("label_8"))
         self.groupBox = QtGui.QGroupBox(self.General_tab)
-        self.groupBox.setGeometry(QtCore.QRect(10, 450, 391, 81))
+        self.groupBox.setGeometry(QtCore.QRect(10, 440, 391, 111))
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.chkCurvature = QtGui.QCheckBox(self.groupBox)
         self.chkCurvature.setGeometry(QtCore.QRect(20, 50, 161, 22))
@@ -136,6 +137,16 @@ class Ui_ViewshedAnalysis(object):
         self.chkCumulative.setEnabled(True)
         self.chkCumulative.setGeometry(QtCore.QRect(20, 20, 261, 21))
         self.chkCumulative.setObjectName(_fromUtf8("chkCumulative"))
+        self.label_12 = QtGui.QLabel(self.groupBox)
+        self.label_12.setGeometry(QtCore.QRect(20, 80, 46, 13))
+        self.label_12.setObjectName(_fromUtf8("label_12"))
+        self.cmbAlgorithm = QtGui.QComboBox(self.groupBox)
+        self.cmbAlgorithm.setGeometry(QtCore.QRect(190, 80, 121, 22))
+        self.cmbAlgorithm.setEditable(False)
+        self.cmbAlgorithm.setObjectName(_fromUtf8("cmbAlgorithm"))
+        self.cmbAlgorithm.addItem(_fromUtf8(""))
+        self.cmbAlgorithm.addItem(_fromUtf8(""))
+        self.cmbAlgorithm.addItem(_fromUtf8(""))
         self.cmbPointsTarget = QtGui.QComboBox(self.General_tab)
         self.cmbPointsTarget.setEnabled(True)
         self.cmbPointsTarget.setGeometry(QtCore.QRect(10, 140, 201, 22))
@@ -148,25 +159,19 @@ class Ui_ViewshedAnalysis(object):
         self.tab = QtGui.QWidget()
         self.tab.setObjectName(_fromUtf8("tab"))
         self.textBrowser_2 = QtGui.QTextBrowser(self.tab)
-        self.textBrowser_2.setGeometry(QtCore.QRect(0, 0, 421, 501))
+        self.textBrowser_2.setGeometry(QtCore.QRect(0, 0, 421, 551))
+        self.textBrowser_2.setOpenExternalLinks(True)
         self.textBrowser_2.setObjectName(_fromUtf8("textBrowser_2"))
-        self.label_19 = QtGui.QLabel(self.tab)
-        self.label_19.setGeometry(QtCore.QRect(50, 510, 301, 21))
-        self.label_19.setTextFormat(QtCore.Qt.RichText)
-        self.label_19.setOpenExternalLinks(True)
-        self.label_19.setObjectName(_fromUtf8("label_19"))
         self.tabWidget.addTab(self.tab, _fromUtf8(""))
         self.About_tab = QtGui.QWidget()
         self.About_tab.setObjectName(_fromUtf8("About_tab"))
         self.textBrowser = QtGui.QTextBrowser(self.About_tab)
-        self.textBrowser.setGeometry(QtCore.QRect(0, 0, 411, 501))
+        self.textBrowser.setGeometry(QtCore.QRect(0, 0, 421, 551))
         self.textBrowser.setFocusPolicy(QtCore.Qt.WheelFocus)
+        self.textBrowser.setFrameShape(QtGui.QFrame.Box)
+        self.textBrowser.setFrameShadow(QtGui.QFrame.Sunken)
+        self.textBrowser.setOpenExternalLinks(True)
         self.textBrowser.setObjectName(_fromUtf8("textBrowser"))
-        self.label_20 = QtGui.QLabel(self.About_tab)
-        self.label_20.setGeometry(QtCore.QRect(50, 510, 301, 21))
-        self.label_20.setTextFormat(QtCore.Qt.RichText)
-        self.label_20.setOpenExternalLinks(True)
-        self.label_20.setObjectName(_fromUtf8("label_20"))
         self.tabWidget.addTab(self.About_tab, _fromUtf8(""))
         self.buttonBox = QtGui.QDialogButtonBox(ViewshedAnalysis)
         self.buttonBox.setGeometry(QtCore.QRect(270, 590, 161, 32))
@@ -176,6 +181,7 @@ class Ui_ViewshedAnalysis(object):
 
         self.retranslateUi(ViewshedAnalysis)
         self.tabWidget.setCurrentIndex(0)
+        self.cmbAlgorithm.setCurrentIndex(1)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), ViewshedAnalysis.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), ViewshedAnalysis.reject)
         QtCore.QObject.connect(self.chkCurvature, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.txtRefraction.setEnabled)
@@ -211,37 +217,51 @@ class Ui_ViewshedAnalysis(object):
         self.txtRefraction.setText(_translate("ViewshedAnalysis", "0.13", None))
         self.label_17.setText(_translate("ViewshedAnalysis", "Atmospheric refraction", None))
         self.chkCumulative.setText(_translate("ViewshedAnalysis", " cumulative (for raster output)", None))
+        self.label_12.setText(_translate("ViewshedAnalysis", "Precision", None))
+        self.cmbAlgorithm.setItemText(0, _translate("ViewshedAnalysis", "Coarse", None))
+        self.cmbAlgorithm.setItemText(1, _translate("ViewshedAnalysis", "Normal", None))
+        self.cmbAlgorithm.setItemText(2, _translate("ViewshedAnalysis", "Fine", None))
         self.label_7.setText(_translate("ViewshedAnalysis", "Target points (intervisibility)", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.General_tab), _translate("ViewshedAnalysis", "General", None))
         self.textBrowser_2.setHtml(_translate("ViewshedAnalysis", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:16px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600;\">Data</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Raster layer:</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\"> any supported raster format. For better performance the extent of the raster should be cropped to the analysed area. Too large of a raster will saturate memory.</span></p>\n"
-"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Observer points:</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\"> shapefile containing observer points. The coordinate reference systems of the elevation raster and the observer/target point(s) </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; text-decoration: underline;\">must match</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">. If field named</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\"> ID </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">exists</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">, </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">it will be used for filenames and </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; text-decoration: underline;\">should be unique</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">. Otherwise, the internal Id is used.</span></p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Observer points:</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\"> shapefile containing observer points. The coordinate reference systems of the elevation raster and the observer/target point(s) </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; text-decoration: underline;\">must match</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">. If field named</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\"> ID </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">exists</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">, </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">it will be used for filenames and </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; text-decoration: underline;\">should be unique</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">. Otherwise, the internal Id is used. By default a single viewshed will be produced for each point: check </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt; text-decoration: underline;\">cumulative option</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\"> to obtain a sum of all viewsheds in a single raster.</span></p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Target points:</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\"> this option is used for intervisibility analysis only.</span></p>\n"
-"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Search radius</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">: size of the analyzed area around each observer point.</span></p>\n"
+"<p style=\" margin-top:16px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:12pt; font-weight:600;\">Settings</span></p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Search radius</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">: size of the analysed area around each observer point.</span></p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Observer/target height:</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\"> height above ground from which the analysis is made. If the height should vary across points, it can be read from a table column. In case of error, the observer/target height specified in the textbox will be used.</span></p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Adapt to highest point: </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">search the highest point in the vicinity. The search is made in a quadrangular window where the observer point is in the middle.</span></p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:12pt; font-weight:600;\">Output</span></p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Viewshed:</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\"> standard true/false (binary) viewshed. Multiple viewsheds can be combined in a one raster layer using the cumulative option.</span></p>\n"
-"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Intervisibility: </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">produces a network of visual relationships between two sets of points (or whithin a single set). </span></p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Intervisibility: </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">produces a network of visual relationships between two sets of points (or within a single set). </span></p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Invisibility depth:</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\"> measures the size an object should attain in order to become visible if placed in an area out of view. </span></p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Horizon:</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\"> is the last visible place on the terrain, which corresponds to fringes of visible zones.</span></p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:12pt; font-weight:600;\">Algorithm options</span></p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Cumulative: </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">sum all outputs in a single raster. </span></p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Earth curvature:</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\"> takes into account the slope of  Earth\'s surface around the observer point.</span></p>\n"
-"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Atmospheric refraction:</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">  coefficient used to calculate the bending down of the light due to the atmosphere.</span></p></body></html>", None))
-        self.label_19.setText(_translate("ViewshedAnalysis", "<html><head/><body><p><a href=\"http://zoran-cuckovic.from.hr/landscape/viewshed-analysis\"><span style=\" text-decoration: underline; color:#0000ff;\">See project web page for more information.</span></a></p></body></html>", None))
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Atmospheric refraction:</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">  coefficient used to calculate the bending down of the light due to the atmosphere.</span></p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Precision: </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">choose between faster / less precise and slower / more precise calculation.</span></p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt; text-decoration: underline;\">For more detailed reference see:</span><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\"> <br /></span><a href=\"http://zoran-cuckovic.github.io/QGIS-visibility-analysis/\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt; text-decoration: underline; color:#0000ff;\">http://zoran-cuckovic.github.io/QGIS-visibility-analysis/</span></a><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\"> </span></p></body></html>", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("ViewshedAnalysis", "Reference", None))
         self.textBrowser.setHtml(_translate("ViewshedAnalysis", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-size:11pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:12pt; font-weight:600;\">Version 0.5.1</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:12pt; font-weight:600;\">Version 0.5.2</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-size:12pt; font-weight:600;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">Developed by Zoran Čučković, Laboratoire Chrono-environnement – UMR 6249, Université de Franche-Comté, Besançon (France).</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-size:11pt;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">This tool has been brought to you by an individual and is being developed through academic research: please provide an appropriate reference.</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-size:11pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">Contact: cuckovic.zoran@gmail.com</span></p></body></html>", None))
-        self.label_20.setText(_translate("ViewshedAnalysis", "<html><head/><body><p><a href=\"http://hub.qgis.org/projects/viewshed/wiki\"><span style=\" text-decoration: underline; color:#0000ff;\">See project web page for more information.</span></a></p></body></html>", None))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">For more on algoritm behaviour, tutorial(s), and case studies check: </span><a href=\"http://zoran-cuckovic.from.hr\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">zoran-cuckovic.from.hr</span></a><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\"> </span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-size:11pt;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">Bugs and issues: </span><a href=\"https://github.com/zoran-cuckovic/QGIS-visibility-analysis/issues\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">Github</span></a><span style=\" font-size:11pt;\">, </span><a href=\"https://hub.qgis.org/projects/viewshed/issues\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">Hub.QGIS.org</span></a><span style=\" font-size:8pt;\">, </span><span style=\" font-size:11pt;\">or use the contact above</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">Contact form: </span><a href=\"http://zoran-cuckovic.from.hr/about\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">here</span></a></p></body></html>", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.About_tab), _translate("ViewshedAnalysis", "About", None))
 

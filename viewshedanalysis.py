@@ -173,6 +173,8 @@ class ViewshedAnalysis:
             
             Radius = ViewshedAnalysisDialog.returnRadius(self.dlg)
 
+            Algo = ViewshedAnalysisDialog.returnAlgorithm(self.dlg)
+
             search_top_obs = ViewshedAnalysisDialog.returnSearchTopObserver(self.dlg)
             search_top_target = ViewshedAnalysisDialog.returnSearchTopTarget(self.dlg)
             
@@ -191,7 +193,8 @@ class ViewshedAnalysis:
             out_raster = Viewshed(ly_obs, ly_dem, z_obs, z_target, Radius,outPath,
                                   output_options,
                                   ly_target, search_top_obs, search_top_target,
-                                  z_obs_field, z_target_field, curv, refraction)
+                                  z_obs_field, z_target_field, curv, refraction,
+                                  Algo)
             
             for r in out_raster:
                 #QMessageBox.information(self.iface.mainWindow(), "debug", str(r))
@@ -201,60 +204,10 @@ class ViewshedAnalysis:
                 if not layer.isValid():
                     layer= QgsVectorLayer(r,lyName[0],"ogr")
                     
-                else:
-##                    #rlayer.setColorShadingAlgorithm(QgsRasterLayer.UndefinedShader)
-##
-##                    #from linfinity.com
-##                    extentMin, extentMax = layer.computeMinimumMaximumFromLastExtent( band )
-##
-##                    # For greyscale layers there is only ever one band
-##                    band = layer.bandNumber( layer.grayBandName() ) # base 1 counting in gdal
-##                    # We don't want to create a lookup table
-##                    generateLookupTableFlag = False
-##                    # set the layer min value for this band
-##                    layer.setMinimumValue( band, extentMin, generateLookupTableFlag )
-##                    # set the layer max value for this band
-##                    layer.setMaximumValue( band, extentMax, generateLookupTableFlag )
-##
-##                    # let the layer know that the min max are user defined
-##                    layer.setUserDefinedGrayMinimumMaximum( True )
-##
-##                    # make sure the layer is redrawn
-##                    layer.triggerRepaint()
-
-                    #NOT WORKING 
-                    
-##                    x = QgsRasterTransparency.TransparentSingleValuePixel()
-##                    x.pixelValue = 0
-##                    x.transparencyPercent = 100
-##                    layer.setTransparentSingleValuePixelList( [ x ] )
-                    
+                else: 
                     layer.setContrastEnhancement(QgsContrastEnhancement.StretchToMinimumMaximum)
-
-                    #rlayer.setDrawingStyle(QgsRasterLayer.SingleBandPseudoColor)
-                    #rlayer.setColorShadingAlgorithm(QgsRasterLayer.PseudoColorShader)
-                    #rlayer.setContrastEnhancementAlgorithm(QgsContrastEnhancement.StretchToMinimumMaximum, False)
-                    #rlayer.setTransparency(200)
-                    #rlayer.setNoDataValue(0.0)
                     
                 QgsMapLayerRegistry.instance().addMapLayer(layer)
-
-            
-#    adding csv files ... an attempt
-##                    url = QUrl.fromLocalFile(r)
-##                    url.addQueryItem('delimiter',',')
-##                    url.addQueryItem('xField  <-or-> yField','longitude')
-##                    url.addQueryItem('crs','epsg:4723')
-##                    url.addQueryItem('wktField','WKT')
-## -> Problem
-##                    #layer_uri=Qstring.fromAscii(url.toEncoded())
-##                    layer_uri= str(url)
-##                    layer=QgsVectorLayer(r, lyName[0],"delimitedtext")
-
-#                     QMessageBox.information(None, "File created!", str("Please load file manually (as comma delilmited text)."))
-
-
-
 
 
             

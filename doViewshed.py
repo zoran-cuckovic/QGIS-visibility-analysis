@@ -13,18 +13,11 @@ email : /
 * *
 * This program is free software; you can redistribute it and/or modify *
 * it under the terms of the GNU General Public License as published by *
-* the Free Software Foundation; either version 2 of the License, or *
-* (at your option) any later version. *
+* the Free Software Foundation version 2 of the License, or *
+* any later version. *
 * *
 ***************************************************************************/
 """
-
-#open console !!!! to monitor !!!
-#and test time !!!!
-
-
-
-
 
 
 from __future__ import division 
@@ -51,26 +44,19 @@ def dist(x1,y1,x2,y2, estimation=False):
 
     return r
 
-def sum_by_group(values, groups):
-    #http://stackoverflow.com/questions/4373631/sum-array-by-number-in-numpy
-    order = numpy.argsort(groups)
-    groups = groups[order]
-    values = values[order]
-    values.cumsum(out=values)
-    index = numpy.ones(len(groups), 'bool')
-    index[:-1] = groups[1:] != groups[:-1]
-    values = values[index]
-    groups = groups[index]
-    values[1:] = values[1:] - values[:-1]
-    return values, groups
 
 def error_matrix(radius, size_factor=1):
 
+    """
+    Create a set of lines of sight which can be reused for all calculations. 
+    Each line (departing from the observer point) has its target and a set of pixels it passes through.
+    Only 1/8th of full radius is enough : the rest can be copied/mirrored. 
+    """
+
     
-    
-    radius_large =  radius + radius * (size_factor-1)  #if double else 0
+    if size_factor == 0: size_factor = 1 #0 is for coarse algo...
+    radius_large = radius  * size_factor  #if double else 0  
                                                 
-    # SMANJI JEDNU DIMENZIJU
     mx_index= numpy.zeros((radius_large +1 , radius, 4))
 
     min_err = {}
@@ -96,9 +82,7 @@ def error_matrix(radius, size_factor=1):
             else:
                 y_f += 1
                 D += dy - dx
-##          # it is not necessary to make a circle, all calculations are in a square matrix (when x / y are not specified, they are 0,0)
-##            if x_f + y_f > 2*radius : #make a circle
-##                if dist (radius, radius, x_f, y_f) > radius +0.4999:break # +0.5 = centre of pix
+#        # it is not necessary to make a circle, all calculations are in a square matrix (when x / y are not specified, they are 0,0)
                            
             #reverse x,y for data array!
             yx= (y_f,x_f)
@@ -126,24 +110,29 @@ def error_matrix(radius, size_factor=1):
 
     return mx_index
     
-   
-
-
-
 
 def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
               output_options,
               Target_layer=0, search_top_obs=0, search_top_target=0,
               z_obs_field=0, z_target_field=0,
-              curvature=0, refraction=0): #for visib index !!
-# ########################################################
-#    output_options[0]= "Fast"
-    fast = False #dodatak !
-##########################################################
-        
-    def search_top_z (pt_x, pt_y, search_top): #shoud be a separate loop for all points ?
+              curvature=0, refraction=0, algorithm = 1): 
 
-        # global variable      
+
+    """
+    Opens a DEM and produces viewsheds from a set of points. Algorithms for raster ouput are all based on a same approach,
+    explained at zoran-cuckovic.from.hr (perhaps published one day...). Intervisibility calculation, however,
+    is on point to point basis and has its own algorithm. 
+    """
+
+    fast = False #non-interpolated algorithm for next version
+
+    def search_top_z (pt_x, pt_y, search_top):
+        """
+        Find the highest point in a perimeter around each observer point.
+        Probably a better option is to make a separate loop/function for all points
+        before making viewsheds...
+        """
+        # global variables for raster size      
 
         x_off1 = max(0, pt_x - search_top)
         x_off2 = min(pt_x + search_top +1, raster_x_size) #could be enormus radius, theoretically
@@ -169,24 +158,22 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
         if x_off1: x_top = pt_x + (x_top - search_top)
         if y_off1: y_top = pt_y + (y_top - search_top)
 
-            #target search is done on cropped data array, and it takes care not to fall out of perimeter
-            # points x and y are local, relative to the window of analysis !!
-
-           # too messy
-##            msk = numpy.ma.array(data, mask = mask_circ, fill_value = -9999)#have to reverse T/F ... messy
-##
-##            y_top, x_top = numpy.unravel_index(
-##                                numpy.argmax(
-##                                    msk[pt_y- search_top : pt_y + search_top +1,
-##                                        pt_x- search_top : pt_x + search_top +1]), shape = has to be of the [    ]slice and then fitted ..)
-                              
+                             
         return x_top, y_top
 
 
        
     
     def intervisibility(x, y, x2, y2, target_offset, id_target, 
-                            interpolate=True): #x0, y0 are not needed!
+                            interpolate=True):
+
+        """
+        Calculate intervisibilty lines from the observer point (always in the centre of the matrix)
+        to target point (x2,y2).
+        Has it's proper algorithm in order to avoid inaccuracies of the usual viewshed approach.
+        """
+
+        
 
         d = mx_dist[y2, x2] #do before swapping
         
@@ -205,7 +192,8 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
         D = 0
       
         #for interpolation
-       # slope = dy / dx *sx *sy #!! the operators for negative quadrants (we do need dx, dy as absolute to verify steepness, to search distances...)
+       # slope = dy / dx *sx *sy #!!
+       #the operators for negative quadrants (we do need dx, dy as absolute to verify steepness, to search distances...)
 
         #begins with the minimum possible angle for the observer pix,
         #thus the first pixel next to observer is always visible!
@@ -216,12 +204,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
         angle_hor_min = angle_block
 
         for i in xrange (0, dx):
-##                y_dec = slope * (x-x2) + y2
-##                y = int(round(y_dec)) #it considers rounded as float...
-##                err = y - y_dec
-##
-##                interpolated = y-1 if err > 0 else y+1 #inverse : if the good pixel is above the line then search down
-##                                                    # we don't need to y+sy because the slope has already been multiplied by sy
+
         # ---- Bresenham's algorithm (understandable variant)
         # http://www.cs.helsinki.fi/group/goa/mallinnus/lines/bresenh.html       
             x += sx
@@ -440,7 +423,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
     #else:   mx_vis[:] = numpy.nan # set to nan so that it's nicer on screen ...
     
     ################index matrix
-    t= error_matrix(radius_pix, not fast) #fast - single our double rim (double rim = True, so not fast)
+    t= error_matrix(radius_pix, algorithm) 
 
     mx_err = t[:,:, 2]
     mx_err_dir = numpy.where(mx_err > 0, 1, -1); mx_err_dir[mx_err == 0]=0 #should use some multiple criteria in where... 
@@ -613,7 +596,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                             my= mx_y_rev_steep if rev_y  else mx_y_steep
                             me= mx_x_err_rev_steep if rev_x  else  mx_x_err_steep
                                             
-                        if fast:
+                        if algorithm == 0:
                             interp = data[mx,my]  #skip interpolation
                         else:
                             if steep:
@@ -624,23 +607,14 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                             
                         test_val = numpy.maximum.accumulate(interp, axis=1)
 
-                        if z_target: interp = mx_target[mx,my] #cheat here - test aginst target mx 
-                                #target is non-interpolated !!
+                        #cheat here - test aginst target mx
+                        #target is non-interpolated: is it faster/better to interpolate target or to do a
+                        #more accurate analysis (i.e. "fine" algorithm option)?
+                        if z_target: interp = mx_target[mx,my] 
+                                
                  
-                        # non-interpolated, normal                  
-                       # v = data[mx,my] == numpy.maximum.accumulate(data[mx,my], axis=1)
 
-                        if output_options[0]== "Fast":
-
-                            matrix_final[y,x] +=numpy.count_nonzero (interp >= test_val)
-                            #mx_vis [radius_pix,radius_pix] += numpy.count_nonzero (interp >= test_val)
-
-                            continue # avoid writing to mx_vis at the bottom
-
-                            #normal visibilty option
-                            #v = interp >= test_val
-
-                        elif output_options[0]== "Binary":
+                        if output_options[0]== "Binary":
                             #if it's T/F then False is written as NoData by gdal (i.e. nothing is written)
                             v = interp >= test_val 
 
@@ -653,125 +627,31 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                             #diff always returns one place less than full array!
                             v[:, :-1] = numpy.diff((interp >= test_val).astype(int)) *-1
                            
-    ##                            # 1: make = True/False array;
-    ##                            # 2: turn to integers because boolean operations give True False only
-    ##                            # 3 diff = x(i)- x(i-1) = -1 or 1 for breaks
-                                    # * -1 so that good breaks become +1, instead of -1
-                                # = v [1:]= k[1:] - k[:-1] but flat!
+                                # 1: make = True/False array;
+                                # 2: turn to integers because boolean operations give True False only
+                                # 3 diff = x(i)- x(i-1) = -1 or 1 for breaks
+                                # * -1 so that good breaks become +1, instead of -1
+                                
                             v[v == -1]=0 #delete the beginning of  visible areas
                         
-##                    
-##                        if output_options[1]== "Error": #on top of everything, every calculation can be evaluated !
-##                                                   
-##                           
-##                            #rows = numpy.arange(radius_pix + 1) +1
-##                            keys = mx * radius_pix + my #rows[:, numpy.newaxis]
-##                            if  output_options[0] in ["Binary", "Horizon"] : v = v.astype(int)                                         
-##                            values, groups = sum_by_group(v.flat, keys.flat)
-##                             
 
-                            
-    ##                        k1 = keys.flat[order]#reorder ascending keys
-    ##                        v1 = v.flat[order]#keep values to match
-    ##                    
-    ##      
-    ##                        index = numpy.ones(len(k1), 'bool')
-    ##                        #only those where the index changes are important (last keys in a succession)
-    ##                        index[:-1] = k1[1:] != k1[:-1]
-    ##                        v2 = v1.cumsum()
-    ##                        
-    ##                        k2 = k1[index]
-    ##
-    ##                        
-    ##                        v3= v2[index]
-    ##                        #we need cumulative values at the end of successions (=index positions)!
-    ##                        #index = mask + 1 (unique values)
-    ##                        
-    ##                        
-    ##                         
-    ##                        v3[1:] -= v3[:-1] #eliminate cumulative effect
-    ##
-    ##                       # orig_sort= numpy.argsort(order[index])
-    ##
-    ##                        #vv= v2[orig_sort]
-
-                            
-                                                          
-                            # TODO : without loop
-    ##                      #reorder everything so that indices get masked properly
-                            # doesn't work at all
-##                            if 1==1:
-##                                keys2 = mx * radius_pix + my #rows[:, numpy.newaxis]
-##                                order = numpy.argsort(keys2.flat)#same order as in the output of sum_by_val
-##                                mask2 = mask.flat[order]
-##                                mx2=mx.flat[order]; my2=my.flat[order]
-##                                                   
-##        ##                      
-##                                size = numpy.count_nonzero(mask2)
-##                                trans = numpy.zeros(size)
-##                                if len(values)==size:
-##                                    trans[:]=values
-##                                else:
-##                                    trans[:-1]=values
-##                                print values.shape, "val"
-##                                print  mx_vis [mx2[mask2], my2[mask2]]. shape
-##
-##                                mx_vis [mx2[mask2], my2[mask2]]=trans
-##
-##                            for x,y in numpy.column_stack((mx[mask].flat,my[mask].flat)):
-##                                    key_a = x* radius_pix + y
-##                                    p=0
-##                                    for key_b in groups:
-##                                        if key_b==key_a:
-##                          #                      mx_vis[x,y]=values[p]
-##                                                break
-##
-##                                        p+=1
-##                                  #  print key_a, key_b
-##                  
-##                        else:
-                            
-                        mx_vis [mx[mask], my[mask]]= v[mask] #numpy.absolute(mx_err[mask]) for errors
+                        #numpy.absolute(mx_err[mask])# for errors                                
+                        mx_vis [mx[mask], my[mask]]=v[mask]
                         
-            if output_options[0]== "Fast": continue            
+            if output_options[0]== "Binary":
+                mx_vis [radius_pix,radius_pix]=1         
+
             elif output_options[0]== "Invisibility":
                 
                 mx_vis *= mx_dist
                 mx_vis[radius_pix,radius_pix]=z_target
                 #this is neccesary because the target matrix is not interpolated!
                 mx_vis[mx_vis>z_target]=z_target
-            elif output_options[0]== "Binary":
-                mx_vis [radius_pix,radius_pix]=1
-
-            elif output_options[0]== "Horizon": pass
-                
-##            elif output_options[0]== "Intervisibility":
-##                #to make it fast : for each pair choose matrix in-between
-##                #e.g. linspace + stretch or y = m * x[:, np.newaxis] + b (y =m*x +b...)
-##                for x2,y2,z2,id2,x2_geo, y2_geo in targets:
-##                    
-##                    d=mx_dist[y2,x2]
-##                    z_angle = z2/d if z2 else 0
-##                    vis  = mx_vis[y2,x2]  + z_angle #z2 is only a difference - main target angle is set up as usual
-##                    z_object= z_target+ z2
-##                    
-##                    hgt= vis * d
-##                    if hgt > z_object: hgt = z_object
-##                          
-##                    visib_list.append([id2, x2_geo, y2_geo, vis>=0,  hgt, d])#, err=0 
-                    
-                    
+                               
             matrix_vis = mx_vis
            
             # ~~~~~~~~~~~~~~~ Finalizing raster output ~~~~~~~~~~~~~~~~~~~~~~~
-            out=str(output + "_" + str(id1))
-            
-##          Doesn't work anymore - 0 values get classed as NoData ..
-##            if output_options[0] in ['Binary','Horizon']: num_format=gdal.GDT_Byte
-##            else : num_format=gdal.GDT_Float32
-
-            #############################
-            
+            out=str(output + "_" + str(id1))           
 
             if output_options [1] == "cumulative":
                 matrix_vis [mask_circ] = 0 #loosing a bit of time, but not critical
@@ -782,7 +662,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                                     x_offset_dist_mx : x_offset_dist_mx + window_size_x] 
     
             else:
-                
+               
                 matrix_vis[mask_circ]=numpy.nan #mask out corners 
 
                 file_name = out + "_" + output_options[0]
@@ -801,7 +681,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
         #Update the progress bar: point loop
         
         progress += 1
-        progress_bar.setValue(progress) #(progress / feature_count) * 100 = percentage - losing time :)	
+        progress_bar.setValue(progress) 	
 
         start_etape=time.clock()
         
