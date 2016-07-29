@@ -34,8 +34,8 @@
 	
 <img src="images/screenshot.jpg" alt="screenshot" >
 <h3>      
-Current stable version: 0.4.2 <br>
-Current experimental version: 0.5.1
+Current stable version: 0.5.2 <br>
+
 </h3>  
 Supported QGIS version: 2.x <br>
 Licence: GNU GPL v.3 <br>
@@ -46,7 +46,7 @@ Licence: GNU GPL v.3 <br>
  	<li><strong><a href="#1">Input/output and features</a></strong></li>
  	<li><strong><a href="#3">Common problems</a></strong></li>
 </ol>
-<h2 id="1a">1. Instalation</h2>
+<h2 id="1a">1. Installation</h2>
 <p>
 The plugin is installed as any other from the official QGIS repository (In QGIS go to <em>Plugins -&gt; Manage and install</em> ... ). Be sure to enable experimental versions if the latest plugin version is labelled as experimental.
 <p>
@@ -55,6 +55,9 @@ In case the usual install doesn't work, the plugin can be installed manually:
 First you need to locate your QGIS plugins folder. On windows it would be <code>C:\users\username\.qgis2\python\plugins</code> and on Linux something like <code>~/home/.qgis2/python/plugins</code>. (do a file search for <code>.qgis2</code>)
 
 <p>Plugin code can then be extracted in a new folder inside the plugins folder (you should name the folder ViewshedAnalysis). Click above to download the latest version (older versions can be found at <a href="https://plugins.qgis.org/plugins/ViewshedAnalysis/">QGIS plugins repository </a>.
+
+<p>Be sure to enable the plugin in Plugins manager: it should then be visible in <strong>Plugins menu</strong>.
+<img src="images/enable_plugin.jpg" alt="enable plugin screenshot" >
 
 <h2 id="1">2. Input and features</h2>
 <h3>Data</h3>
@@ -67,12 +70,12 @@ First you need to locate your QGIS plugins folder. On windows it would be <code>
 
 <p>The coordinate reference systems of the elevation raster and the observer/target point(s) <em>must match</em>. There is no 'on the fly reprojection' or whatever: the best practice is to turn off automatic reprojection to test whether things overlap as they should.
 
-<p>If field named <strong>ID</strong> exists, it will be used for filenames and should be unique. Otherwise, the internal Id is used.
+<p>Unless <em>cumulative output</em> is chosen in algorithm options, a viewshed raster will be produced for each point. Files will be named using an internal Id number or by value specified in <strong>ID</strong> column in the associated data table, in case such field exists. Take care that these values be unique (no warning is issued if otherwise!).
 
 <p><em>Target points</em>
 <p>This option is used for intervisibility analysis only. Target points behave the same way as observer points.
 
-<h3>General parametres</h3>
+<h3>Settings</h3>
 
 <p>A basic requirement in viewshed modelling is setting up height values for both the observer and the target. For instance we might be interested whether a building 20 metres tall (<strong>target height</strong>) would be visible by an average pedestrian with eye-level at 1.6 metres (<strong>observer height</strong>).
 
@@ -82,7 +85,21 @@ First you need to locate your QGIS plugins folder. On windows it would be <code>
 
 <p><strong>Adapt to the highest point</strong>: often it is desirable to perform a local search for a higher observation point. The search is made in a quadrangular window where the observer point is in the middle.
 
+<h3>Output</h3>
+<p><strong>Viewshed</strong> will produce a standard true/false (binary) raster. Multiple viewsheds can be combined in a one raster layer using the <strong>cumulative option</strong>, otherwise a single file will be saved for <strong>each observer point</strong>.
+
+<p>A network of visual relationships between two sets of points (or within a single set) can be obtained with the <strong>intervisibility</strong> option. For each link the depth below/above horizon and the length are calculated. All possible links are shown in the output - the information on whether a link is successful is contained in the <strong>"Visible" column</strong> of the produced shapefile. </p>
+
+<img src="images/intervisibility.jpg" alt="intervisibility screenshot" >
+
+<p>Using the <strong>invisibility depth</strong> we can measure the depth of terrain below the lowest possible visibility line. However, when this option is used with the target height the measurement is made from the top of the target (terrain + target): in cases when the target is partially occluded we obtain its apparent height.
+
+<p><strong>Horizon</strong> is the last visible place on the terrain, which corresponds to fringes of visible zones. Here the horizon analysis will provide outer fringes of <em>all visible patches</em> (to be refined in future).
+
 <h3>Algorithm parameters</h3>
+
+<p><em>Cumulative output</em>
+<p>This options sums up all viewsheds from specified observer points into a single raster. 
 <p><em>Earth curvature and light refraction</em>
 <p>Similar to other viewshed algorithms available, it is possible to account for effects of the Earth's curvature and refraction of the light when travelling through the atmosphere. Following formula is used to adjust height values in the DEM:
 <p>
@@ -95,21 +112,19 @@ Diam: The diameter of the earth that is calculated as Semi-major axis + Semi-min
 
 <p>For more explanation cf. <a href="http://webhelp.esri.com/arcgisdesktop/9.3/index.cfm?TopicName=How%20Visibility%20works">ArcGIS web page</a>
 
-<h3>Output</h3>
-<p><strong>Viewshed</strong> will produce a standard true/false (binary) raster. Multiple viewsheds can be combined in a one raster layer using the <strong>cumulative option</strong>.
-
-<p>A network of visual relationships between two sets of points (or whithin a single set) can be obtained with the <strong>intervisibility</strong> option. For each link the depth below/above horizon and the length are calculated.
-
-<p>Using the <strong>invisibility depth</strong> we can measure the depth of terrain below the lowest possible visibility line. However, when this option is used with the target height the measurement is made from the top of the target (terrain + target): in cases when the target is partially occluded we we obtain its apparent height.
-
-<p><strong>Horizon</strong> is the last visible place on the terrain, which corresponds to fringes of visible zones. Here the horizon analysis will provide outer fringes of <em>all visible patches</em> (to be refined in future).
-
-
+<p><em>Precision</em>
+<p>Three levels of precision to speed ratio are available: <br>
+<ul>
+	<li>Coarse: no interpolation between pixels, lines of sight are cast to the specified perimeter.
+	<li>Normal: values are interpolated between pixels, lines of sight are cast to the specified perimeter.
+	<li>Fine: values are interpolated between pixels, lines of sight are cast to artificially enlarged   perimeter (two times the specified value).
+</ul>
+<p>For more explanation cf. <a href="http://zoran-cuckovic.from.hr/landscape-analysis/visibility">project site</a>
 <h2 id="3">3. Common problems</h2>
 <ul>
  	<li>There is<strong> no transformation of coordinate reference systems</strong> between the raster DEM and the observation/target points shapefile. In order to check whether they match properly simply disable 'on-the-fly' transformation.</li>
  	<li><strong>Special/international characters</strong> (e.g. ç, é, č, đ ...) are not supported for file names (or folder names).</li>
- 	<li>The observer/target points are approximated to <strong>the centre of pixels</strong> they occupy : there is no need for super-precision.</li>
+ 	<li>The observer/target points are approximated to <strong>the centre of pixels</strong> they occupy: there is no need for super-precision.</li>
  	<li>The speed of execution is related primarily to the <strong>radius of analysis</strong>, and then to the complexity of chosen options and overall size of the DEM used.</li>
  	<li>The module loads the entire chunk of data to be analysed into memory: the volume of the analysis is limited by your hardware features. Some options may be more memory hungry, such as target height offset or Earth's curvature calculation.</li>
 </ul>
