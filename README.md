@@ -3,6 +3,8 @@
 
 **Version: 0.5.2**
 
+**Supported QGIS version: 2.x**
+
 **Licence: GNU GPLv3**
 
 **Author: Zoran Čučković ([contact](http://zoran-cuckovic.from.hr/about/))** 
