@@ -39,4 +39,4 @@ Llobera, M. 2003. Extending GIS-based visual analysis: the concept of visualscap
 
 # User manual
 
-[zoran-cuckovic.github.io/QGIS-visibility-analysis/](zoran-cuckovic.github.io/QGIS-visibility-analysis/)
+[zoran-cuckovic.github.io/QGIS-visibility-analysis/](http://zoran-cuckovic.github.io/QGIS-visibility-analysis/)
