@@ -31,11 +31,11 @@ ERDAS 2015. ERDAS Imagine Suite 2015. Norcross: Hexagon Geospatial.
 
 ESRI 2016. ArcGIS Desktop: Release 10.4. Redlands: Environmental Systems Research Institute.
 
-Neteler M., Bowman, M.H., Landa, M., Metz, M. 2012. "GRASS GIS: A multi-purpose open source GIS." Environmental Modelling & Software. Vol 31, pp. 124–130.DOI: [10.1016/j.envsoft.2011.11.014 ](http://dx.doi.org/10.1016/j.envsoft.2011.11.014)
+Neteler M., Bowman, M.H., Landa, M., Metz, M. 2012. "GRASS GIS: A multi-purpose open source GIS." Environmental Modelling & Software. Vol 31, pp. 124–130. doi: [10.1016/j.envsoft.2011.11.014 ](http://dx.doi.org/10.1016/j.envsoft.2011.11.014)
 
 Higouchi, T. 1983. *Visual and Spatial Structure Of Landscapes*. Cambridge, Mass: MIT Press. 
 
-Llobera, M. 2003. Extending GIS-based visual analysis: the concept of visualscapes. International journal of geographical information science 17(1), 25-48. [DOI:10.1080/713811741](https://doi.org/10.1080/713811741)
+Llobera, M. 2003. Extending GIS-based visual analysis: the concept of visualscapes. International journal of geographical information science 17(1), 25-48. doi: [10.1080/713811741](https://doi.org/10.1080/713811741)
 
 # User manual
 
