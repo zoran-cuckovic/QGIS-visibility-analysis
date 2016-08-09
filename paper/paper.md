@@ -25,17 +25,6 @@ The plug-in is coded in Python and is dependant of the Quantum GIS framework. Mo
  ![Intervisibility network](Intervisibility.jpg)
  
 # References 
-Čučković, Z. 2015. Exploring intervisibility networks: a case study from Bronze and Iron Age Istria (Croatia and Slovenia). In F. Giligny, F. Djindjian, L. Costa, P. Moscati and S. Robert (eds.), *CAA 2014 - 21st Century Archaeology : Proceedings of the 42nd Annual Conference on Computer Applications and Quantitative Methods in Archaeology*, April 2014, Paris, France, 469 - 478.
-
-ERDAS 2015. ERDAS Imagine Suite 2015. Norcross: Hexagon Geospatial. 
-
-ESRI 2016. ArcGIS Desktop: Release 10.4. Redlands: Environmental Systems Research Institute.
-
-Higuchi, T. 1983. *Visual and Spatial Structure of Landscapes*. Cambridge, Mass: MIT Press. 
-
-Llobera, M. 2003. Extending GIS-based visual analysis: the concept of visualscapes. International journal of geographical information science 17(1), 25-48. doi: [10.1080/713811741](https://doi.org/10.1080/713811741)
-
-Neteler M., Bowman, M.H., Landa, M., Metz, M. 2012. "GRASS GIS: A multi-purpose open source GIS." Environmental Modelling & Software. Vol 31, pp. 124–130. doi: [10.1016/j.envsoft.2011.11.014 ](http://dx.doi.org/10.1016/j.envsoft.2011.11.014)
 
 # User manual
 
