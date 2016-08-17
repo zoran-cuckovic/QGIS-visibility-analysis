@@ -434,7 +434,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
     #cannot use mx : has a lot of duplicate indices
 
     # precalculating everything - ugly, but faster
-    x0=y0=radius_pix 
+    x0=y0=int(radius_pix) 
     
     mx_x = t[:, : , 1].astype(int)#x and y are swapped - it's a mess...
     mx_y = t[: ,:, 0].astype(int)
