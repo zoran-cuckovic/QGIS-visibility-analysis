@@ -434,14 +434,14 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
     #cannot use mx : has a lot of duplicate indices
 
     # precalculating everything - ugly, but faster
-    x0=y0=int(radius_pix) 
+    x0=y0=radius_pix 
     
     mx_x = t[:, : , 1].astype(int)#x and y are swapped - it's a mess...
     mx_y = t[: ,:, 0].astype(int)
     mx_y_err = mx_y + mx_err_dir
 
-    mx_x_rev = numpy.subtract ( t[:,:,1], (t[:,:,1]-x0) *2 , dtype=int )
-    mx_y_rev = numpy.subtract ( t[:,:,0], (t[:,:,0]- y0) *2, dtype = int)
+    mx_x_rev = numpy.subtract ( mx_x, (mx_x - x0) *2 , dtype=int )
+    mx_y_rev = numpy.subtract ( mx_y , (mx_y - y0) *2, dtype = int)
     mx_y_err_rev = mx_y_rev + mx_err_dir *-1 #switch direction of error!
 
     #steep = x y swap (error is only on y so now it's only on x) 
