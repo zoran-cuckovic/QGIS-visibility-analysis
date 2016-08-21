@@ -139,8 +139,13 @@ Diam: The diameter of the earth that is calculated as Semi-major axis + Semi-min
  	<li><strong>Special/international characters</strong> (e.g. ç, é, č, đ ...) are not supported for file names (or folder names).</li>
  	<li>The observer/target points are approximated to <strong>the centre of pixels</strong> they occupy: there is no need for super-precision.</li>
  	<li>The speed of execution is related primarily to the <strong>radius of analysis</strong>, and then to the complexity of chosen options and overall size of the DEM used.</li>
- 	<li>The module loads the entire chunk of data to be analysed into memory: the volume of the analysis is limited by your hardware features. Some options may be more memory hungry, such as target height offset or Earth's curvature calculation.</li>
+ 	<li>The module loads the entire chunk of data to be analysed into memory: the volume of the analysis is limited by your hardware resources. 
+ 	Some options may be more memory hungry, such as target height offset or Earth's curvature calculation.
+ 	Consider using Grass viewshed modules for calculations over large datasets.</li>
 </ul>
+<img src="images/memory_error.png" alt="Memory error" >
+Large dViewshed plugin will raise an error when using too large datasets 
+
 <h3 id="4">More information    </h3>
 <p>You can signal an issue at <strong><a href="https://hub.qgis.org/projects/viewshed/issues">hub.qgis.org </a></strong>, 
 <strong><a href="https://github.com/zoran-cuckovic/QGIS-visibility-analysis/issues">GitHub </a></strong> or 
