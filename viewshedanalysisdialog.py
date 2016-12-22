@@ -105,7 +105,9 @@ class ViewshedAnalysisDialog(QtGui.QDialog):
             opt [0]= "Horizon"
   #          try: opt [2]= float(self.ui.txtHorizonDepth.text())
    #         except: pass #will be 0
-        elif self.ui.chkIntervisibility.isChecked():  opt [0]= "Intervisibility"
+        elif self.ui.chkHorizon_full.isChecked():
+            opt [0]= "Horizon_full"
+        elif self.ui.chkIntervisibility.isChecked(): opt [0]= "Intervisibility"
 
         if self.ui.chkCumulative.isChecked(): opt [1]= "cumulative" 
     
