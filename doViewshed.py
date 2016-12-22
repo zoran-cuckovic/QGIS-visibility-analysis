@@ -581,7 +581,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
             #np.take is  much more efficient than using "fancy" indexing (stack overflow says ...)
 
             #there are some problems with shapes (horizon) so we initialize a working array here
-            if output_options[0]== "Horizon":
+            if output_options[0] in ["Horizon", "Horizon_full"] :
                 k = algorithm if algorithm else 1
                 v= numpy.zeros((radius_pix * k +1, radius_pix))
             
@@ -611,10 +611,15 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                             
                         test_val = numpy.maximum.accumulate(interp, axis=1)
 
-                        #cheat here - test aginst target mx
-                        #target is non-interpolated: is it faster/better to interpolate target or to do a
-                        #more accurate analysis (i.e. "fine" algorithm option)?
-                        if z_target: interp = mx_target[mx,my] 
+                        #swap here - test aginst target mx
+                        #target has to be interpolated on its own..
+                        if z_target:
+                            if algorithm == 0 : interp = mx_target[mx,my]
+                            else:
+                                if steep:
+                                    interp = mx_target[mx,my] + (mx_target[me, my]-mx_target[mx,my] ) * numpy.absolute(mx_err)                    
+                                else: 
+                                    interp = mx_target[mx,my] + (mx_target[mx, me] -mx_target[mx,my] ) * numpy.absolute(mx_err)
                     
 
                         if output_options[0]== "Binary":
@@ -625,7 +630,7 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                             v = interp - test_val
                             #Should it be DATA - accum or interpolated - accumul ??
 
-                        elif output_options[0]== "Horizon":
+                        elif output_options[0]== "Horizon_full":
                             
                             #diff always returns one place less than full array! 
                             v[:, :-1] = numpy.diff((interp >= test_val).astype(int)) *-1
@@ -636,7 +641,29 @@ def Viewshed (Obs_points_layer, Raster_layer, z_obs, z_target, radius, output,
                                 # * -1 so that good breaks become +1, instead of -1
                                 
                             v[v == -1]=0 #delete the beginning of  visible areas
-                        
+
+                            
+                        elif output_options[0]== "Horizon": # = true or last horizon
+
+                            v = interp >= test_val
+                            #to avoid confusion because of hidden corners
+                            v[ mx_dist[mx,my] >= radius + pix*2]= False
+                                                       
+                            #select last pixel (find max value in a reversed array (last axis!)
+                            #argmax stops at first occurence
+                            #indices have to be re-reversed :)
+                            #gives a flat array of 1 index for each row (axis=1)
+                            rev_max = radius_pix - numpy.argmax(v[:, ::-1], axis=1) -1
+                                           
+                            v[:]=False
+
+
+                            #radius = row n° for fancy index (should be some nicer way...)
+                            v[ numpy.arange(radius_pix *k +1), rev_max.flat ] = True
+                            # k = 1 or algorithm
+
+                            v[: , -1] = 0 #artifacts at borders (false horizons)
+                            #(all matrix edges are marked as horizon - if visibilty zone gets cut off there)     
 
                         #numpy.absolute(mx_err[mask])# for errors                                
                         mx_vis [mx[mask], my[mask]]=v[mask]
