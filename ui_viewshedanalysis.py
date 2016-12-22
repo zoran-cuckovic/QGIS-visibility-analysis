@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_viewshedanalysis.ui'
 #
-# Created: Thu Aug 11 14:12:08 2016
+# Created: Wed Dec 21 13:05:35 2016
 #      by: PyQt4 UI code generator 4.10.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -62,14 +62,17 @@ class Ui_ViewshedAnalysis(object):
         self.chkBinary.setGeometry(QtCore.QRect(10, 30, 141, 22))
         self.chkBinary.setObjectName(_fromUtf8("chkBinary"))
         self.chkInvisibility = QtGui.QRadioButton(self.Output_groupBox)
-        self.chkInvisibility.setGeometry(QtCore.QRect(200, 30, 141, 22))
+        self.chkInvisibility.setGeometry(QtCore.QRect(190, 30, 141, 22))
         self.chkInvisibility.setObjectName(_fromUtf8("chkInvisibility"))
         self.chkIntervisibility = QtGui.QRadioButton(self.Output_groupBox)
         self.chkIntervisibility.setGeometry(QtCore.QRect(10, 60, 161, 17))
         self.chkIntervisibility.setObjectName(_fromUtf8("chkIntervisibility"))
         self.chkHorizon = QtGui.QRadioButton(self.Output_groupBox)
-        self.chkHorizon.setGeometry(QtCore.QRect(200, 60, 181, 16))
+        self.chkHorizon.setGeometry(QtCore.QRect(190, 60, 81, 16))
         self.chkHorizon.setObjectName(_fromUtf8("chkHorizon"))
+        self.chkHorizon_full = QtGui.QRadioButton(self.Output_groupBox)
+        self.chkHorizon_full.setGeometry(QtCore.QRect(280, 60, 111, 17))
+        self.chkHorizon_full.setObjectName(_fromUtf8("chkHorizon_full"))
         self.groupBox_3 = QtGui.QGroupBox(self.General_tab)
         self.groupBox_3.setGeometry(QtCore.QRect(10, 170, 391, 167))
         self.groupBox_3.setObjectName(_fromUtf8("groupBox_3"))
@@ -86,6 +89,7 @@ class Ui_ViewshedAnalysis(object):
         self.txtAdaptRadiusTarget.setGeometry(QtCore.QRect(220, 140, 31, 20))
         self.txtAdaptRadiusTarget.setObjectName(_fromUtf8("txtAdaptRadiusTarget"))
         self.cmbTargetField = QtGui.QComboBox(self.groupBox_3)
+        self.cmbTargetField.setEnabled(True)
         self.cmbTargetField.setGeometry(QtCore.QRect(260, 90, 121, 22))
         self.cmbTargetField.setEditable(False)
         self.cmbTargetField.setObjectName(_fromUtf8("cmbTargetField"))
@@ -121,27 +125,27 @@ class Ui_ViewshedAnalysis(object):
         self.label_8.setGeometry(QtCore.QRect(10, 30, 91, 16))
         self.label_8.setObjectName(_fromUtf8("label_8"))
         self.groupBox = QtGui.QGroupBox(self.General_tab)
-        self.groupBox.setGeometry(QtCore.QRect(10, 440, 391, 111))
+        self.groupBox.setGeometry(QtCore.QRect(10, 440, 401, 111))
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.chkCurvature = QtGui.QCheckBox(self.groupBox)
-        self.chkCurvature.setGeometry(QtCore.QRect(20, 50, 161, 22))
+        self.chkCurvature.setGeometry(QtCore.QRect(10, 50, 161, 22))
         self.chkCurvature.setObjectName(_fromUtf8("chkCurvature"))
         self.txtRefraction = QtGui.QLineEdit(self.groupBox)
         self.txtRefraction.setEnabled(False)
-        self.txtRefraction.setGeometry(QtCore.QRect(190, 50, 51, 21))
+        self.txtRefraction.setGeometry(QtCore.QRect(180, 50, 51, 21))
         self.txtRefraction.setObjectName(_fromUtf8("txtRefraction"))
         self.label_17 = QtGui.QLabel(self.groupBox)
-        self.label_17.setGeometry(QtCore.QRect(250, 50, 161, 20))
+        self.label_17.setGeometry(QtCore.QRect(240, 50, 161, 20))
         self.label_17.setObjectName(_fromUtf8("label_17"))
         self.chkCumulative = QtGui.QCheckBox(self.groupBox)
         self.chkCumulative.setEnabled(True)
-        self.chkCumulative.setGeometry(QtCore.QRect(20, 20, 261, 21))
+        self.chkCumulative.setGeometry(QtCore.QRect(10, 20, 261, 21))
         self.chkCumulative.setObjectName(_fromUtf8("chkCumulative"))
         self.label_12 = QtGui.QLabel(self.groupBox)
-        self.label_12.setGeometry(QtCore.QRect(20, 80, 46, 13))
+        self.label_12.setGeometry(QtCore.QRect(10, 80, 111, 16))
         self.label_12.setObjectName(_fromUtf8("label_12"))
         self.cmbAlgorithm = QtGui.QComboBox(self.groupBox)
-        self.cmbAlgorithm.setGeometry(QtCore.QRect(190, 80, 121, 22))
+        self.cmbAlgorithm.setGeometry(QtCore.QRect(180, 80, 121, 22))
         self.cmbAlgorithm.setEditable(False)
         self.cmbAlgorithm.setObjectName(_fromUtf8("cmbAlgorithm"))
         self.cmbAlgorithm.addItem(_fromUtf8(""))
@@ -198,6 +202,7 @@ class Ui_ViewshedAnalysis(object):
         self.chkInvisibility.setText(_translate("ViewshedAnalysis", "Invisibility depth", None))
         self.chkIntervisibility.setText(_translate("ViewshedAnalysis", "Intervisibility", None))
         self.chkHorizon.setText(_translate("ViewshedAnalysis", "Horizon", None))
+        self.chkHorizon_full.setText(_translate("ViewshedAnalysis", "Horizon full", None))
         self.groupBox_3.setTitle(_translate("ViewshedAnalysis", "Settings ", None))
         self.label_16.setText(_translate("ViewshedAnalysis", "pixels for target", None))
         self.txtAdaptRadiusObs.setText(_translate("ViewshedAnalysis", "0", None))
@@ -216,7 +221,7 @@ class Ui_ViewshedAnalysis(object):
         self.chkCurvature.setText(_translate("ViewshedAnalysis", "Use earth curvature", None))
         self.txtRefraction.setText(_translate("ViewshedAnalysis", "0.13", None))
         self.label_17.setText(_translate("ViewshedAnalysis", "Atmospheric refraction", None))
-        self.chkCumulative.setText(_translate("ViewshedAnalysis", " cumulative (for raster output)", None))
+        self.chkCumulative.setText(_translate("ViewshedAnalysis", " Cumulative (for raster output)", None))
         self.label_12.setText(_translate("ViewshedAnalysis", "Precision", None))
         self.cmbAlgorithm.setItemText(0, _translate("ViewshedAnalysis", "Coarse", None))
         self.cmbAlgorithm.setItemText(1, _translate("ViewshedAnalysis", "Normal", None))
@@ -245,30 +250,31 @@ class Ui_ViewshedAnalysis(object):
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Earth curvature:</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\"> takes into account the slope of  Earth\'s surface around the observer point.</span></p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Atmospheric refraction:</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">  coefficient used to calculate the bending down of the light due to the atmosphere.</span></p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; font-weight:600;\">Precision: </span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\">choose between faster / less precise and slower / more precise calculation.</span></p>\n"
-"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt; text-decoration: underline;\">For more detailed reference see:</span><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\"> <br /></span><a href=\"http://zoran-cuckovic.github.io/QGIS-visibility-analysis/\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt; text-decoration: underline; color:#0000ff;\">http://zoran-cuckovic.github.io/QGIS-visibility-analysis/</span></a><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\"> </span></p></body></html>", None))
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; text-decoration: underline;\">For more detailed reference see:</span><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\"> <br /></span><a href=\"http://zoran-cuckovic.from.hr/QGIS-visibility-analysis/\"><span style=\" font-family:\'Ubuntu\'; font-size:10pt; text-decoration: underline; color:#0000ff;\">www.zoran-cuckovic.from.hr/QGIS-visibility-analysis/</span></a><span style=\" font-family:\'Ubuntu\'; font-size:10pt;\"> </span></p></body></html>", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("ViewshedAnalysis", "Reference", None))
         self.textBrowser.setHtml(_translate("ViewshedAnalysis", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-size:11pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:12pt; font-weight:600;\">Version 0.5.2</span></p>\n"
+"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-size:11pt;\"><br /></p>\n"
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:12pt; font-weight:600;\">Visibility analysis for QGIS</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"><br /></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:12pt; font-weight:600;\">Version 0.5.4</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-size:12pt; font-weight:600;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:12pt;\">Licence: GNU GPL v. 3</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-size:12pt; font-weight:600;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">Developed by Zoran Čučković, Laboratoire Chrono-environnement – UMR 6249, Université de Franche-Comté, Besançon (France).</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-size:11pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">For manual see: <br /></span><a href=\"http://zoran-cuckovic.github.io/QGIS-visibility-analysis/\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt; text-decoration: underline; color:#0000ff;\">http://zoran-cuckovic.github.io/QGIS-visibility-analysis/</span></a><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\"> </span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">For manual see: </span><a href=\"http://zoran-cuckovic.from.hr/QGIS-visibility-analysis/\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt; text-decoration: underline; color:#0000ff;\">HERE</span></a><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\"> </span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-size:11pt;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">For more on algoritm behaviour, tutorial(s), and case studies check: </span><a href=\"http://zoran-cuckovic.from.hr\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">zoran-cuckovic.from.hr</span></a><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">.</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-size:11pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">Publication:</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:600;\">Published as:</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">Čučković, Z. (2016) Advanced viewshed analysis: a Quantum GIS plug-in for the analysis of visual landscapes. JOSS 1(4). [DOI:</span><a href=\"http://dx.doi.org/10.21105/joss.00032\"><span style=\" font-size:11pt; text-decoration: underline; color:#0000ff;\">10.21105/joss.00032</span></a><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\">]</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-size:11pt;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-size:11pt;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-size:11pt;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt;\"><br /></p>\n"
+"<p align=\"right\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Ubuntu\'; font-size:11pt;\"><br /></p>\n"
+"<p align=\"right\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\"> </span><a href=\"http://zoran-cuckovic.from.hr/support/qgis-visibility\"><span style=\" font-family:\'Ubuntu\'; font-size:11pt; text-decoration: underline; color:#0000ff;\">Support Visibility analysis plugin &lt;3</span></a><span style=\" font-family:\'Ubuntu\'; font-size:11pt;\"> </span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"><br /></p></body></html>", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.About_tab), _translate("ViewshedAnalysis", "About", None))
 
