@@ -34,10 +34,11 @@ from osgeo import osr, gdal
 import os
 #import shutil# to copy files
 import numpy 
-#from scipy import sparse Nema ga !!
-from math import sqrt, degrees, atan2
+
+
 from operator import itemgetter #ovo je za sortiranje liste NE TREBA!!!
 
+from Points import Points
 
 class ViewshedAnalysis:
 
@@ -124,7 +125,7 @@ class ViewshedAnalysis:
     def run(self):
  
 
-        #UBACIVANJE RASTERA I TOCAKA (mora biti ovdje ili se barem pozvati odavde)
+       
         myLayers = []
         iface = self.iface
         #clear combos        
@@ -134,14 +135,24 @@ class ViewshedAnalysis:
         #add layers to combos
         for i in range(len(iface.mapCanvas().layers())):
             myLayer = iface.mapCanvas().layer(i)
+
+            #l_id = myLayer.id() not used   
+
+            l_path =myLayer.dataProvider().dataSourceUri()
+
+            l_name= myLayer.name()
+            
+            if not myLayer.isValid() :
+                l_name ='ERROR ' + l_name 
+            
             if myLayer.type() == myLayer.RasterLayer:
 
                 #provjera da li je DEM 1 band .... !!!
-                self.dlg.ui.cmbRaster.addItem(myLayer.name(),myLayer.id())
+                self.dlg.ui.cmbRaster.addItem(l_name,l_path)
 
             elif myLayer.geometryType() == QGis.Point: 
-                self.dlg.ui.cmbPoints.addItem(myLayer.name(),myLayer.id())
-                self.dlg.ui.cmbPointsTarget.addItem(myLayer.name(),myLayer.id())
+                self.dlg.ui.cmbPoints.addItem(l_name, l_path)
+                self.dlg.ui.cmbPointsTarget.addItem(l_name, l_path)
 
         #allAttrs = layer.pendingAllAttributesList()
        
@@ -180,8 +191,8 @@ class ViewshedAnalysis:
             
             output_options = ViewshedAnalysisDialog.returnOutputOptions(self.dlg)
                 
-            curv=ViewshedAnalysisDialog.returnCurvature(self.dlg)
-            refraction = curv[1] if curv else 0 
+            curvature=ViewshedAnalysisDialog.returnCurvature(self.dlg)
+            
             
             if not output_options [0]:
                 QMessageBox.information(self.iface.mainWindow(), "Error!", str("Select an output option")) 
@@ -190,10 +201,103 @@ class ViewshedAnalysis:
              # uri = "file:///some/path/file.csv?delimiter=%s&crs=epsg:4723&wktField=%s" \
              # % (";", "shape")
 
-            out_raster = Viewshed(ly_obs, ly_dem, z_obs, z_target, Radius,outPath,
+
+           
+            
+            rst = QgsRasterLayer(ly_dem, 'o', 'gdal')
+            ext = rst.extent()
+            pix = rst.rasterUnitsPerPixelX()
+        
+            if pix < 0.01: #this is not the best way to test for WGS !!
+                            # eg.   projection= gdal_raster.GetProjection()
+                QMessageBox.information(self.iface.mainWindow(), "Error!",
+                      """The elevation data seems to be in a latitude/longitude system
+                        that cannot be used.""")
+                return         
+            elif round(pix, 4) != round(rst.rasterUnitsPerPixelY(), 4):
+                QMessageBox.information(self.iface.mainWindow(), "Error!", 
+                    """Elevation model does not have regular pixels!
+                    Was it properly reprojected from a latitude/longitude system ?""") 
+                return
+
+            
+            
+            if curvature: #a list of two values: Diameter of Earth and refraction
+                
+                # we need ellipsiod for curvature (and crs for output)
+               
+                raster_crs = rst.crs().toWkt() #messy.. have to parse textual description...
+                inx =raster_crs.find("SPHEROID") #(...)spheroid["name",semi_major, minor, etc...]
+                inx2 = raster_crs.find(",", inx) +1
+                inx3 = raster_crs.find(",", inx2 )
+                try:
+                    semi_major= float(raster_crs[inx2:inx3])
+                    if not 6000000 < semi_major < 7000000 : semi_major=6378137#WGS 84
+                except: semi_major=6378137  
+
+                inx4 = raster_crs.find(",", inx3 +1 )
+                try:
+                    flattening =  float(raster_crs[inx3 +1:inx4-1])
+                    if not 296 <flattening < 301 : flattening= 298.257223563#WGS 84
+                except: flattening= 298.257223563
+                
+                semi_minor=  semi_major - semi_major* (1/flattening)
+                # a compromise for 45 deg latitude, ArcGis seems to have a fixed earth diameter?
+                Diameter = semi_major + semi_minor
+                curvature[0]=Diameter #curvatture [1] = refraction, already set
+
+                
+            points = Points()
+            points.point_dict(ly_obs, ext, pix, z_obs, Radius,
+                              z_targ = z_target,
+                              
+                              field_ID = None, 
+                              field_zobs= z_obs_field,
+                              field_ztarg = z_target_field,
+                              field_radius=None) #None : not used yet !
+
+            if search_top_obs : points.search_top_z(search_top_obs, ly_dem)
+
+         
+            
+
+            if output_options [0] == 'Intervisibility':
+                if not ly_target:
+                    QMessageBox.information(self.iface.mainWindow(), "Error!", str(
+                    "Target points are not chosen")) 
+                    return
+                points_tg = Points()
+                # obs height is not used (target = obs )
+                points_tg.point_dict(ly_target, ext, pix, z_obs, Radius,
+                              z_targ = z_target,
+                              field_ID = None, 
+                              field_ztarg = z_target_field)
+                
+             
+
+                points.point_network( points_tg , Radius)#construct network
+            
+                
+                if search_top_target : pass # TODO !!
+                
+            else: points_tg = None
+            
+            if output_options[0]=="Translucency": #not implemented !!
+                rst_t = QgsRasterLayer(output_options[2], 'o', 'gdal')
+                
+                if not ext == rst.extent() or not pix == rst_t.rasterUnitsPerPixelX():
+                    answer= QMessageBox.question(None, "Data mismatch",
+                    """There seems to be a mismatch between elevation data and coverage raster.
+                                           Do you want to proceed anyway? """,
+                                           QMessageBox.Yes, QMessageBox.No)
+
+                    if answer == QMessageBox.No: return        
+
+                
+
+            out_raster = Viewshed(points, ly_dem,  outPath,
                                   output_options,
-                                  ly_target, search_top_obs, search_top_target,
-                                  z_obs_field, z_target_field, curv, refraction,
+                                  points_tg, curvature,
                                   Algo)
             
             for r in out_raster:
