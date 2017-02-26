@@ -620,8 +620,7 @@ def Viewshed (Obs_points, Raster_layer, output,
             
             matrix_vis = viewshed_raster (output_options[0], data,
                             mx_err,   mask, mx_indices, mx_err_indices,
-                            distance_matrix = mx_dist, target_matrix=mx_target,
-                                     cover_matrix=mx_cover)
+                             target_matrix=mx_target)
 
       
 
@@ -698,7 +697,7 @@ def Viewshed (Obs_points, Raster_layer, output,
    
     ps = pstats.Stats(prof, stream=s).sort_stats('cumulative')
     ps.print_stats()
-    print s.getvalue()
+    # print s.getvalue()
 ##########################
     
     iface.messageBar().clearWidgets()  
