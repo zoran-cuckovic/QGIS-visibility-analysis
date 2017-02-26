@@ -53,6 +53,7 @@ def dem_chunk (x, y, radius_pix, gdal_open_raster, square = True):
 
                
         # raster is open gdal raster ! for speed (?)
+        
         raster_y_size = gdal_open_raster.RasterYSize
         raster_x_size = gdal_open_raster.RasterXSize
         
