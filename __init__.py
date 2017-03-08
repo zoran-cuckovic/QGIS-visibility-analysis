@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- ViewshedAnalysis
+ test_processing
                                  A QGIS plugin
- ------description-------
-                             -------------------
-        begin                : 2013-05-22
-        copyright            : (C) 2013 by Zoran Čučković 
-        email                : 
+ uuu
+                              -------------------
+        begin                : 2017-02-27
+        copyright            : (C) 2017 by hhhh
+        email                : na
  ***************************************************************************/
 
 /***************************************************************************
@@ -21,33 +21,18 @@
  This script initializes the plugin, making it known to QGIS.
 """
 
-
-def name():
-    return "Viewshed Analysis"
-
-
-def description():
-    return "Calculates viewsheds, intervisibility networks, invisibility depth and visible horizon for multiple points."
+__author__ = 'hhhh'
+__date__ = '2017-02-27'
+__copyright__ = '(C) 2017 by hhhh'
 
 
-def version():
-    return "Version 0.5.3"
+# noinspection PyPep8Naming
+def classFactory(iface):  # pylint: disable=invalid-name
+    """Load test_processing class from file test_processing.
 
-
-def icon():
-    return "icon.png"
-
-
-def qgisMinimumVersion():
-    return "2.0"
-
-def author():
-    return "Zoran Čučković"
-
-def email():
-    return "n/a"
-
-def classFactory(iface):
-    # load ViewshedAnalysis class from file ViewshedAnalysis
-    from viewshedanalysis import ViewshedAnalysis
-    return ViewshedAnalysis(iface)
+    :param iface: A QGIS interface instance.
+    :type iface: QgsInterface
+    """
+    #
+    from .test_processing import test_processingPlugin
+    return test_processingPlugin()
