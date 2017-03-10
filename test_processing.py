@@ -2,13 +2,13 @@
 
 """
 /***************************************************************************
- test_processing
+ TestProcessing
                                  A QGIS plugin
- uuu
+ Some descr
                               -------------------
-        begin                : 2017-02-27
-        copyright            : (C) 2017 by hhhh
-        email                : na
+        begin                : 2017-03-10
+        copyright            : (C) 2017 by some
+        email                : some
  ***************************************************************************/
 
 /***************************************************************************
@@ -21,9 +21,9 @@
  ***************************************************************************/
 """
 
-__author__ = 'hhhh'
-__date__ = '2017-02-27'
-__copyright__ = '(C) 2017 by hhhh'
+__author__ = 'some'
+__date__ = '2017-03-10'
+__copyright__ = '(C) 2017 by some'
 
 # This will get replaced with a git SHA1 when you do a git archive
 
@@ -34,7 +34,7 @@ import sys
 import inspect
 
 from processing.core.Processing import Processing
-from test_processing_provider import test_processingProvider
+from test_processing_provider import TestProcessingProvider
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 
@@ -42,10 +42,10 @@ if cmd_folder not in sys.path:
     sys.path.insert(0, cmd_folder)
 
 
-class test_processingPlugin:
+class TestProcessingPlugin:
 
     def __init__(self):
-        self.provider = test_processingProvider()
+        self.provider = TestProcessingProvider()
 
     def initGui(self):
         Processing.addProvider(self.provider)

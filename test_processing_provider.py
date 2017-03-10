@@ -2,13 +2,13 @@
 
 """
 /***************************************************************************
- test_processing
+ TestProcessing
                                  A QGIS plugin
- uuu
+ Some descr
                               -------------------
-        begin                : 2017-02-27
-        copyright            : (C) 2017 by hhhh
-        email                : na
+        begin                : 2017-03-10
+        copyright            : (C) 2017 by some
+        email                : some
  ***************************************************************************/
 
 /***************************************************************************
@@ -21,9 +21,9 @@
  ***************************************************************************/
 """
 
-__author__ = 'hhhh'
-__date__ = '2017-02-27'
-__copyright__ = '(C) 2017 by hhhh'
+__author__ = 'some'
+__date__ = '2017-03-10'
+__copyright__ = '(C) 2017 by some'
 
 # This will get replaced with a git SHA1 when you do a git archive
 
@@ -31,9 +31,10 @@ __revision__ = '$Format:%H$'
 
 from processing.core.AlgorithmProvider import AlgorithmProvider
 from processing.core.ProcessingConfig import Setting, ProcessingConfig
-from algorithms import viewshed_binary
+from TestProcessing.algorithms.viewshed_binary import  ViewshedBinary
 
-class test_processingProvider(AlgorithmProvider):
+
+class TestProcessingProvider(AlgorithmProvider):
 
     MY_DUMMY_SETTING = 'MY_DUMMY_SETTING'
 
@@ -44,7 +45,7 @@ class test_processingProvider(AlgorithmProvider):
         self.activate = False
 
         # Load algorithms
-        self.alglist = [viewshed_binary.viewshed_binary()]
+        self.alglist = [ViewshedBinary()]
         for alg in self.alglist:
             alg.provider = self
 
@@ -58,7 +59,7 @@ class test_processingProvider(AlgorithmProvider):
         """
         AlgorithmProvider.initializeSettings(self)
         ProcessingConfig.addSetting(Setting('Example algorithms',
-            test_processingProvider.MY_DUMMY_SETTING,
+            TestProcessingProvider.MY_DUMMY_SETTING,
             'Example setting', 'Default value'))
 
     def unload(self):
@@ -67,7 +68,7 @@ class test_processingProvider(AlgorithmProvider):
         """
         AlgorithmProvider.unload(self)
         ProcessingConfig.removeSetting(
-            test_processingProvider.MY_DUMMY_SETTING)
+            TestProcessingProvider.MY_DUMMY_SETTING)
 
     def getName(self):
         """This is the name that will appear on the toolbox group.
@@ -75,13 +76,12 @@ class test_processingProvider(AlgorithmProvider):
         It is also used to create the command line name of all the
         algorithms from this provider.
         """
-        return 'visibility'
+        return 'Visibility analysis'
 
     def getDescription(self):
         """This is the provired full name.
         """
-        #this is displayed on the toolbox (?)
-        return 'Visibility analysis'
+        return 'Some provider description'
 
     def getIcon(self):
         """We return the default icon.

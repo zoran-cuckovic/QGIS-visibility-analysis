@@ -7,17 +7,17 @@
 # This file should be included when you package your plugin.# Mandatory items:
 
 [general]
-name=test for processing
+name=Test_processing2
 qgisMinimumVersion=2.0
-description=uuu
+description=Some descr
 version=0.1
-author=hhhh
-email=na
+author=some
+email=some
 
-about=nje
+about=Some about text
 
-tracker=Issues.github.io
-repository=someGit.github.io
+tracker=some tracker
+repository=some repo
 # End of mandatory metadata
 
 # Recommended items:
@@ -26,9 +26,9 @@ repository=someGit.github.io
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=
+tags=tags to fill
 
-homepage=
+homepage=home page
 category=Analysis
 icon=icon.png
 # experimental flag

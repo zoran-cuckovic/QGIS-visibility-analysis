@@ -1,9 +1,9 @@
-.. test_processing documentation master file, created by
+.. TestProcessing documentation master file, created by
    sphinx-quickstart on Sun Feb 12 17:11:03 2012.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to test_processing's documentation!
+Welcome to TestProcessing's documentation!
 ============================================
 
 Contents:

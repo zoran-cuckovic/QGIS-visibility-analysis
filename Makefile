@@ -1,12 +1,12 @@
 #/***************************************************************************
-# test_processing
+# TestProcessing
 #
-# uuu
+# Some descr
 #							 -------------------
-#		begin				: 2017-02-27
+#		begin				: 2017-03-10
 #		git sha				: $Format:%H$
-#		copyright			: (C) 2017 by hhhh
-#		email				: na
+#		copyright			: (C) 2017 by some
+#		email				: some
 # ***************************************************************************/
 #
 #/***************************************************************************
@@ -40,7 +40,7 @@ SOURCES = \
 	__init__.py \
 	test_processing.py 
 
-PLUGINNAME = test_processing
+PLUGINNAME = TestProcessing
 
 PY_FILES = \
 	__init__.py \

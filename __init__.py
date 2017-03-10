@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- test_processing
+ TestProcessing
                                  A QGIS plugin
- uuu
+ Some descr
                               -------------------
-        begin                : 2017-02-27
-        copyright            : (C) 2017 by hhhh
-        email                : na
+        begin                : 2017-03-10
+        copyright            : (C) 2017 by some
+        email                : some
  ***************************************************************************/
 
 /***************************************************************************
@@ -21,18 +21,18 @@
  This script initializes the plugin, making it known to QGIS.
 """
 
-__author__ = 'hhhh'
-__date__ = '2017-02-27'
-__copyright__ = '(C) 2017 by hhhh'
+__author__ = 'some'
+__date__ = '2017-03-10'
+__copyright__ = '(C) 2017 by some'
 
 
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name
-    """Load test_processing class from file test_processing.
+    """Load TestProcessing class from file TestProcessing.
 
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
     #
-    from .test_processing import test_processingPlugin
-    return test_processingPlugin()
+    from .test_processing import TestProcessingPlugin
+    return TestProcessingPlugin()

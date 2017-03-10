@@ -13,24 +13,20 @@ class Points:
 
     # tu sve radnje!!!
     #assembly etc
-    def __init__(self):
-        self.pt={}
-        self.crs = None
-        self.max_radius = 0
-        self.pix = 0
-        
-
-    def point_dict (self, shapefile, bounding_box, pix_size, z_obs,radius ,
+    def __init__(self, shapefile, extent, pix_size, z_obs,radius ,
                     z_targ=None, 
                 spatial_index=None, field_ID = None,
                 field_zobs = None, field_ztarg=None, field_radius=None):
     #layer = qgis layer,  bounding_box = QgsRectangle,   field_id= string)
+        self.pt={}
+        self.crs = None
+        self.max_radius = 0
+        self.pix = 0
 
-
-
-        x_min = bounding_box.xMinimum() 
-        y_max = bounding_box.yMaximum()
         
+        x_min, y_max = extent[0], extent [3]
+
+        bounding_box = QgsRectangle(*extent) #* unpacks an argument list
 
         pix= pix_size
         self.pix=pix
@@ -42,6 +38,7 @@ class Points:
         layer = QgsVectorLayer(shapefile, 'o', 'ogr')
 
         self.crs=layer.crs()
+        
 
         # returns 0-? for indexes or -1 if doesn't exist
         if bool( layer.fieldNameIndex ("ID") + 1):
@@ -58,7 +55,8 @@ class Points:
         
         feature_ids = s_index.intersects(bounding_box)
 
-                  
+        self.count= len(feature_ids)
+        
         for fid in feature_ids:
 
             # next = to get feature
@@ -81,17 +79,17 @@ class Points:
             #addition for possible field values. Defaults are always loaded above
             if field_zobs :
                 try : z = float(feat[field_zobs])
-                except: pass
+                except: z=z_obs
 
             if field_ztarg:
                 try : zt = float(feat[field_target])
-                except: pass
+                except: zt=z_targ
 
             if field_radius:
                 try :
                     r = float(feat[field_radius]) / pix
                     if r > self.max_radius : self.max_radius = r
-                except: pass
+                except: r=radius_float
             
 
             self.pt[id1]={"x_pix" : x, "y_pix":y,
@@ -119,7 +117,7 @@ class Points:
 ##        raster_y_size = gdal_raster.RasterYSize
 ##        raster_x_size = gdal_raster.RasterXSize
 
-        pix = gdal_raster.GetGeoTransform()[1]
+        pix =self.pix
     #raster_y_min = raster_y_max - raster_y_size * pix
     #raster_x_max = raster_x_min + raster_x_size * pix
 
