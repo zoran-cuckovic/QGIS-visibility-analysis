@@ -7,6 +7,17 @@ from osgeo import gdal
 from qgis.core import QgsFeatureRequest
 
 
+BINARY_VIEWSHED = 0
+INVISIBILITY_DEPTH = 1
+HORIZON = 2
+ANGULAR_SIZE = 3
+
+TYPE_NAME = ['binary',
+             'invisibility_depth',
+             'horizon',
+             'horizon_full'
+            ]
+
 class Points:
 
     def __init__(self, layer):

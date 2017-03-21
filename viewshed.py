@@ -10,6 +10,8 @@ from processing.core.parameters import (ParameterVector,
 from processing.core.outputs import OutputDirectory
 from processing.tools import dataobjects
 
+import visibility
+
 
 class Viewshed(GeoAlgorithm):
 
@@ -79,4 +81,28 @@ class Viewshed(GeoAlgorithm):
             self.tr('Directory for storing results')))
 
     def processAlgorithm(self, feedback):
-        pass
+        dem = dataobjects.getObjectFromUri(
+            self.getParameterValue(self.DEM))
+        observer = dataobjects.getObjectFromUri(
+            self.getParameterValue(self.OBSERVER_POINTS))
+        observerHeight = self.getParameterValue(self.OBSERVER_HEIGHT)
+        targetHeight = self.getParameterValue(self.TARGET_HEIGHT)
+        searchRadius = self.getParameterValue(self.SEARCH_RADIUS)
+        useEarthCurvature = self.getParameterValue(self.USE_CURVATURE)
+        refraction = self.getParameterValue(self.REFRACTION)
+        precision = self.getParameterValue(self.PRECISION)
+        analysisType = self.getParameterValue(self.ANALYSIS_TYPE)
+        cumulative = self.getParameterValue(self.CUMULATIVE)
+
+        outputPath = self.getOutputValue(self.OUTPUT)
+
+        visibility.viewshed(dem,
+                            observer,
+                            observerHeight,
+                            targetHeight,
+                            searchRadius,
+                            useEarthCurvature,
+                            refraction,
+                            analysisType,
+                            precision,
+                            outputPath)
