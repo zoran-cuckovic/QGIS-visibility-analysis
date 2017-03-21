@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from qgis.core import Qgis, QgsUnitTypes
+
 from processing.core.GeoAlgorithm import GeoAlgorithm
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
 from processing.core.parameters import (ParameterVector,
@@ -10,7 +12,7 @@ from processing.core.parameters import (ParameterVector,
 from processing.core.outputs import OutputDirectory
 from processing.tools import dataobjects
 
-import visibility
+from viewshedanalysis import visibility
 
 
 class Viewshed(GeoAlgorithm):
@@ -95,6 +97,11 @@ class Viewshed(GeoAlgorithm):
         cumulative = self.getParameterValue(self.CUMULATIVE)
 
         outputPath = self.getOutputValue(self.OUTPUT)
+
+        # convert meters to layer distance units
+        coef = QgsUnitTypes.fromUnitToUnitFactor(Qgis.DistanceMeters, dem.crs().mapUnits())
+        searchRadius = searchRadius * coef
+
 
         visibility.viewshed(dem,
                             observer,

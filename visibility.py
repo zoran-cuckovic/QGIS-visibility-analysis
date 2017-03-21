@@ -2,6 +2,7 @@
 
 import os
 
+import numpy
 from osgeo import gdal
 
 from qgis.core import QgsFeatureRequest
@@ -90,6 +91,8 @@ class Points:
                         self.maxSearchRadius = r
                 except:
                     r = self.maxSearchRadius
+            else:
+                r = self.maxSearchRadius
 
             self.data[fid] = {"p": p,
                               "x": x,
@@ -423,7 +426,7 @@ def viewshed(dem, observer, observerHeight, targetHeight, searchRadius, useEarth
     # for speed : precalculate maximum mask - can be shrunk for lesser diameters
     mask_circ_max = mx_dist [:] > p.maxSearchRadius
 
-    for i in points :
+    for i in points:
         x = points[i]["x"]
         y = points[i]["y"]
 
@@ -471,11 +474,11 @@ def viewshed(dem, observer, observerHeight, targetHeight, searchRadius, useEarth
         matrix_vis[mask_circ]=numpy.nan
 
         if os.path.isdir(outputPath):
-            filePath = os.path.join(outputPath, '{}_{}.tif'.format(fid, TYPE_NAME[analysisType]))
+            filePath = os.path.join(outputPath, '{}_{}.tif'.format(i, TYPE_NAME[analysisType]))
         else:
             filePath = outputPath
 
-        writeRaster(outputPath,
+        writeRaster(filePath,
                     matrix_vis[y_offset_dist_mx : y_offset_dist_mx + window_size_y,
                                x_offset_dist_mx : x_offset_dist_mx + window_size_x],
                     x_offset,

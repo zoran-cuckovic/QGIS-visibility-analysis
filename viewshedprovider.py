@@ -6,7 +6,7 @@ from processing.core.ProcessingConfig import Setting, ProcessingConfig
 from viewshedanalysis.viewshed import Viewshed
 
 
-class GnmProvider(AlgorithmProvider):
+class ViewshedProvider(AlgorithmProvider):
 
     def __init__(self):
         AlgorithmProvider.__init__(self)
