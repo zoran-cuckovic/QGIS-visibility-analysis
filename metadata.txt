@@ -1,0 +1,20 @@
+[general]
+name=Visibility analysis Processing provider
+description=Calculate visible surface from a given observer point over a digital elevation model
+about=Calculate visible surface from a given observer point over a digital elevation model as well as generate intervisibilty networks between groups of points.
+category=Analysis
+version=0.1.0
+qgisMinimumVersion=2.99
+
+icon=icons/viewshed.png
+tags=analysis,processing,visibility
+
+author=Zoran Čučković
+email=cuckovic.zoran@gmail.com
+
+homepage=
+tracker=https://github.com/zoran-cuckovic/QGIS-visibility-analysis/issues
+repository=https://github.com/zoran-cuckovic/QGIS-visibility-analysis
+
+experimental=True
+deprecated=False
