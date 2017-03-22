@@ -16,7 +16,7 @@ from processing.tools import dataobjects
 from viewshedanalysis import visibility
 
 
-class Viewshed(GeoAlgorithm):
+class ViewshedVariable(GeoAlgorithm):
 
     DEM = 'DEM'
     OBSERVER_POINTS = 'OBSERVER_POINTS'
@@ -35,7 +35,7 @@ class Viewshed(GeoAlgorithm):
     TYPES = ['Binary viewshed', 'Invisibility depth', 'Horizon', 'Horizon full']
 
     def defineCharacteristics(self):
-        self.name = 'Viewshed (fixed)'
+        self.name = 'Viewshed (variable)'
         self.group = 'Visibility analysis'
 
         self.addParameter(ParameterRaster(
@@ -50,18 +50,18 @@ class Viewshed(GeoAlgorithm):
             self.tr('Observer ids (leave unchanged to use feature ids)'),
             self.OBSERVER_POINTS,
             optional=True))
-        self.addParameter(ParameterNumber(
+        self.addParameter(ParameterTableField(
             self.OBSERVER_HEIGHT,
             self.tr('Observer height, meters'),
-            0.0, 999.999, 1.6))
-        self.addParameter(ParameterNumber(
+            self.OBSERVER_POINTS)
+        self.addParameter(ParameterTableField(
             self.TARGET_HEIGHT,
             self.tr('Target height, meters'),
-            0.0, 999.999, 0.0))
-        self.addParameter(ParameterNumber(
+            self.OBSERVER_POINTS))
+        self.addParameter(ParameterTableField(
             self.SEARCH_RADIUS,
             self.tr('Search radius, meters'),
-            0.0, 99999999.99999, 5000))
+            self.OBSERVER_POINTS))
         self.addParameter(ParameterBoolean(
             self.USE_CURVATURE,
             self.tr('Take in account Earth curvature'),

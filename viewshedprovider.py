@@ -3,7 +3,8 @@
 from processing.core.AlgorithmProvider import AlgorithmProvider
 from processing.core.ProcessingConfig import Setting, ProcessingConfig
 
-from viewshedanalysis.viewshed import Viewshed
+from viewshedanalysis.viewshedfixed import ViewshedFixed
+from viewshedanalysis.viewshedvariable import ViewshedVariable
 
 
 class ViewshedProvider(AlgorithmProvider):
@@ -14,7 +15,7 @@ class ViewshedProvider(AlgorithmProvider):
         self.activate = True
 
         self.alglist = []
-        self.alglist = [Viewshed()]
+        self.alglist = [ViewshedFixed(), ViewshedVariable()]
         for alg in self.alglist:
             alg.provider = self
 
