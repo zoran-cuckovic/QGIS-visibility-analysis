@@ -390,7 +390,7 @@ def calculateViewshed(data, error_matrix, error_mask, indices, indices_interpola
     return mx_vis
 
 
-def viewshed(dem, observer, observerHeight, targetHeight, searchRadius, useEarthCurvature, refraction, analysisType, precision, outputPath):
+def viewshed(dem, observer, observerIdField, observerHeight, targetHeight, searchRadius, useEarthCurvature, refraction, analysisType, precision, outputPath):
     """
     """
     dsDem = gdal.Open(dem.source(), gdal.GA_ReadOnly)
@@ -403,7 +403,7 @@ def viewshed(dem, observer, observerHeight, targetHeight, searchRadius, useEarth
     rasterXMax = rasterXMin + dsDem.RasterXSize * pix
 
     p = Points(observer)
-    p.loadData(dem.extent(), pix, searchRadius, observerHeight, targetHeight)
+    p.loadData(dem.extent(), pix, searchRadius, observerHeight, targetHeight, observerIdField)
     points = p.data
 
     radius_pix = int(p.maxSearchRadius)

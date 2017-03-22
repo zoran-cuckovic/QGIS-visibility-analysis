@@ -8,7 +8,8 @@ from processing.core.parameters import (ParameterVector,
                                         ParameterRaster,
                                         ParameterNumber,
                                         ParameterBoolean,
-                                        ParameterSelection)
+                                        ParameterSelection,
+                                        ParameterTableField)
 from processing.core.outputs import OutputDirectory
 from processing.tools import dataobjects
 
@@ -19,6 +20,7 @@ class Viewshed(GeoAlgorithm):
 
     DEM = 'DEM'
     OBSERVER_POINTS = 'OBSERVER_POINTS'
+    OBSERVER_ID = 'OBSERVER_ID'
     OBSERVER_HEIGHT = 'OBSERVER_HEIGHT'
     TARGET_HEIGHT = 'TARGET_HEIGHT'
     SEARCH_RADIUS = 'SEARCH_RADIUS'
@@ -43,6 +45,11 @@ class Viewshed(GeoAlgorithm):
             self.OBSERVER_POINTS,
             self.tr('Observer location(s)'),
             dataobjects.TYPE_VECTOR_POINT))
+        self.addParameter(ParameterTableField(
+            self.OBSERVER_ID,
+            self.tr('Observer ids (leave unchanged to use feature ids)'),
+            self.OBSERVER_POINTS,
+            optional=True))
         self.addParameter(ParameterNumber(
             self.OBSERVER_HEIGHT,
             self.tr('Observer height, meters'),
@@ -87,6 +94,7 @@ class Viewshed(GeoAlgorithm):
             self.getParameterValue(self.DEM))
         observer = dataobjects.getObjectFromUri(
             self.getParameterValue(self.OBSERVER_POINTS))
+        observerIdField = self.getParameterValue(self.OBSERVER_ID)
         observerHeight = self.getParameterValue(self.OBSERVER_HEIGHT)
         targetHeight = self.getParameterValue(self.TARGET_HEIGHT)
         searchRadius = self.getParameterValue(self.SEARCH_RADIUS)
@@ -105,6 +113,7 @@ class Viewshed(GeoAlgorithm):
 
         visibility.viewshed(dem,
                             observer,
+                            observerIdField,
                             observerHeight,
                             targetHeight,
                             searchRadius,
