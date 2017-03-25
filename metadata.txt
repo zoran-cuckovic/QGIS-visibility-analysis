@@ -1,39 +1,20 @@
-# This file contains metadata for your plugin. Since 
-# version 2.0 of QGIS this is the proper way to supply 
-# information about a plugin. The old method of 
-# embedding metadata in __init__.py will 
-# is no longer supported since version 2.0.
-
-# This file should be included when you package your plugin.# Mandatory items:
-
 [general]
-name=Test_processing2
-qgisMinimumVersion=2.0
-description=Some descr
-version=0.1
-author=some
-email=some
-
-about=Some about text
-
-tracker=some tracker
-repository=some repo
-# End of mandatory metadata
-
-# Recommended items:
-
-# Uncomment the following line and add your changelog:
-# changelog=
-
-# Tags are comma separated with spaces allowed
-tags=tags to fill
-
-homepage=home page
+name=Visibility analysis Processing provider
+description=Calculate visible surface from a given observer point over a digital elevation model
+about=Calculate visible surface from a given observer point over a digital elevation model as well as generate intervisibilty networks between groups of points.
 category=Analysis
-icon=icon.png
-# experimental flag
+version=0.1.0
+qgisMinimumVersion=2.99
+
+icon=icons/viewshed.png
+tags=analysis,processing,visibility
+
+author=Zoran Čučković
+email=cuckovic.zoran@gmail.com
+
+homepage=
+tracker=https://github.com/zoran-cuckovic/QGIS-visibility-analysis/issues
+repository=https://github.com/zoran-cuckovic/QGIS-visibility-analysis
+
 experimental=True
-
-# deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
-
