@@ -1,12 +1,12 @@
 #/***************************************************************************
-# TestProcessing
+# senscape
 #
-# Some descr
+# Description TODO...
 #							 -------------------
-#		begin				: 2017-03-10
+#		begin				: 2018-03-18
 #		git sha				: $Format:%H$
-#		copyright			: (C) 2017 by some
-#		email				: some
+#		copyright			: (C) 2018 by AUthor
+#		email				: email TODO
 # ***************************************************************************/
 #
 #/***************************************************************************
@@ -38,13 +38,13 @@ LOCALES =
 # translation
 SOURCES = \
 	__init__.py \
-	test_processing.py 
+	senscape.py 
 
-PLUGINNAME = TestProcessing
+PLUGINNAME=senscape
 
 PY_FILES = \
 	__init__.py \
-	test_processing.py 
+	senscape.py 
 
 UI_FILES = 
 
@@ -74,7 +74,7 @@ default: compile
 compile: $(COMPILED_RESOURCE_FILES)
 
 %.py : %.qrc $(RESOURCES_SRC)
-	pyrcc4 -o $*.py  $<
+	pyrcc5 -o $*.py  $<
 
 %.qm : %.ts
 	$(LRELEASE) $<
@@ -113,7 +113,7 @@ deploy: compile doc transcompile
 	cp -vfr i18n $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 	cp -vfr $(HELP) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/help
 	# Copy extra directories if any
-  # (temporarily removed)
+	(foreach EXTRA_DIR,(EXTRA_DIRS), cp -R (EXTRA_DIR) (HOME)/(QGISDIR)/python/plugins/(PLUGINNAME)/;)
 
 
 # The dclean target removes compiled python files from plugin directory

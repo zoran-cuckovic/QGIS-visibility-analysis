@@ -1,23 +1,17 @@
-# This file contains metadata for your plugin. Since 
-# version 2.0 of QGIS this is the proper way to supply 
-# information about a plugin. The old method of 
-# embedding metadata in __init__.py will 
-# is no longer supported since version 2.0.
-
-# This file should be included when you package your plugin.# Mandatory items:
+# Mandatory items:
 
 [general]
-name=Test_processing2
-qgisMinimumVersion=2.0
-description=Some descr
-version=0.1
-author=some
-email=some
+name=Visibility Analysis
+qgisMinimumVersion=3.0
+description=Visibility analysis over raster DEM
+version=0.6
+author=Zoran Čučković
+email=contact@zoran-cuckovic.from.hr
 
-about=Some about text
+about=This is the first, experimental port of the Viewshed Analysis plugin to QGIS 3. Only the standard viewshed algorithm is included for the moment. Thanks to Gilles Vuidel for the help with QGIS 3 architecture.   
 
-tracker=some tracker
-repository=some repo
+tracker=https://github.com/zoran-cuckovic/QGIS-visibility-analysis/issues
+repository=https://github.com/zoran-cuckovic/QGIS-visibility-analysis
 # End of mandatory metadata
 
 # Recommended items:
@@ -26,10 +20,10 @@ repository=some repo
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=tags to fill
+tags=Viewshed, Visibility, Raster
 
-homepage=home page
-category=Analysis
+homepage=http://zoran-cuckovic.from.hr/p/visibility.html
+category=Raster Analysis
 icon=icon.png
 # experimental flag
 experimental=True
