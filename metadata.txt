@@ -11,7 +11,7 @@ email=contact@zoran-cuckovic.from.hr
 about=This is the first, experimental port of the Viewshed Analysis plugin to QGIS 3. Only the standard viewshed algorithm is included for the moment. Thanks to Gilles Vuidel for the help with QGIS 3 architecture.   
 
 tracker=https://github.com/zoran-cuckovic/QGIS-visibility-analysis/issues
-repository=https://github.com/zoran-cuckovic/QGIS-visibility-analysis
+repository=https://github.com/zoran-cuckovic/QGIS-visibility-analysis/tree/experimental
 # End of mandatory metadata
 
 # Recommended items:
