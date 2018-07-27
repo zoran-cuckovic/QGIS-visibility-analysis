@@ -1,3 +1,4 @@
+[go to main page](zoran-cuckovic.github.io/QGIS-visibility-analysis)
 
 # Visibility analysis for QGIS 2 (0.5 version)
 
