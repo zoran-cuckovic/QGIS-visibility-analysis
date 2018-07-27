@@ -26,3 +26,10 @@ Data used for testing and tutorials can be found **[here](https://github.com/zor
 Qgis visibility analysis maintained by [zoran-cuckovic](https://github.com/zoran-cuckovic)
 
 Homepage: [zoran-cuckovic.from.hr](http://zoran-cuckovic.from.hr)
+
+
+{% for page in site.pages %}
+ 
+{{ page.url }}
+{{ page.title }}
+{% endfor %}
