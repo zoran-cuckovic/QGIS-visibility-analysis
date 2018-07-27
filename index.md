@@ -2,23 +2,22 @@
 
 [View on GitHub](https://github.com/zoran-cuckovic/QGIS-visibility-analysis)
 
-QGIS viewshed analysis
+Quantum GIS plugin for visibility analysis
 ======================
 
-Quantum GIS plugin for visibility analysis
-------------------------------------------
 
 [Download this project as a .zip file](https://github.com/zoran-cuckovic/QGIS-visibility-analysis/zipball/master) [Download this project as a tar.gz file](https://github.com/zoran-cuckovic/QGIS-visibility-analysis/tarball/master)
 
 ![screenshot](images/screenshot.jpg)
 
-### Current stable version: 0.5.2 (for QGIS 2) Current experimental version: 0.6 (for QGIS 3)
+### Current stable version: 0.5.2 
+### Current experimental version: 0.6 
 
-Supported QGIS version: 2.x  
+Supported QGIS version: 2.x (stable version), 3 (experimental)  
 Licence: GNU GPL v.3  
 [![10.5281/zenodo.56664](https://zenodo.org/badge/22929/zoran-cuckovic/QGIS-visibility-analysis.svg)](https://zenodo.org/badge/latestdoi/22929/zoran-cuckovic/QGIS-visibility-analysis)
 
-### Contents
+### Contents: stable version
 
 1.  **[Installation](#1a)**
 2.  **[Input/output and features](#1)**
