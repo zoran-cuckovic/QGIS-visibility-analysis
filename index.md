@@ -5,9 +5,6 @@
 Quantum GIS plugin for visibility analysis
 ======================
 
-
-[Download this project as a .zip file](https://github.com/zoran-cuckovic/QGIS-visibility-analysis/zipball/master) [Download this project as a tar.gz file](https://github.com/zoran-cuckovic/QGIS-visibility-analysis/tarball/master)
-
 ![screenshot](images/screenshot.jpg)
 
 ### Current stable version: 0.5.2 
