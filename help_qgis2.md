@@ -19,8 +19,8 @@ Plugin code can then be extracted in a new folder inside the plugins folder (you
 .qgis2\\python\\plugins  
 ├─── \[some QGIS plugin folders...\]  
 ├─── **ViewshedAnalysis**  
-       ├── viewshedanalysis.py  
-       ├── \[other files and folders...\]  
+.       ├── viewshedanalysis.py  
+.       ├── \[other files and folders...\]  
 
 Click above to download the latest version (older versions can be found at [QGIS plugins repository](https://plugins.qgis.org/plugins/ViewshedAnalysis/) ).
 
