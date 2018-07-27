@@ -1,4 +1,4 @@
-# Help for QGIS 2 version
+# Visibility analysis for QGIS 2 (0.5 version)
 
 1.  **[Installation](#1a)**
 2.  **[Input/output and features](#1)**
