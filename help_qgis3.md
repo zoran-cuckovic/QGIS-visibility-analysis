@@ -26,4 +26,6 @@ Dependencies:
 -------------
 The plugin is coded in Python 3.6 and does not require any additional libraries than those provided by standard QGIS installation. These libraries include *numpy* and *gdal* for manipulating raster data, and *PyQt5* and *QGIS core libraries* for integration with QGIS.
 
-Download here
+Repository and download
+------------------------
+[https://github.com/zoran-cuckovic/QGIS-visibility-analysis/tree/experimental](https://github.com/zoran-cuckovic/QGIS-visibility-analysis/tree/experimental)
