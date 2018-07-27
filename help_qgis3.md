@@ -1,4 +1,4 @@
-[go to main page](zoran-cuckovic.github.io/QGIS-visibility-analysis)
+[go to main page](https://zoran-cuckovic.github.io/QGIS-visibility-analysis)
 
 # Work in progress
 
