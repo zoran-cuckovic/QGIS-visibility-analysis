@@ -1,7 +1,4 @@
 
-
-[View on GitHub](https://github.com/zoran-cuckovic/QGIS-visibility-analysis)
-
 Quantum GIS plugin for visibility analysis
 ======================
 
