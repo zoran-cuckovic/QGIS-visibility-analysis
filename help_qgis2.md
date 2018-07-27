@@ -1,7 +1,6 @@
----
-title: Visibility analysis for QGIS 2 (0.5 version)
-permalink: /help_qgis2/
----
+
+# Visibility analysis for QGIS 2 (0.5 version)
+
 
 1.  **[Installation](#1a)**
 2.  **[Input/output and features](#1)**
