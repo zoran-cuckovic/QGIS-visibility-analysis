@@ -42,3 +42,11 @@ Homepage: [zoran-cuckovic.from.hr](http://zoran-cuckovic.from.hr)
 - [July 30, 2016](http://www.zoran-cuckovic.from.hr/2017/12/qgis-visibility-analysis-algorithm.html): QGIS visibility analysis algorithm
 
 - [July 27, 2016](http://www.zoran-cuckovic.from.hr/2016/07/viewshed-tutorial.html ): QGIS viewshed plugin: a tutorial
+
+
+## Community guidelines and feedback:
+
+This project is released with a Contributor Code of Conduct (Contributor_code.md). By participating in this project you agree to abide by its terms. Feedback, bug reports (and fixes!), and feature requests are welcome and can be submitted at [GitHub] (https://github.com/zoran-cuckovic/QGIS-visibility-analysis/issues) or reported directly through author's contact (above).
+
+**Licence: GNU GPLv3**
+
