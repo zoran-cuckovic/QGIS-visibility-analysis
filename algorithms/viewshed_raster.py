@@ -88,11 +88,11 @@ class ViewshedRaster(QgsProcessingAlgorithm):
             1, 0.13, False, 0.0, 1.0))
         
         
-        self.addParameter(QgsProcessingParameterEnum (
-            self.PRECISION,
-            self.tr('Algorithm precision'),
-            self.PRECISIONS,
-            defaultValue=1))
+##        self.addParameter(QgsProcessingParameterEnum (
+##            self.PRECISION,
+##            self.tr('Algorithm precision'),
+##            self.PRECISIONS,
+##            defaultValue=1))
 
 ##        self.addParameter(QgsProcessingParameterEnum (
 ##            self.OPERATOR,
@@ -104,22 +104,21 @@ class ViewshedRaster(QgsProcessingAlgorithm):
             QgsProcessingParameterRasterDestination(
                 self.OUTPUT,
             self.tr("Output file")))
-    
-##    def help(self):
-##        return False, 'http://zoran-cuckovic.github.io/senscape/help/raster'
+
+##    def shortHelpString(self):
+##        return ("Viewshed maps are made over an elevation model,"
+##               "from viewpoints created by the “Create viewpoints” routine.")
+
+    #---------- not working ---------------- 
+    def helpUrl(self):
+        return 'https://zoran-cuckovic.github.io/QGIS-visibility-analysis/help_qgis3.html'
+    # for local file : QUrl.fromLocalFile(os.path.join(helpPath, '{}.html'.format(self.grass7Name))).toString()
         
 
     def processAlgorithm(self, parameters, context, feedback):
 
         
 
-        # objects are not used : the idea is to be able to use modules outside processing
-        # it's simpler to pass the path (?)
-##        raster_object = dataobjects.getObjectFromUri(
-##            self.getParameterValue(self.DEM))
-##
-##        observer_object = dataobjects.getObjectFromUri(
-##            self.getParameterValue(self.OBSERVER_POINTS))
 
         raster = self.parameterAsRasterLayer(parameters,self.DEM, context)
         observers = self.parameterAsSource(parameters,self.OBSERVER_POINTS,context)
@@ -127,7 +126,7 @@ class ViewshedRaster(QgsProcessingAlgorithm):
         
         useEarthCurvature = self.parameterAsBool(parameters,self.USE_CURVATURE,context)
         refraction = self.parameterAsDouble(parameters,self.REFRACTION,context)
-        precision = self.parameterAsInt(parameters,self.PRECISION,context)
+        precision = 1 #self.parameterAsInt(parameters,self.PRECISION,context)
         analysis_type = 0#self.getParameterValue(self.ANALYSIS_TYPE)
         operator = 1 #self.parameterAsInt(parameters,self.OPERATOR,context) + 1       
 
@@ -147,19 +146,11 @@ class ViewshedRaster(QgsProcessingAlgorithm):
 		
         #searchRadius = searchRadius * coef
 
-# --------------- verification of inputs ------------------   
+# --------------- verification of inputs ------------------
+
         raster_path= raster.source()
         dem = rst.Raster(raster_path, output=output_path)
         # TODO: ADD MORE TESTS (raster rotated [projections ??], rectnagular pixels [OK?]
-        """
-        In the Raster class it says:
-            self.crs = crs if crs else gdal_raster.GetProjection()
-        
-        Perhaps there could be problems when registered crs
-        is not matching the one chosen in QGIS ??
-        
-        ... to override one can do dem.crs = ....
-        """       
                          
         points = pts.Points(observers)
 
@@ -170,13 +161,13 @@ class ViewshedRaster(QgsProcessingAlgorithm):
         miss = points.test_fields(fields)
         
         if miss: raise QgsProcessingException(
-                " ****** \n ERROR! \n Missing fields: \n" + "\n".join(miss))
+                " \n ****** \n ERROR! \n Missing fields: \n" + "\n".join(miss))
 
         points.take(dem.extent, dem.pix)
 
         if points.count == 0:
             raise QgsProcessingException(
-                " ******* \n ERROR! \n No viewpoints in the chosen area!")
+                "  \n ******* \n ERROR! \n No viewpoints in the chosen area!")
         elif points.count == 1:
             operator=0
 
@@ -185,19 +176,9 @@ class ViewshedRaster(QgsProcessingAlgorithm):
         pt = points.pt #this is a dict of obs. points
 
 # --------------------- analysis ----------------------   
-            
-        ##### TESTING #########
-        import time
-        start = time.clock()
-        #test_rpt= "Start: " + str(start)
 
-
-        #prof=Profile()
-
-                       
-        #prof.enable()
-
-    
+        import time; start = time.clock()
+        
         report=[]
 
         
@@ -244,33 +225,12 @@ class ViewshedRaster(QgsProcessingAlgorithm):
 
             if feedback.isCanceled():  break
 
-             # x,y, EMPTY_z, x_geog, y_geog = points[id1] #unpack all = RETURNS STRINGS ??
-
-
-            # all matrices are calculated for the maximum radius !!        
-            
-
+               
     ##        if diff: np_slice = np.s_[diff : radius_pix - diff,
     ##                                  diff : radius_pix - diff]
     ##
-    ##        else: np_slice = np.s_[:]
-    ##        
-            
-            # background value for analysed matrix
-            # it gives observer value, as that point is never tested
+    ##        else: np_slice = np.s_[:]       
 
-            # should not take too much time,
-            # compared to (faster) data [y, x] = init_val (test?)
-    ##        if output_options == BINARY_viewsghed: init_val = 1
-    ##        elif output_options == INVISIBILITY_DEPTH: init_val = z_targ
-    ##        else: init_val = 0
-
-        
-
-            # Horizon is the last visible zone before the edge of the window
-            # need to remove data from corners (if a circular analysis is required !)
-            # has to be done here because of varying radius
-                   
             matrix_vis = ws.viewshed_raster (analysis_type, pt[id1], dem,
                                           interpolate = precision > 0)
 
@@ -278,7 +238,8 @@ class ViewshedRaster(QgsProcessingAlgorithm):
             # ----------- MASKING ------------
                   
             mask = dem.mx_dist [:] > pt[id1]["radius"]
-##
+            
+##            **   angular - not used yet ** 
 ##            if isinstance(angles,np.ndarray):
 ##
 ##                az1 =  pt[id1]["azim_1"]
@@ -299,7 +260,7 @@ class ViewshedRaster(QgsProcessingAlgorithm):
 
             #---------------------------------
             
-#TODO: make some kind of general report system : inside raster class ???
+            #TODO: make some kind of general report system : inside raster class ???
             # algo 0 is fast, so skip to save some time (??)
             if precision > 0 :
 
@@ -309,7 +270,7 @@ class ViewshedRaster(QgsProcessingAlgorithm):
                 sl = np.s_[slice(*s_y), slice(*s_x)]
                 #careful with areas outside raster ! 
                 view_m = matrix_vis[sl]
-# CONSTANTS !!
+# USE CONSTANTS !!
                 if analysis_type == 1: #INVISIBILITY_DEPTH:
                    c= np.count_nonzero(view_m >= 0) 
 
@@ -320,7 +281,7 @@ class ViewshedRaster(QgsProcessingAlgorithm):
                 # Here, nans are in the outside (which are not zero!)
                 if operator != 1: c -= crop
                 # this is unmasked: sunbtract masked out areas!
-                report.append([id1, c , view_m.size - crop] )
+                report.append([pt[id1]["id"], c , view_m.size - crop] )
 
             if operator > 0: dem.add_to_buffer (matrix_vis)
             else  :     dem.write_result(in_array= matrix_vis)
@@ -330,38 +291,18 @@ class ViewshedRaster(QgsProcessingAlgorithm):
 
             feedback.setProgress(int((cnt/points.count) *100))
                 
-        """
-        #TESTING #################
-        prof.disable()
-        test_rpt += "\n Total time: " + str (time.clock()- start)
-        QMessageBox.information(None, "Timing report:", str(test_rpt))
-
-        import pstats, StringIO
-        s = StringIO.StringIO()
        
-        ps = pstats.Stats(prof, stream=s).sort_stats('cumulative')
-        ps.print_stats()
-        # print s.getvalue()
         
-
-        test_rpt += "\n Total time: " + str (time.clock()- start)
-        """
-
-        
-        
-        if operator > 0: dem.write_result()
-            
-            #results[self.OUTPUT]=output_path
-       
-
-        #write using .output property
-        #out_files.append(dem.output)
+        if operator > 0: dem.write_result()     
 
         print (" Finished: " + str( round( (time.clock() - start
                                            ) / 60, 2)) + " minutes.")
                 
 
-        txt = "Analysed points \n ID : visible pixels : total area" 
+        txt = ("\n Analysis time: " + str(
+                            round( (time.clock() - start
+                                    ) / 60, 2)) + " minutes."
+              " \n.      RESULTS \n Point_ID, visible pixels, total pixels" )
         
         for l in report:
             txt = txt + "\n" + ' , '.join(str(x) for x in l)

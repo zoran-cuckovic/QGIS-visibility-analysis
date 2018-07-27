@@ -19,10 +19,6 @@ This class handles input and output of raster data.
 It doesn't do any calculations besides combining analysed patches. 
 """
 
-"""
-TODO : test for WGS = unprojected or Lat/Lon !! useful (visi Viewshed Analysis plugin)
-QGIS 3 : sourceCrs() now returns a QgsCoordinateReferenceSystem instead of the crs ID.
-"""
 class Raster:
 
     
@@ -30,11 +26,7 @@ class Raster:
 	
 		
         gdal_raster=gdal.Open(raster)
-        
-        
-        # This is problematic : the idea is that the thing might work even with 
-        # rasters not loaded in QGIS. But for those already loaded, it will override gdal crs. 
-        # format has to be same (text string) ??
+
        
         self.crs = crs if crs else gdal_raster.GetProjection()
         
@@ -66,15 +58,18 @@ class Raster:
 
         self.min, self.max = gdal_raster.GetRasterBand(1).GetStatistics(True, True)[:2]
 
-        #save output path here, to avoid passing as argument.
-        #the idea is to avoid handling outputs from the doViewshed module
-        #(besides commanding dem.write_result(), without passing the path)
-        #hacky ??
         self.output = output
 
         self.mode = SINGLE
         
-       
+
+    def pixel_coords (self, x, y):
+        
+        x_min = self.extent[0]; y_max = self.extent[3]
+        return (int((x - x_min) / self.pix),
+                int((y_max - y) / self.pix)) #reversed !
+    
+
      
 
     """
@@ -82,8 +77,7 @@ class Raster:
     Smaller windows are slices of this one.
 
     [ theoretically,window should be a subclass,
-    but we can have only one window at a time,
-    and it should be as fast as possible]
+    but we can have only one window at a time ...]
 
     Buffer mode: the method for combining results (summing up or otherwise).
     By default, the mode is 0: no summing up
@@ -92,12 +86,6 @@ class Raster:
     [ should be done in chunks for very large arrays - to implement ...]
     """
 
-    def pixel_coords (self, x, y):
-        
-        x_min = self.extent[0]; y_max = self.extent[3]
-        return (int((x - x_min) / self.pix),
-                int((y_max - y) / self.pix)) #reversed !
-    
     def set_master_window (self, radius_pix,
                            size_factor = 1,
                            curvature=False,
@@ -228,7 +216,8 @@ class Raster:
 
         rx = self.radius_pix
         x, y = pixel_coord
-#NONSENSE !!there can be no smaller window than the master window (unless cropped)
+
+        #NONSENSE !!there can be no smaller window than the master window (unless cropped)
         #to place smaller windows inside the master window
         diff_x = self.window.shape[1] - (rx *2 +1)
         diff_y =  self.window.shape[0] - (rx *2 +1)

@@ -21,28 +21,7 @@ email : /
 
 from __future__ import division
 
-"""
-BUGS
-- progress bar not working: nicer [NOT VITAL]
-- finding highest position : should be circular [NOT VITAL]
-- Limitations in cell size eg. : SAGA assumes that raster layers have the same cell size in the X and Y axis. If you are working with a layer with different values for horizontal and vertical cell size, you might get unexpected results. In this case, a warning will be added to the processing log,
-  indicating that an input layer might not be suitable to be processed by SAGA
 
-!!!
-  INTERPOLATION NOT 100% u usporedbi s total viewshed daje losije rezultate
-  Neinterpolorani su identicni
-  greska= error matrix ??? TODO!!!
-
-
-  Izbaciti bresenham za error matrix : nepotrebno kompliciranje (samo za intervisibility !!)
-
-    TODO : large matrices ! https://stackoverflow.com/questions/25399120/working-with-very-large-arrays-numpy
-
-RADIUS TOO LARGE NOT SIGNALLED , nothing happens !!
-"""
-
-
-#from qgis.utils import * #progress bar
 import os
 #from osgeo import osr, gdal, ogr
 
@@ -56,7 +35,7 @@ from math import sqrt
 from . import Points as pts
 from . import Raster as rst
 
-#from processing.gui.SilentProgress import SilentProgress NOT WORKING
+
 
 BINARY_VIEWSHED = 0
 ANGLE_DIFF = 1
@@ -384,165 +363,89 @@ def rasterised_line (x,y, x2, y2,
             
 
 """
-Calculates intervisibility lines...
+Calculates intervisibility lines
 
-TO TEST!!!
+Assigns values to targets inside the passed dictionary (points_class)
 
 """
 
-def intervisibility (points_class, targets_class, raster_class,
-                      curvature=0, refraction=0, interpolate = True):
+def intervisibility (point_class, raster_class, interpolate = False):
+  
+    
+    p=point_class
 
-    print ("start interv")    
-    ###########################"
-    edges = {}
+    try: tgs = p["targets"]
+    except: return None
 
-    # RasterPath= str(QgsMapLayerRegistry.instance().mapLayer(Raster_layer).dataProvider().dataSourceUri())
-    points, targets = points_class.pt, targets_class.pt
-        
+    x,y= p["pix_coord"];  z= p["z"]
+    
+          
     mx_dist = raster_class.mx_dist
 
     radius_pix = raster_class.radius_pix
-         
-    print ("START analysis3")
-       
-    for id1 in points :
-
-        
-
-        try: tg = points[id1]["targets"]
-        except: continue
-        
-        x,y= points[id1]["pix_coord"]
-        z= points[id1]["z"]
-        
+    
         # radius is in pixels !
         #r=  points[id1]["radius"]
         #r_pix= int (r)
 
      
-        raster_class.open_window ((x,y))
-        data= raster_class.window
+    raster_class.open_window ((x,y))
+    data= raster_class.window
         
-        z_abs = z + data [radius_pix,radius_pix]
+    z_abs = z + data [radius_pix,radius_pix]
         
         # level all according to observer
-        data -= z_abs
+    data -= z_abs
            
-        data /= mx_dist
-
-        
-
-        test = np.zeros(data.shape)
+    data /= mx_dist
 
 
-        print (id1, x, y)
-        
-        for id2 in tg:
+    for id2 in tgs:
             #adjust for local raster (diff x)
-            x2, y2 = targets[id2]["pix_coord"]
+        x2, y2 = tgs[id2]["pix_coord"]
 
-            try: z_targ = targets[id2]["z_targ"]
-            except : z_targ = 0
+        try: z_targ = tgs[id2]["z_targ"]
+        except : z_targ = 0
             
-            # x2 = (x2 - x) + radius_pix 
-            x2 -= x - radius_pix
-            y2 -= y - radius_pix
+        # x2 = (x2 - x) + radius_pix 
+        x2 -= x - radius_pix
+        y2 -= y - radius_pix
 
-            # bare terrain, without the target !
-            angle_targ = data[y2,x2] 
+        # bare terrain, without the target !
+        angle_targ = data[y2,x2] 
 
-            d = mx_dist[y2,x2]
+        d = mx_dist[y2,x2]
 
-            if interpolate:
-                mx_line, mx_neighbours, mx_err = rasterised_line (
+        if interpolate:
+            mx_line, mx_neighbours, mx_err = rasterised_line (
                                     radius_pix, radius_pix, x2, y2,
                                     interpolation= True,
                                     crop = 1)
 
-            else:
-                mx_line = rasterised_line (
+        else:
+            mx_line = rasterised_line (
                                     radius_pix, radius_pix, x2, y2,
                                     interpolation= False,
                                     crop = 1)
                 
-            l_x, l_y = mx_line[:,1], mx_line[:,0]
+        l_x, l_y = mx_line[:,1], mx_line[:,0]
 
-            angles = data[l_y,l_x]
+        angles = data[l_y,l_x]
 
-            if interpolate:
-                n_x, n_y = mx_neighbours[:,1], mx_neighbours[:,0]
-                angles +=  (data[n_y, n_x] - angles) * mx_err
+        if interpolate:
+            n_x, n_y = mx_neighbours[:,1], mx_neighbours[:,0]
+            angles +=  (data[n_y, n_x] - angles) * mx_err
 
-            # bare terrain!
-            # target pixel is not calculated (crop =1)!
-            depth = (angle_targ - np.max(angles)) * d
+        # bare terrain!
+        # target pixel is not calculated (crop =1)!
+        depth = (angle_targ - np.max(angles)) * d
             
-            # correct with target height only for invisible terrain,
-            # otherwise it adds to relative pixel height
-            edges[id1, id2] = z_targ if depth >= 0 else depth + z_targ
-
-
-
-            
-            
-
-            if id1 > id2:test[l_y, l_x]=2
-        print("add to buff")
-      #  raster_class.add_to_buffer (test)
-    print ("exit, write result")
-    #raster_class.write_result()
-               
-    return  edges  
-    
-
-
-
-def write_intervisibility_line (file_name, data_list, coordinate_ref_system, use_pix_coords=False):
-
-    #QMessageBox.information(None, "Timing report:", str(data_list))
-    
-    fields = QgsFields() #there's a BUG in QGIS here (?), normally : fields = ....
-    fields.append(QgsField("Source", QVariant.String ))
-    fields.append(QgsField("Target", QVariant.String))
-## fields.append(QgsField("Source_lbl", QVariant.String, 'string',50))
-## fields.append(QgsField("Target_lbl", QVariant.String, 'string',50))
-    fields.append(QgsField("Visible", QVariant.String, 'string',5))
-    fields.append(QgsField("TargetSize", QVariant.Double, 'double',10,3))
-    fields.append(QgsField("Distance", QVariant.Double, 'double',10,2))
-
-    writer = QgsVectorFileWriter( file_name + ".shp", "CP1250", fields,
-                                  QGis.WKBLineString, coordinate_ref_system) #, "ESRI Shapefile"
-                                            #CP... = encoding
-    if writer.hasError() != QgsVectorFileWriter.NoError:
-        QMessageBox.information(None, "ERROR!", "Cannot write intervisibilty file (?)")
-        return 0
-    
-    for r in data_list:
-        # create a new feature
-        feat = QgsFeature()
-        if use_pix_coords:
-            half_pix= pix/2 #global variable pix
-            l_start=QgsPoint(raster_x_min  + r[1]*pix + half_pix, raster_y_max - r[2]*pix - half_pix )
-            l_end = QgsPoint(raster_x_min  + r[4]*pix + half_pix, raster_y_max - r[5]*pix - half_pix)
-        else:
-            l_start=QgsPoint(r[1],r[2]);  l_end = QgsPoint(r[4],r[5])
-         
-        feat.setGeometry(QgsGeometry.fromPolyline([l_start, l_end]))
-        # do not cast ID to string: unicode problem -- angle * distance in pixels -- distance * pixel_size
-        #feat.setAttributes([ str(r[0]), str(r[3]), bool(r[6]), float(r[7] * r[8]), ])
-        feat.setFields(fields)
-        feat['Source'] = r[0]
-        feat['Target'] = r[3]
-        feat['Visible'] = 'True' if r[6] else 'False'
-        feat['TargetSize'] = float(r[7])
-        feat['Distance'] = float(r[8])
+        # correct with target height only for invisible terrain,
+        # otherwise it adds to relative pixel height
         
-        writer.addFeature(feat)
-        del feat
+        tgs[id2]["depth"]= depth + z_targ #z_targ if depth >= 0 else depth + z_targ
+    
 
-    del writer
-    layer = None
-    return file_name + ".shp"
+
 
 

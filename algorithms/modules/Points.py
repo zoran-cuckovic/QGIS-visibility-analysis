@@ -17,22 +17,19 @@ from .Raster import Raster as rst
 
 
 """
-bugs:
- - cannot use memory layers (cannot iterate through features) ?
-
-FAIL :  target height specified in create points
-FAIL: find highest pt
-
-TODO : calculating coordinates in pixels ==> to Raster class !!
-"""
-    
-
-"""
 Points class is creating a clean shapefile with analysis parameteres in
 the associated table. It is also taking care of geometries (filtering
 points outside raster, searching for neighbours in a specified radius etc.)
 The idea is to move all the mess of handling vector input and output
 in a single class.
+"""
+
+"""
+
+TODO: find highest pt
+
+TODO : calculating coordinates in pixels ==> to Raster class !!
+
 """
 
 FIELDS = {"id" : ["ID", 255,0],
@@ -60,7 +57,7 @@ class Points:
 
         self.crs = crs if crs else self.layer.sourceCrs()
 
-        self.project_crs = project_crs
+        self.project_crs = project_crs if project_crs != crs else None
 
         #make a test first !
         self.missing = []
@@ -84,8 +81,7 @@ class Points:
         for e in field_list:
             try: f_in.field(e)
             except:  l.append(e)
-        return l
-        
+        return l   
         
 ##        for defs in iter(FIELDS.items()): 
 ##            f = defs[0]
@@ -135,14 +131,9 @@ class Points:
 
         if self.project_crs:
 
-            transf = QgsCoordinateTransform(self.crs,self.project_crs)   
+            transf = QgsCoordinateTransform(self.crs, self.project_crs, QgsProject.instance())   
 
         
-        #feat = QgsFeature()
-        
-        #feature_iterator= layer.getFeatures() 
-        
-        #while feat_iterator.nextFeature(feat):
 
         for feat in self.layer.getFeatures():
             
@@ -158,65 +149,66 @@ class Points:
 
             #z,zt,r = z_obs, z_targ, radius
             
+            
+            key  = feat.id()
 
             try: id1 = feat[field_ID]
-            except : id1 = feat.id()
-
-            # test for duplicates
-            if id1 not in self.pt:
+            except: id1 = key
                 
-                #addition for possible field values.
-                #override with fixed parameters in case of problem 
+            #addition for possible field values.
+            #override with fixed parameters in case of problem 
+            
+            try : z = float(feat[field_zobs])
+            except: z=z_obs
+
+            try : r = float(feat[field_radius]) 
+            except: r=radius
                 
-                try : z = float(feat[field_zobs])
-                except: z=z_obs
+            # obligatory prarameters        
+            self.pt[id1]={"id":key, "z":z ,  "radius" : r,
+                          "x_geog":x_geog, "y_geog" : y_geog }
 
-                try : r = float(feat[field_radius]) 
-                except: r=radius
-                    
-                # obligatory prarameters        
-                self.pt[id1]={"id":id1, "z":z ,  "radius" : r,
-                              "x_geog":x_geog, "y_geog" : y_geog }
+            # optional
+            if z_targ or field_ztarg:
+                try : self.pt[id1]["z_targ"] = float(feat[field_ztarg])
+                except: self.pt[id1]["z_targ"]=z_targ
 
-                # optional
-                if z_targ or field_ztarg:
-                    try : self.pt[id1]["z_targ"] = float(feat[field_ztarg])
-                    except: self.pt[id1]["z_targ"]=z_targ
-
-                if folder:
-                    self.pt[id1]["path"] = path.join(folder, str(id1) + ".tif")
-                    
+            if folder:
+                self.pt[id1]["path"] = path.join(folder, str(id1) + ".tif")
                 
-                if azim_1 or azim_2 or field_azim_1 or field_azim_2:
-                    
-                    try : a1 =  float(feat[field_azim_1])
-                    except: a1 =azim_1
+            
+            if azim_1 or azim_2 or field_azim_1 or field_azim_2:
+                
+                try : a1 =  float(feat[field_azim_1])
+                except: a1 =azim_1
 
-                    if 0 <= a1 <= 360: self.pt[id1]["azim_1"]=a1
-                    else: errors.append(["Azimuth out of range:",a1, "Point:", id1])
+                if 0 <= a1 <= 360: self.pt[id1]["azim_1"]=a1
+                else: errors.append(["Azimuth out of range:",a1, "Point:", id1])
 
-                    try : a2 = float(feat[field_azim_2])
-                    except: a2 =azim_2
+                try : a2 = float(feat[field_azim_2])
+                except: a2 =azim_2
 
-                    if 0 <= a2 <= 360: self.pt[id1]["azim_2"]=a2
-                    else: errors.append(["Azimuth out of range:",a2, "Point:", id1])
+                if 0 <= a2 <= 360: self.pt[id1]["azim_2"]=a2
+                else: errors.append(["Azimuth out of range:",a2, "Point:", id1])
 
-                if angle_down or angle_up or field_angle_down or field_angle_up:
+            if angle_down or angle_up or field_angle_down or field_angle_up:
 
-                    try : a1 = float(feat[field_angle_down])
-                    except: a1 =angle_down
+                try : a1 = float(feat[field_angle_down])
+                except: a1 =angle_down
 
-                    if -180 <= a1 <= 180: self.pt[id1]["angle_down"]=a1
-                    else: errors.append(["Angle out of range:",a1, "Point:", id1])
+                if -180 <= a1 <= 180: self.pt[id1]["angle_down"]=a1
+                else: errors.append(["Angle out of range:",a1, "Point:", id1])
 
-                    try : a2 = float(feat[field_angle_up])
-                    except: a2 =angle_up
+                try : a2 = float(feat[field_angle_up])
+                except: a2 =angle_up
 
-                    if -180 <= a2 <= 180: self.pt[id1]["angle_up"]=a2
-                    else: errors.append(["Angle out of range:",a2, "Point:", id1])
+                if -180 <= a2 <= 180: self.pt[id1]["angle_up"]=a2
+                else: errors.append(["Angle out of range:",a2, "Point:", id1])
      
-            else: errors.append(["duplicate ID:",id1])
-       
+
+            #else: errors.append(["duplicate ID:",id1])
+       #TODO : testing for duplicates --> network etc ...
+                
         return errors if errors else 0
          
        # self.max_radius = max(x, key=lambda i: x[i])
@@ -356,12 +348,7 @@ class Points:
     """
     def network (self,targets):
 
-        self.edges={}
-
-        for pt1 in self.pt:
-
-            # testing
-            if not self.pt[pt1]["id"]==15704 : continue 
+         for pt1 in self.pt:
 
                       
             x,y = self.pt[pt1]["pix_coord"]
@@ -383,9 +370,10 @@ class Points:
 ##                if z_target_field: #this is a clumsy addition so that each point might have it's own height
 ##                    try: tg_offset = float(feat2[z_target_field])
 ##                    except: pass
+            self.pt[pt1]["targets"]={}
             
-            for pt2 in targets.pt:
-                x2, y2 = targets.pt[pt2]["pix_coord"]
+            for pt2, value in targets.pt.items():
+                x2, y2 = value["pix_coord"]
                 
                 #skipping itself
                 if x2==x and y2==y : continue
@@ -395,8 +383,7 @@ class Points:
                           # this is inefficient for looping
                           # need to open a window for each edge...
 ##                        self.edges[id1,id2]={}
-                        try: self.pt[pt1]["targets"].append(pt2)
-                        except: self.pt[pt1]["targets"]=[pt2]
+                        self.pt[pt1]["targets"][pt2]=value
 
 
     """
@@ -406,7 +393,7 @@ class Points:
     To make it robust: everything is in try - except blocks,
     use test_fields( ..) to check!
 
-       
+    
     """
     def take (self, extent, pix_size, spatial_index=None):
         
@@ -437,12 +424,16 @@ class Points:
 
             x_geog, y_geog= t
 
-            id1 = feat["ID"]
+            id1= feat.id()
+
+             # !! SHOULD BE PARAMETRIZED - fiels are listed above
+            # test_fileds ( FIELDS) and then map ...
 
             r=feat["radius"] 
             if r > self.max_radius: self.max_radius=r
             
-            self.pt[ id1 ]={"z" : feat["observ_hgt"],
+            self.pt[ id1 ]={"id" : feat["ID"],
+                            "z" : feat["observ_hgt"],
                             "radius" : r/ pix_size, #we use pixel distances !
                             # not float !
                             "pix_coord" : (int((x_geog - x_min) / pix_size), 
@@ -452,6 +443,7 @@ class Points:
 
             
             # optional fields
+          
             
             try: self.pt[ id1 ]["z_targ"]  = feat["target_hgt"]
             except : pass
@@ -519,68 +511,5 @@ class Points:
 
          
             yield feat
- 
-
-    def write_network (self, file_name, edges, target_class,
-                   coordinate_ref_system=None , use_pix_coords=False):
-
-        from processing.tools.vector import VectorWriter
-
-        #QMessageBox.information(None, "Timing report:", str(data_list))
-        fields = QgsFields()
-        fields.append ( QgsField("Source", QVariant.String, 'string',50))
-        fields.append ( QgsField("Target", QVariant.String, 'string',50))
-       # fields.append (QgsField("Visible", QVariant.Boolean ))
-        fields.append(QgsField("Visible", QVariant.String, 'string',5))
-        fields.append (QgsField("observ_hgt", QVariant.Double,'double', 5,4 ))
-        fields.append (QgsField("target_hgt", QVariant.Double,'double', 5,4 ))
-        
-               
-
-       # writer = QgsVectorFileWriter( file_name + ".shp", "CP1250", fields,
-       #                               QGis.WKBPoint, coordinate_ref_system, "ESRI Shapefile")
-        
-        tg= target_class
-
-        crs = coordinate_ref_system if coordinate_ref_system else self.crs
-        
-        writer = VectorWriter(file_name, None, fields, QGis.WKBLineString,crs)
-        
-                                           #CP... = encoding
-##        if writer.hasError() != QgsVectorFileWriter.NoError:
-##            QMessageBox.information(None, "ERROR!", "Cannot write points file (?)")
-##            return 0
-        
-        for r in self.pt :
-
-            if "targets" not in self.pt[r]: continue
-           
-            # create a new feature
-            feat = QgsFeature()
-
-            p1 = QgsPoint(float(self.pt[r]["x_geog"]),
-                         float(self.pt[r]["y_geog"] ))
-
-            for t in self.pt[r]["targets"]:
-
-                p2 = QgsPoint(float(tg.pt[t]["x_geog"]),
-                         float(tg.pt[t]["y_geog"] ))
-            
-    
-                feat.setGeometry(QgsGeometry.fromPolyline([p1, p2]))
-          
-                feat.setFields(fields)
-
-                feat['Source'] = r
-                feat['Target'] = t
-                feat['Visible'] = 'True' if edges[r,t] >= 0 else 'False'
-                feat ['observ_hgt']=self.pt[r]["z"]
-                feat ['target_hgt']=float(edges[r,t]) #why doesn't it accept Python numbers ??        
-                
-                writer.addFeature(feat)
-                
-
-        del writer
-        
 
     

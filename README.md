@@ -40,6 +40,6 @@ This project is released with a Contributor Code of Conduct (Contributor_code.md
 
 More information:
 --------------
-Tutorials and other stuff can be found on the plugin's webpage:  [http://www.zoran-cuckovic.from.hr/p/visibility.html](http://www.zoran-cuckovic.from.hr/p/visibility.html)  
+Tutorials and other stuff can be found on the plugin's webpage:  [https://zoran-cuckovic.github.io/QGIS-visibility-analysis](https://zoran-cuckovic.github.io/QGIS-visibility-analysis)  
 Data for testing purposes can be found at [test data branch](https://github.com/zoran-cuckovic/QGIS-visibility-analysis/tree/test-data).  
 

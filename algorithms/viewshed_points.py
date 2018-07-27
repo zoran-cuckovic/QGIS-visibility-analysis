@@ -57,7 +57,7 @@ class ViewshedPoints(QgsProcessingAlgorithm):
     # calling from the QGIS console.
 
     OBSERVER_POINTS = 'OBSERVER_POINTS'
-    INPUT_DEM = 'INPUT_DEM'
+    DEM = 'DEM'
 
     OUTPUT = 'OUTPUT'
 
@@ -88,20 +88,16 @@ class ViewshedPoints(QgsProcessingAlgorithm):
         """
 
  
-
-        # The branch of the toolbox under which the algorithm will appear
-        #self.group = 'Visibility analysis'
-
-        # We add the input vector layer. It can have any kind of geometry
-        # It is a mandatory (not optional) one, hence the False argument    
-
-
         self.addParameter(
             QgsProcessingParameterFeatureSource(
   
             self.OBSERVER_POINTS,
             self.tr('Observer location(s)'),
-            [QgsProcessing.TypeVectorPoint])) 
+            [QgsProcessing.TypeVectorPoint]))
+        
+        self.addParameter(QgsProcessingParameterRasterLayer
+                          (self.DEM,
+            self.tr('Digital elevation model ')))
        
         self.addParameter(QgsProcessingParameterField(
             self.OBSERVER_ID,
@@ -156,7 +152,7 @@ class ViewshedPoints(QgsProcessingAlgorithm):
 
         # The first thing to do is retrieve the values of the parameters
         # entered by the user
-        #Raster_path = self.getParameterValue(self.INPUT_DEM)
+        raster = self.parameterAsRasterLayer(parameters,self.DEM, context)
         Points_layer = self.parameterAsSource(parameters, self.OBSERVER_POINTS, context)
 
        
@@ -176,12 +172,12 @@ class ViewshedPoints(QgsProcessingAlgorithm):
         
        # output_dir = self.getParameterValue(self.OUTPUT_DIR) 
         
-        
-                        # crs=  layer.crs().toWkt() #I do not have layer object ??
-                        # write_mode = 'cumulative', if cumulative
-        
-        
-        points = pts.Points(Points_layer) # and all other stuff ....
+        from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform
+      
+        points = pts.Points(Points_layer, crs = Points_layer.sourceCrs(),
+                            project_crs = raster.crs()) # and all other stuff ....
+
+     
 
         success = points.clean_parameters( observer_height, radius,
                            z_targ = target ,
@@ -203,12 +199,12 @@ class ViewshedPoints(QgsProcessingAlgorithm):
 
 
         
-
+        
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT,
                 context,
-                            points.field_defs(),
+                            points.field_defs(), 
                             Points_layer.wkbType(),
-                            points.crs)            
+                            raster.crs()) # attention ! REPROJECTED    
 
         for f in points.return_points():
             sink.addFeature(f, QgsFeatureSink.FastInsert)

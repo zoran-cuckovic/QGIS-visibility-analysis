@@ -4,7 +4,7 @@
 name=Visibility Analysis
 qgisMinimumVersion=3.0
 description=Visibility analysis over raster DEM
-version=0.6
+version=0.6.1
 author=Zoran Čučković
 email=contact@zoran-cuckovic.from.hr
 
@@ -22,7 +22,7 @@ repository=https://github.com/zoran-cuckovic/QGIS-visibility-analysis/tree/exper
 # Tags are comma separated with spaces allowed
 tags=Viewshed, Visibility, Raster
 
-homepage=http://zoran-cuckovic.from.hr/p/visibility.html
+homepage=https://zoran-cuckovic.github.io/QGIS-visibility-analysis/
 category=Raster Analysis
 icon=icon.png
 # experimental flag
