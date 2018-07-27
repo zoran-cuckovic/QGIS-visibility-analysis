@@ -7,16 +7,18 @@ Quantum GIS plugin for visibility analysis
 ## Introduction
 Viewshed analysis plugin for QGIS calculates visible surface from a given observer point over a digital elevation model. The plugin is intended for more complex modelling, such as the depth below the visible horizon or generation of intervisibilty networks between groups of points. It is particularly performant for multiple viewshed calculations form a set of fixed points.
 
-## Current stable version: 0.5.2 
+## Current stable version: 0.5.4 
 - Supported QGIS version: 2.x
 - [**Help & documentation**](https://zoran-cuckovic.github.io/QGIS-visibility-analysis/help_qgis2.html)
+
+Archived at: [![10.5281/zenodo.56664](https://zenodo.org/badge/22929/zoran-cuckovic/QGIS-visibility-analysis.svg)](https://zenodo.org/badge/latestdoi/22929/zoran-cuckovic/QGIS-visibility-analysis)
+
 
 ## Current experimental version: 0.6 
 - Supported QGIS version: 3.x
 - [**Help & documentation**](https://zoran-cuckovic.github.io/QGIS-visibility-analysis/help_qgis3.html)
   
-Licence: GNU GPL v.3  
-[![10.5281/zenodo.56664](https://zenodo.org/badge/22929/zoran-cuckovic/QGIS-visibility-analysis.svg)](https://zenodo.org/badge/latestdoi/22929/zoran-cuckovic/QGIS-visibility-analysis)
+**Licence: GNU GPL v.3**  
 
 ## More information
 
@@ -46,7 +48,7 @@ Homepage: [zoran-cuckovic.from.hr](http://zoran-cuckovic.from.hr)
 
 ## Community guidelines and feedback:
 
-This project is released with a Contributor Code of Conduct (Contributor_code.md). By participating in this project you agree to abide by its terms. Feedback, bug reports (and fixes!), and feature requests are welcome and can be submitted at [GitHub] (https://github.com/zoran-cuckovic/QGIS-visibility-analysis/issues) or reported directly through author's contact (above).
+This project is released with a [Contributor Code of Conduct](https://github.com/zoran-cuckovic/QGIS-visibility-analysis/blob/master/Contributor_code.md). By participating in this project you agree to abide by its terms. Feedback, bug reports (and fixes!), and feature requests are welcome and can be submitted at [GitHub] (https://github.com/zoran-cuckovic/QGIS-visibility-analysis/issues) or reported directly through author's contact (above).
 
-**Licence: GNU GPLv3**
+
 
