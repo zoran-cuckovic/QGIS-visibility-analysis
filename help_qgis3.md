@@ -24,7 +24,7 @@ Create observer points
 ----------------------
 This is the **first step** for the visibility analysis. The result will be written as a geopackage file with standardised field names and reprojected to match the elevation model used (if needed). Data inside the table can be changed manually - but the manes and data types of fields should remain unchanged. 
 
-## Input
+### Input
 All input parameters are stored in the accompanying table and can be changed manually. Field names need to remain as assigned.
 
 - *Observer points* have to be stored in a shapefile or other recognised vector formats. Lines or polygons cannot be used (unless broken up in points). Multi-point shapefiles will not work, neither. In case when point's coordinate system differ from the elevation model used, the vector data will be reprojected to match.
