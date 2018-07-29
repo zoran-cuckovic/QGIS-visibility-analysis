@@ -43,14 +43,19 @@ Raster output (viewshed)
 
 Viewshed maps are made over an elevation model, from viewpoints created by the "Create viewpoints" routine.
 
-- viewpoints: point type vector layer created by the *create viewpoints* routine.
+- *Observer points*: point type vector layer created by the *create viewpoints* routine.
 - elevation model: raster data
 
 Intervisibility network
 -----------------------
+**[ Work in progress as of 0.6.1 version ]**
 
-Intervisibility network is calculated between two sets of points, created by the *create viewpoints* routine. [ Work in progress as of 0.6.1 version ]
+The output of intervisibility network routine is a set of lines connecting viewpoints. 
 
+### Input
+- *Observer points*:  point type vector layer created by the *create viewpoints* routine. 
+- *Target points*: point type vector layer created by the *create viewpoints* routine. **!** Target height is always specified in the ``target_hgt`` field, even when using the same file for observer and target points.
+- *Save negative links*: save non-visible relationships.
 
 Dependencies:
 -------------
