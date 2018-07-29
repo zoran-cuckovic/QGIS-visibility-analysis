@@ -8,11 +8,11 @@ The plugin is installed as any other from the official QGIS repository (In QGIS 
 In case the usual install doesn't work, the plugin can be installed manually:  
 First you need to locate your QGIS plugins folder. On Windows it would be 'C:\users\username\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins' (do a file search for 'QGIS3' ...)
 
-Plugin code can then be extracted in a new folder inside the plugins folder (you should name the folder VisibilityAnalysis). Take care that the code is not inside a subfolder - the folder structure should be like this:  
+Plugin code can then be extracted in a new folder inside the plugins folder (you should name the folder ViewshedAnalysis). Take care that the code is not inside a subfolder - the folder structure should be like this:  
 
 + QGIS3\profiles\default\python\__plugins__
     + [some QGIS plugin folders...] 
-    + VisibilityAnalysis   
+    + ViewshedAnalysis   
         + visibility_plugin.py
 		+ visibility_provider.py
         + [other files and folders...]  
