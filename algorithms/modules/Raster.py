@@ -53,10 +53,41 @@ class Raster:
         raster_x_max = raster_x_min + self.size[1] * self.pix
 
         
+##        xsize = gdalData.RasterXSize 
+##        ysize = gdalData.RasterYSize 
+        
         self.extent = [raster_x_min, raster_y_min, 
                        raster_x_max, raster_y_max]
 
-        self.min, self.max = gdal_raster.GetRasterBand(1).GetStatistics(True, True)[:2]
+        self.min, self.max = gdal_raster.GetRasterBand(1
+                            ).GetStatistics(True, True)[:2]
+
+         # Get raster statistics
+##        srcband = gdalData.GetRasterBand(1)
+##
+##
+##        raster_max= srcband.GetMaximum()
+##        raster_min = srcband.GetMinimum()
+##
+##        nodata = srcband.GetNoDataValue()
+##
+##        data_type =  srcband.DataType
+
+        """
+        NP2GDAL_CONVERSION = {
+          "uint8": 1,
+          "int8": 1,
+          "uint16": 2,
+          "int16": 3,
+          "uint32": 4,
+          "int32": 5,
+          "float32": 6,
+          "float64": 7,
+          "complex64": 10,
+          "complex128": 11,
+        }
+
+        """
 
         self.output = output
 
@@ -86,7 +117,7 @@ class Raster:
     [ should be done in chunks for very large arrays - to implement ...]
     """
 
-    def set_master_window (self, radius_pix,
+    def set_master_window (self, radius,
                            size_factor = 1,
                            curvature=False,
                            refraction =0,
@@ -94,11 +125,15 @@ class Raster:
                            pad=False):           
         
         
+        self.radius = radius
+        radius_pix = int(radius/self.pix)
+        self.radius_pix = radius_pix
+        
         full_size = radius_pix *2 +1
         self.window = np.zeros((full_size, full_size))
         self.initial_value=background_value
         self.pad= pad
-        self.radius_pix = radius_pix
+        
         
         self.mx_dist = self.distance_matrix()
 
@@ -286,7 +321,13 @@ class Raster:
 ##        self.win_offset= (x_offset_dist_mx, y_offset_dist_mx)
 ##        self.win_size = (window_size_x, window_size_y)
 
-
+    """
+    reads entire raster
+    """
+    def open_raster (self):
+        self.raster = self.rst.ReadAsArray().astype(float)
+        return self.raster
+        
     """
     Insert a numpy matrix to the same place where data has been extracted.
     Data can be added-up, or chosen from highest/lowest values.
@@ -324,9 +365,13 @@ class Raster:
     """
     TODO : a trick to work on very large arrays [mode = cumulative_lage]
     e.g. read a window from a gdal raster, sum, write back
+
+    TODO : tidy up writing directly to raster file (without buffer)
+     - data = self.result
+     - slices = self.slices
        
     """
-    def write_result(self, in_array=None, file_name = None,
+    def write_result(self, file_name = None,
                      fill = np.nan, no_data = np.nan,
                      dataFormat = gdal.GDT_Float32):
 
@@ -347,16 +392,24 @@ class Raster:
 ##
 ##        else:
         
-        #all modes > 0 operate on a copy of the raster
-        if self.mode > 0:
-            
-            ds.GetRasterBand(1).WriteArray(self.result )
-        else:
-            y_in = slice(*self.inside_window_slice[0])
-            x_in = slice(*self.inside_window_slice[1])
-            #for writing gdal takes only x and y offset (1st 2 values of self.gdal_slice) 
-            ds.GetRasterBand(1).WriteArray(in_array [ y_in, x_in ],
+        
+        if self.mode == 0 :#in place writing
+
+            try:
+                y_in = slice(*self.inside_window_slice[0])
+                x_in = slice(*self.inside_window_slice[1])
+                #for writing gdal takes only x and y offset (1st 2 values of self.gdal_slice) 
+                ds.GetRasterBand(1).WriteArray(in_array [ y_in, x_in ],
                                            *self.gdal_slice[:2] )
+            except: # for entire raster             
+                ds.GetRasterBand(1).WriteArray(self.result )
+        #all modes > 0 operate on a copy of the raster
+        else:   
+            ds.GetRasterBand(1).WriteArray(self.result )
+
+            
+       
+            
             #self.offset[0], self.offset[1])     
 
         ds = None

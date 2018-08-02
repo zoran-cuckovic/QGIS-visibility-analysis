@@ -26,8 +26,7 @@ import os
 #from osgeo import osr, gdal, ogr
 
 import time
-#_____Testing_____________
-#from cProfile import Profile
+
 
 import numpy as np
 from math import sqrt
@@ -168,11 +167,13 @@ def viewshed_raster (option,point, dem, interpolate = True):
         
     # level all according to observer (Earth curvature is dealt with in the Raster class)
     data -= z_abs
-           
+
+    target_matrix= None   
     try :
-        target_matrix = (data + point["z_targ"]) / distance_matrix
-    except:
-        target_matrix=0                     
+        if point["z_targ"] >0:
+            target_matrix = (data + point["z_targ"]) / distance_matrix
+    except: pass
+                            
 
     data /= distance_matrix #all one line = (data -z - mxcurv) /mx_dist
     #NB : there can be some divisions by zero, but these are OK
@@ -406,7 +407,12 @@ def intervisibility (point_class, raster_class, interpolate = False):
 
         try: z_targ = tgs[id2]["z_targ"]
         except : z_targ = 0
-            
+
+        # special case : zero or one pixel distance
+        if x-1 <= x2 <= x+1 and y-1 <= y2 <= y+1:
+            tgs[id2]["depth"]=z_targ
+            continue
+  
         # x2 = (x2 - x) + radius_pix 
         x2 -= x - radius_pix
         y2 -= y - radius_pix
@@ -439,11 +445,11 @@ def intervisibility (point_class, raster_class, interpolate = False):
         # bare terrain!
         # target pixel is not calculated (crop =1)!
         depth = (angle_targ - np.max(angles)) * d
-            
+              
         # correct with target height only for invisible terrain,
         # otherwise it adds to relative pixel height
         
-        tgs[id2]["depth"]= depth + z_targ #z_targ if depth >= 0 else depth + z_targ
+        tgs[id2]["depth"]= z_targ if depth >= 0 else depth + z_targ
     
 
 

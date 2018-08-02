@@ -209,7 +209,7 @@ class Points:
             #else: errors.append(["duplicate ID:",id1])
        #TODO : testing for duplicates --> network etc ...
                 
-        return errors if errors else 0
+        
          
        # self.max_radius = max(x, key=lambda i: x[i])
 
@@ -346,11 +346,11 @@ class Points:
 
     TODO : use spatial indexing ... == use .take ??
     """
-    def network (self,targets):
+    def network (self,targets, skip_same_id=False):
 
          for pt1 in self.pt:
 
-                      
+            id1 = self.pt[pt1]["id"]        
             x,y = self.pt[pt1]["pix_coord"]
             
             r = self.pt[pt1]["radius"] #it's pixelised after take !!
@@ -373,10 +373,12 @@ class Points:
             self.pt[pt1]["targets"]={}
             
             for pt2, value in targets.pt.items():
+
+                id2 = self.pt[pt2]["id"]
+
+                if skip_same_id and id1==id2: continue
+
                 x2, y2 = value["pix_coord"]
-                
-                #skipping itself
-                if x2==x and y2==y : continue
                 
                 if min_x <= x2 <= max_x and min_y <= y2 <= max_y:
                     if  (x-x2)**2 + (y-y2)**2 <= r_sq:

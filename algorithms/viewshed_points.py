@@ -32,6 +32,7 @@ __revision__ = '$Format:%H$'
 
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (QgsProcessing,
+                       QgsProcessingException,
                        
                        QgsProcessingAlgorithm,
 
@@ -172,14 +173,26 @@ class ViewshedPoints(QgsProcessingAlgorithm):
         
        # output_dir = self.getParameterValue(self.OUTPUT_DIR) 
         
-        from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform
+        # convert meters to layer distance units
+        # [this can be confusing when the module is used in a script,
+        #  and it's 3.0 function ]
+        #coef = QgsUnitTypes.fromUnitToUnitFactor(Qgis.DistanceMeters, dem.crs().mapUnits())
+		
+        #searchRadius = searchRadius * coef
+
+        if raster.crs().mapUnits() != 0 :
+            err= " \n ****** \n ERROR! \n Raster data has to be projected in a metric system!"
+            feedback.reportError(err, fatalError = True)
+            raise QgsProcessingException(err)
+          
       
-        points = pts.Points(Points_layer, crs = Points_layer.sourceCrs(),
-                            project_crs = raster.crs()) # and all other stuff ....
+        points = pts.Points(Points_layer,
+                            crs = Points_layer.sourceCrs(),
+                            project_crs = raster.crs()) 
 
      
 
-        success = points.clean_parameters( observer_height, radius,
+        points.clean_parameters( observer_height, radius,
                            z_targ = target ,
                            field_ID = observer_id,
                            field_zobs = observer_height_field,
@@ -187,9 +200,9 @@ class ViewshedPoints(QgsProcessingAlgorithm):
                            field_radius= radius_field)
                            #folder = output_dir)
         
-        if success != 0 :
-            raise QgsProcessingException(
-                self.invalidSinkError(parameters, self.OUTPUT))
+##        if success != 0 :
+##            raise QgsProcessingException(
+##                self.invalidSinkError(parameters, self.OUTPUT))
         
            # "Duplicate IDs!", str(success))
      

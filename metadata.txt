@@ -4,11 +4,11 @@
 name=Visibility Analysis
 qgisMinimumVersion=3.0
 description=Visibility analysis over raster DEM
-version=0.6.1
+version=0.6.2
 author=Zoran Čučković
 email=contact@zoran-cuckovic.from.hr
 
-about=This is the first, experimental port of the Viewshed Analysis plugin to QGIS 3. Only the standard viewshed algorithm is included for the moment. Thanks to Gilles Vuidel for the help with QGIS 3 architecture.   
+about=Viewshed analysis calculates visible surface from a given observer point over a digital elevation model. Additionally, this plugin can be used for modelling intervisibilty networks between groups of points. It is particularly performant for multiple viewshed calculations form a set of fixed points. 
 
 tracker=https://github.com/zoran-cuckovic/QGIS-visibility-analysis/issues
 repository=https://github.com/zoran-cuckovic/QGIS-visibility-analysis/tree/experimental

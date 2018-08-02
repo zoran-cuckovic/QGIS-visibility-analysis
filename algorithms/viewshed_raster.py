@@ -117,8 +117,6 @@ class ViewshedRaster(QgsProcessingAlgorithm):
 
     def processAlgorithm(self, parameters, context, feedback):
 
-        
-
 
         raster = self.parameterAsRasterLayer(parameters,self.DEM, context)
         observers = self.parameterAsSource(parameters,self.OBSERVER_POINTS,context)
@@ -126,7 +124,7 @@ class ViewshedRaster(QgsProcessingAlgorithm):
         
         useEarthCurvature = self.parameterAsBool(parameters,self.USE_CURVATURE,context)
         refraction = self.parameterAsDouble(parameters,self.REFRACTION,context)
-        precision = 1 #self.parameterAsInt(parameters,self.PRECISION,context)
+        precision = 1#self.parameterAsInt(parameters,self.PRECISION,context)
         analysis_type = 0#self.getParameterValue(self.ANALYSIS_TYPE)
         operator = 1 #self.parameterAsInt(parameters,self.OPERATOR,context) + 1       
 
@@ -160,14 +158,18 @@ class ViewshedRaster(QgsProcessingAlgorithm):
         
         miss = points.test_fields(fields)
         
-        if miss: raise QgsProcessingException(
-                " \n ****** \n ERROR! \n Missing fields: \n" + "\n".join(miss))
+        if miss:
+            err= " \n ****** \n ERROR! \n Missing fields: \n" + "\n".join(miss)
+            feedback.reportError(err, fatalError = True)
+            raise QgsProcessingException(err)
 
         points.take(dem.extent, dem.pix)
 
         if points.count == 0:
-            raise QgsProcessingException(
-                "  \n ******* \n ERROR! \n No viewpoints in the chosen area!")
+            err= "  \n ******* \n ERROR! \n No viewpoints in the chosen area!"
+            feedback.reportError(err, fatalError = True)
+            raise QgsProcessingException(err )
+
         elif points.count == 1:
             operator=0
 
@@ -182,14 +184,10 @@ class ViewshedRaster(QgsProcessingAlgorithm):
         report=[]
 
         
-        # should be explicit ( .max_radius(pixel=True) ) ...
-        radius_float = points.max_radius
-        radius_pix = int(radius_float/dem.pix)
-
         
         #for speed and convenience, use maximum sized window for all analyses
         #this is not clear! should set using entire size, not radius !!
-        dem.set_master_window(radius_pix,
+        dem.set_master_window(points.max_radius,
                             size_factor = precision ,
                             background_value=0,
                             pad = precision>0,
@@ -293,11 +291,7 @@ class ViewshedRaster(QgsProcessingAlgorithm):
                 
        
         
-        if operator > 0: dem.write_result()     
-
-        print (" Finished: " + str( round( (time.clock() - start
-                                           ) / 60, 2)) + " minutes.")
-                
+        if operator > 0: dem.write_result()                   
 
         txt = ("\n Analysis time: " + str(
                             round( (time.clock() - start

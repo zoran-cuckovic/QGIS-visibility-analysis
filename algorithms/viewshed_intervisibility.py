@@ -184,18 +184,21 @@ class Intervisibility(QgsProcessingAlgorithm):
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT, context,
                             qfields,
                             QgsWkbTypes.LineString,
-                            o.crs)    
+                            o.crs)
 
-        o.network(t) #do this after .take which takes points within raster extents
+        
+        feedback.setProgressText("*1* Constructing the network")
+        o.network(t, skip_same_id = (observers==targets)) #do this after .take which takes points within raster extents
 
         t = None
        
-        dem.set_master_window(int(o.max_radius / dem.pix),
+        dem.set_master_window(o.max_radius,
                             curvature =useEarthCurvature,
                             refraction = refraction )
         
         cnt = 0
-               
+
+        feedback.setProgressText("*2* Testing visibility")   
         for key, ob in o.pt.items():
 
             ws.intervisibility(ob, dem, interpolate = precision)
@@ -217,19 +220,17 @@ class Intervisibility(QgsProcessingAlgorithm):
                 feat.setFields(qfields)
                 feat['Source'] = ob["id"]
                 feat['Target'] = tg["id"]
-                feat['TargetSize'] = float(h) #... must cast ...                
+                feat['TargetSize'] = float(h) #.                
            
                 sink.addFeature(feat, QgsFeatureSink.FastInsert) 
      
-                cnt +=1
-                feedback.setProgress(int((cnt/o.count) *100))
+            cnt +=1
+            feedback.setProgress(int((cnt/o.count) *100))
 
+        feedback.setProgressText("*3* Drawing the network")
 
         return {self.OUTPUT: dest_id}
-
-
-
-        
+       
         
     def name(self):
         """
