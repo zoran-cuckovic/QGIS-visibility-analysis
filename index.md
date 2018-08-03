@@ -22,9 +22,7 @@ Archived at: [![10.5281/zenodo.56664](https://zenodo.org/badge/22929/zoran-cucko
 
 ## Publication
 
-"Advanced viewshed analysis: a Quantum GIS plug-in for the analysis of visual landscapes." by Zoran Čučković in The Journal of Open Source Software 4(1). doi: [10.21105/joss.00032](http://joss.theoj.org/papers/10.21105/joss.00032)
-
-
+"Advanced viewshed analysis: a Quantum GIS plug-in for the analysis of visual landscapes." by Zoran Čučković in *The Journal of Open Source Software* 4(1). doi: [10.21105/joss.00032](http://joss.theoj.org/papers/10.21105/joss.00032)
 
 ## More information
 
