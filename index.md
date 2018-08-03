@@ -39,11 +39,11 @@ Homepage: [zoran-cuckovic.from.hr](http://zoran-cuckovic.from.hr)
 
 - [July 3, 2018](http://landscapearchaeology.org/2018/visibility-analysis-0-6/): 0.6 version - compatible with QGIS 3 
 
-- [December 22, 2016](http://www.zoran-cuckovic.from.hr/2017/12/qgis-visibility-054.html) : Visibility analysis, release 0.5.4: modelling the horizon
+- [December 22, 2016](http://www.zoran-cuckovic.from.hr/2016/qgis-visibility-054/) : Visibility analysis, release 0.5.4: modelling the horizon
 
-- [July 30, 2016](http://www.zoran-cuckovic.from.hr/2017/12/qgis-visibility-analysis-algorithm.html): QGIS visibility analysis algorithm
+- [July 30, 2016](http://www.zoran-cuckovic.from.hr/2016/qgis-visibility-analysis-algorithm/): QGIS visibility analysis algorithm
 
-- [July 27, 2016](http://www.zoran-cuckovic.from.hr/2016/07/viewshed-tutorial.html ): QGIS viewshed plugin: a tutorial
+- [July 27, 2016](http://www.zoran-cuckovic.from.hr/2016/qgis-viewshed-plugin-a-tutorial/ ): QGIS viewshed plugin: a tutorial
 
 
 ## Community guidelines and feedback:
