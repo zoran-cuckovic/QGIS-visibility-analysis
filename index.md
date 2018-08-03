@@ -20,6 +20,11 @@ Archived at: [![10.5281/zenodo.56664](https://zenodo.org/badge/22929/zoran-cucko
 - [**Help & documentation**](https://zoran-cuckovic.github.io/QGIS-visibility-analysis/help_qgis3.html)
   
 
+## Publication
+
+"Advanced viewshed analysis: a Quantum GIS plug-in for the analysis of visual landscapes." by Zoran Čučković in The Journal of Open Source Software 4(1). doi: [10.21105/joss.00032](http://joss.theoj.org/papers/10.21105/joss.00032)
+
+
 
 ## More information
 
@@ -33,11 +38,8 @@ Qgis visibility analysis maintained by [zoran-cuckovic](https://github.com/zoran
 
 Homepage: [zoran-cuckovic.from.hr](http://zoran-cuckovic.from.hr)
 
-## Publication
 
-"Advanced viewshed analysis: a Quantum GIS plug-in for the analysis of visual landscapes." by Zoran Čučković in The Journal of Open Source Software 4(1). doi: [10.21105/joss.00032](http://joss.theoj.org/papers/10.21105/joss.00032)
-
-## Archive 
+### Archive 
 
 - [July 15, 2018]( https://landscapearchaeology.org/2018/visibility-test-nuraghi/): Testing perfomance of 0.6 version
 
