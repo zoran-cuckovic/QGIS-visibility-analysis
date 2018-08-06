@@ -50,9 +50,9 @@ Homepage: [zoran-cuckovic.from.hr](http://zoran-cuckovic.from.hr)
 - [July 27, 2016](http://www.zoran-cuckovic.from.hr/2016/qgis-viewshed-plugin-a-tutorial/ ): QGIS viewshed plugin: a tutorial
 
 
-## Community guidelines and feedback:
+## Community guidelines and feedback
 
-This project is released with a [Contributor Code of Conduct](https://github.com/zoran-cuckovic/QGIS-visibility-analysis/blob/master/Contributor_code.md). By participating in this project you agree to abide by its terms. Feedback, bug reports (and fixes!), and feature requests are welcome and can be submitted at [GitHub](https://github.com/zoran-cuckovic/QGIS-visibility-analysis/issues) or reported directly through author's contact (above).
+This project is released with a [Contributor Code of Conduct](https://github.com/zoran-cuckovic/QGIS-visibility-analysis/blob/master/Contributor_code.md). By participating in this project you agree to abide by its terms. **Feedback, bug reports (and fixes!)**, and feature requests are welcome and can be submitted at [GitHub](https://github.com/zoran-cuckovic/QGIS-visibility-analysis/issues) or reported directly through author's contact (above).
 
 
 ## Ackowledgments
