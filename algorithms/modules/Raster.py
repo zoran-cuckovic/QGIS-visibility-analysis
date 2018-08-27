@@ -107,14 +107,9 @@ class Raster:
     This is the largest window, used for all analyses.
     Smaller windows are slices of this one.
 
-    [ theoretically,window should be a subclass,
+    [ theoretically, a window should be a subclass,
     but we can have only one window at a time ...]
 
-    Buffer mode: the method for combining results (summing up or otherwise).
-    By default, the mode is 0: no summing up
-    
-    Buffer size (self.result) is the same size as the entire array
-    [ should be done in chunks for very large arrays - to implement ...]
     """
 
     def set_master_window (self, radius,
@@ -150,18 +145,21 @@ class Raster:
     Create the output file in memory and determine the mode of combining results
     (addition or min/max)
 
-    TODO : deal with large files
+    If live_memory is True, a buffer will be the same size as the entire raster,
+    otherwise it will have the size of master window. The latter apporach is 15 - 20% slower. 
+    
     """
-    def set_buffer (self, mode):
+    def set_buffer (self, mode, live_memory = False):
 
-        if mode > 0 :
+        if live_memory:
+
             self.result = np.zeros(self.size)
+        else:
+            
+            self.result = None 
+        
 
-            # for summing up we need zeros,
-            # for min/max we need no_data
-            if mode > 1: self.result [:] = np.nan
-
-            self.mode = mode   
+        self.mode = mode   
         
 
     """
@@ -330,7 +328,7 @@ class Raster:
         
     """
     Insert a numpy matrix to the same place where data has been extracted.
-    Data can be added-up, or chosen from highest/lowest values.
+    Data can be added-up or chosen from highest/lowest values.
     All parameteres are copied from class properties
     because only one window is possible at a time.
     """
@@ -339,23 +337,26 @@ class Raster:
         y_in = slice(*self.inside_window_slice[0])
         x_in = slice(*self.inside_window_slice[1])
 
-        m = self.result [self.window_slice]
         m_in = in_array [y_in, x_in]
   
 
-        if self.mode == 1: m += m_in
-            
-        else:
-            if self.mode == 2: operator = np.less
-            elif self.mode == 3: operator = np.greater
-            
-            mask = operator( m_in, m)
-            #there is a problem to initialise a comparison without knowing min/max values
-            # nan will always give False in any comarison
-            # so make a trick with isnan()...
-            mask[np.isnan(m)]= True
+        if isinstance(self.result, np.ndarray):
+            m = self.result[self.window_slice]
+        else :
+            m = self.gdal_output.ReadAsArray(*self.gdal_slice).astype(float)
 
-            m[mask]= m_in[mask]
+        if self.mode == SINGLE: m = m_in
+        # elif MIN/ MAX ... TODO
+        else:  m += m_in
+    
+        
+        if not isinstance(self.result, np.ndarray): #write to file
+            
+            bd = self.gdal_output.GetRasterBand(1)
+            #for writing gdal takes only x and y offset (1st 2 values of self.gdal_slice)
+            bd.WriteArray( m, *self.gdal_slice[:2] )
+    
+            bd.FlushCache()
             
             
             #np.where(self.result [self.window_slice] < in_array [self.inside_window_slice],
@@ -363,58 +364,37 @@ class Raster:
             
 
     """
-    TODO : a trick to work on very large arrays [mode = cumulative_lage]
-    e.g. read a window from a gdal raster, sum, write back
-
-    TODO : tidy up writing directly to raster file (without buffer)
-     - data = self.result
-     - slices = self.slices
+    Writing analysis result.
+     - If there is no result assigned to the class, it will produce an empty file.
+     - If there is no file name, it will write the result to previously created file. 
        
     """
-    def write_result(self, file_name = None,
+    def write_output (self, file_name=None,
                      fill = np.nan, no_data = np.nan,
                      dataFormat = gdal.GDT_Float32):
 
-        
+        if file_name:
+            driver = gdal.GetDriverByName('GTiff')
+            ds = driver.Create(file_name, self.size[1], self.size[0], 1, dataFormat)
+            ds.SetProjection(self.crs)
+            ds.SetGeoTransform(self.rst.GetGeoTransform())
 
-        if not file_name: file_name = self.output
+            ds.GetRasterBand(1).Fill(fill)
+            ds.GetRasterBand(1).SetNoDataValue(no_data)
 
-        driver = gdal.GetDriverByName('GTiff')
-        ds = driver.Create(file_name, self.size[1], self.size[0], 1, dataFormat)
-        ds.SetProjection(self.crs)
-        ds.SetGeoTransform(self.rst.GetGeoTransform())
+                    # for buffered operations (...hacky ...)
+            self.gdal_output = ds
+      
+        else:
+            ds = self.gdal_output
 
-        ds.GetRasterBand(1).Fill(fill)
-        ds.GetRasterBand(1).SetNoDataValue(no_data)
-
-##        #cumulative : same size as original array
-##        if self.mode == 'cumulative':  ds.GetRasterBand(1).WriteArray(self.result)
-##
-##        else:
-        
-        
-        if self.mode == 0 :#in place writing
-
-            try:
-                y_in = slice(*self.inside_window_slice[0])
-                x_in = slice(*self.inside_window_slice[1])
-                #for writing gdal takes only x and y offset (1st 2 values of self.gdal_slice) 
-                ds.GetRasterBand(1).WriteArray(in_array [ y_in, x_in ],
-                                           *self.gdal_slice[:2] )
-            except: # for entire raster             
-                ds.GetRasterBand(1).WriteArray(self.result )
-        #all modes > 0 operate on a copy of the raster
-        else:   
+        try:
             ds.GetRasterBand(1).WriteArray(self.result )
+            ds = None
+        except: pass
+    
 
-            
        
-            
-            #self.offset[0], self.offset[1])     
-
-        ds = None
-
-        
 
 	  
 

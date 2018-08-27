@@ -1,5 +1,24 @@
 # -*- coding: utf-8 -*-
 
+"""
+/***************************************************************************
+ViewshedAnalysis
+A QGIS plugin
+begin : 2013-05-22
+copyright : (C) 2013 by Zoran Čučković
+email : /
+***************************************************************************/
+
+/***************************************************************************
+* *
+* This program is free software; you can redistribute it and/or modify *
+* it under the terms of the GNU General Public License as published by *
+* the Free Software Foundation version 2 of the License, or *
+* any later version. *
+* *
+***************************************************************************/
+"""
+
 from PyQt5.QtCore import QCoreApplication
 
 from plugins.processing.gui import MessageBarProgress
@@ -25,6 +44,7 @@ from qgis.core import (QgsProcessing,
 
                        QgsMessageLog)
 
+from processing.core.ProcessingConfig import ProcessingConfig
 
 from .modules import visibility as ws
 from .modules import Points as pts
@@ -151,11 +171,8 @@ class ViewshedRaster(QgsProcessingAlgorithm):
         # TODO: ADD MORE TESTS (raster rotated [projections ??], rectnagular pixels [OK?]
                          
         points = pts.Points(observers)
-
-        
+       
         fields =["observ_hgt", "radius"]
-
-        
         miss = points.test_fields(fields)
         
         if miss:
@@ -172,8 +189,22 @@ class ViewshedRaster(QgsProcessingAlgorithm):
 
         elif points.count == 1:
             operator=0
+            fill = np.nan
+            live_memory = False
+        else:
+            fill = 0 # not for min / max !
+            live_memory = ( (dem.size[0] * dem.size[1]) / 1000000 <
+                           float(ProcessingConfig.getSetting(
+                               'MEMORY_BUFFER_SIZE')))
 
-        dem.set_buffer(operator)
+
+        # prepare the output raster
+        if not live_memory:
+            dem.write_output(output_path, fill = fill)
+
+        dem.set_buffer(operator, live_memory = live_memory)
+
+
 
         pt = points.pt #this is a dict of obs. points
 
@@ -183,7 +214,6 @@ class ViewshedRaster(QgsProcessingAlgorithm):
         
         report=[]
 
-        
         
         #for speed and convenience, use maximum sized window for all analyses
         #this is not clear! should set using entire size, not radius !!
@@ -281,17 +311,16 @@ class ViewshedRaster(QgsProcessingAlgorithm):
                 # this is unmasked: sunbtract masked out areas!
                 report.append([pt[id1]["id"], c , view_m.size - crop] )
 
-            if operator > 0: dem.add_to_buffer (matrix_vis)
-            else  :     dem.write_result(in_array= matrix_vis)
-
-
+            dem.add_to_buffer (matrix_vis)
+            
             cnt += 1
 
             feedback.setProgress(int((cnt/points.count) *100))
                 
        
+        if live_memory: dem.write_output(output_path)
         
-        if operator > 0: dem.write_result()                   
+        dem.gdal_output=None
 
         txt = ("\n Analysis time: " + str(
                             round( (time.clock() - start

@@ -54,6 +54,10 @@ class VisibilityProvider(QgsProcessingProvider):
         ProcessingConfig.addSetting(
             Setting(self.name(), 'VISIBILITY_ANALYSIS_ACTIVATED',
                                     'Activate', True))
+        ProcessingConfig.addSetting(
+            Setting(self.name(), 'MEMORY_BUFFER_SIZE',
+                                    'Memory buffer size (mega-pixels)', 300))
+									
         ProcessingConfig.readSettings()
         self.refreshAlgorithms()
         return True
