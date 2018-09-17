@@ -28,7 +28,7 @@ Archived at: [![10.5281/zenodo.56664](https://zenodo.org/badge/22929/zoran-cucko
 
 You can signal an issue at **[GitHub](https://github.com/zoran-cuckovic/QGIS-visibility-analysis/issues)**
 
-For further information on algorithms used, case studies etc. take a look at **[LandscapeArchaeology.org]( LandscapeArchaeology.org)** and **[zoran-cuckovic.from.hr](http://zoran-cuckovic.from.hr)** .
+For further information on algorithms used, case studies etc. take a look at **[LandscapeArchaeology.org]( http://landscapearchaeology.org)** and **[zoran-cuckovic.from.hr](http://zoran-cuckovic.from.hr)** .
 
 Data used for testing and tutorials can be found **[here](https://github.com/zoran-cuckovic/QGIS-visibility-analysis/tree/test-data/)**.
 
