@@ -191,13 +191,13 @@ class ViewshedRaster(QgsProcessingAlgorithm):
             operator=0
             fill = np.nan
             live_memory = False
+
         else:
             fill = 0 # not for min / max !
             live_memory = ( (dem.size[0] * dem.size[1]) / 1000000 <
                            float(ProcessingConfig.getSetting(
                                'MEMORY_BUFFER_SIZE')))
-
-
+            
         # prepare the output raster
         if not live_memory:
             dem.write_output(output_path, fill = fill)
@@ -257,7 +257,9 @@ class ViewshedRaster(QgsProcessingAlgorithm):
     ##        if diff: np_slice = np.s_[diff : radius_pix - diff,
     ##                                  diff : radius_pix - diff]
     ##
-    ##        else: np_slice = np.s_[:]       
+    ##        else: np_slice = np.s_[:]
+
+            
 
             matrix_vis = ws.viewshed_raster (analysis_type, pt[id1], dem,
                                           interpolate = precision > 0)

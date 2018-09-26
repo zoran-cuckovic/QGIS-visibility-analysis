@@ -8,7 +8,7 @@
                               -------------------
         begin                : 2017-03-10
         copyright            : (C) 2017 by Zoran Čučković
-        email                : some
+        email                : contact@zoran-cuckovic.from.hr
  ***************************************************************************/
 
 /***************************************************************************
@@ -179,19 +179,26 @@ class ViewshedPoints(QgsProcessingAlgorithm):
         #coef = QgsUnitTypes.fromUnitToUnitFactor(Qgis.DistanceMeters, dem.crs().mapUnits())
 		
         #searchRadius = searchRadius * coef
-
+    
+        
         if raster.crs().mapUnits() != 0 :
             err= " \n ****** \n ERROR! \n Raster data has to be projected in a metric system!"
             feedback.reportError(err, fatalError = True)
             raise QgsProcessingException(err)
-          
+
+        if  round(abs(raster.rasterUnitsPerPixelX()), 2) !=  round(abs(raster.rasterUnitsPerPixelY()),2):
+            
+            err= (" \n ****** \n ERROR! \n Raster pixels are irregular in shape " +
+                  "(probably due to incorrect projection)!")
+            feedback.reportError(err, fatalError = True)
+            raise QgsProcessingException(err)
       
         points = pts.Points(Points_layer,
                             crs = Points_layer.sourceCrs(),
                             project_crs = raster.crs()) 
 
      
-
+          
         points.clean_parameters( observer_height, radius,
                            z_targ = target ,
                            field_ID = observer_id,
@@ -205,14 +212,12 @@ class ViewshedPoints(QgsProcessingAlgorithm):
 ##                self.invalidSinkError(parameters, self.OUTPUT))
         
            # "Duplicate IDs!", str(success))
-     
+
+       
 ##        if move:
-##            
-##            points.move_top(self.getParameterValue(self.INPUT_DEM), move)
+##           points.move_top(raster.source(), move)
 
-
-        
-        
+                
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT,
                 context,
                             points.field_defs(), 

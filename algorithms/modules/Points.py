@@ -13,7 +13,7 @@ import gdal #ogr
 
 import numpy as np
 
-from .Raster import Raster as rst
+from . import Raster as rst
 
 
 """
@@ -242,20 +242,22 @@ class Points:
 
         for key in self.pt:
            
-            x, y = self.pt[key]["x_geog"], self.pt[key]["y_geog"]
+##            x, y = self.pt[key]["x_geog"], self.pt[key]["y_geog"]
+##
+##            #how to use Qgs functions?
+##            # ext = QgsRectangle(*extents)
+##            #pt = QgsPoint(x,y)
+##            # pt in ext ???
+##          
+##            if not raster_x_min < x < raster_x_max \
+##            or not raster_y_min < y < raster_y_max: continue
+##
+##
+##            # make a function for pixel coords !!!
+##            x_pix= int((x - raster_x_min) / pix)
+##            y_pix = int((raster_y_max - y) / pix) #reversed !
 
-            #how to use Qgs functions?
-            # ext = QgsRectangle(*extents)
-            #pt = QgsPoint(x,y)
-            # pt in ext ???
-          
-            if not raster_x_min < x < raster_x_max \
-            or not raster_y_min < y < raster_y_max: continue
-
-
-            # make a function for pixel coords !!!
-            x_pix= int((x - raster_x_min) / pix)
-            y_pix = int((raster_y_max - y) / pix) #reversed !
+            x_pix, y_pix = self.pt[key]["pix_coord"]
 
             r.open_window(x_pix, y_pix, radius_pix)
 
@@ -346,7 +348,7 @@ class Points:
 
     TODO : use spatial indexing ... == use .take ??
     """
-    def network (self,targets, skip_same_id=False):
+    def network (self,targets):
 
          for pt1 in self.pt:
 
@@ -376,9 +378,9 @@ class Points:
 
                 id2 = self.pt[pt2]["id"]
 
-                if skip_same_id and id1==id2: continue
-
                 x2, y2 = value["pix_coord"]
+
+                if id1==id2 and x == x2 and y==y2 : continue
                 
                 if min_x <= x2 <= max_x and min_y <= y2 <= max_y:
                     if  (x-x2)**2 + (y-y2)**2 <= r_sq:
@@ -423,7 +425,7 @@ class Points:
  
             geom = feat.geometry()
             t = geom.asPoint()
-
+            
             x_geog, y_geog= t
 
             id1= feat.id()

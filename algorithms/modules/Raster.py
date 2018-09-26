@@ -287,7 +287,6 @@ class Raster:
 
         self.gdal_slice = [x_offset, y_offset, window_size_x, window_size_y]
 
-        
         self.window [:]=self.initial_value 
         
         self.window[ slice(*in_slice_y), slice(*in_slice_x)] = \
@@ -379,11 +378,14 @@ class Raster:
             ds.SetProjection(self.crs)
             ds.SetGeoTransform(self.rst.GetGeoTransform())
 
+            ds.GetRasterBand(1).SetNoDataValue(no_data)           
             ds.GetRasterBand(1).Fill(fill)
-            ds.GetRasterBand(1).SetNoDataValue(no_data)
+            ds.FlushCache() #important, otherwise we need to delete ds, to force the flush!
 
-                    # for buffered operations (...hacky ...)
+            # for buffered operations (...hacky ...)
             self.gdal_output = ds
+
+            
       
         else:
             ds = self.gdal_output

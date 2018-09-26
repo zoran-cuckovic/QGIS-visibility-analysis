@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- Senscape
-                                 A QGIS plugin
- 
+        ViewshedAnalysis
+        A QGIS plugin
+                             
                               -------------------
         begin                : 2017-03-10
         copyright            : (C) 2017 by Zoran Čučković
@@ -188,8 +188,9 @@ class Intervisibility(QgsProcessingAlgorithm):
 
         
         feedback.setProgressText("*1* Constructing the network")
-        o.network(t, skip_same_id = (observers==targets)) #do this after .take which takes points within raster extents
-
+               
+        o.network(t) #do this after .take which takes points within raster extents
+       
         t = None
        
         dem.set_master_window(o.max_radius,
