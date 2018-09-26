@@ -4,7 +4,7 @@
 name=Visibility Analysis
 qgisMinimumVersion=3.0
 description=Visibility analysis over raster DEM
-version=0.6.3
+version=0.6.4
 author=Zoran Čučković
 email=contact@zoran-cuckovic.from.hr
 
