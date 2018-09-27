@@ -57,6 +57,10 @@ The output of intervisibility network routine is a set of lines connecting viewp
 - *Target points*: point type vector layer created by the *create viewpoints* routine. **!** Target height is always specified in the ``target_hgt`` field, even when using the same file for observer and target points.
 - *Save negative links*: save non-visible relationships.
 
+General settings
+---------------
+- Maximum buffer size: [explined here](https://landscapearchaeology.org/2018/visibility-analysis-0-6-4)
+
 Dependencies:
 -------------
 The plugin is coded in Python 3.6 and does not require any additional libraries than those provided by standard QGIS installation. These libraries include *numpy* and *gdal* for manipulating raster data, and *PyQt5* and *QGIS core libraries* for integration with QGIS.
