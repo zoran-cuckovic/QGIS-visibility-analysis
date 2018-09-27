@@ -59,7 +59,7 @@ The output of intervisibility network routine is a set of lines connecting viewp
 
 General settings
 ---------------
-- Maximum buffer size: [explined here](https://landscapearchaeology.org/2018/visibility-analysis-0-6-4)
+- Maximum buffer size: [explained here](https://landscapearchaeology.org/2018/visibility-analysis-0-6-4)
 
 Dependencies:
 -------------
