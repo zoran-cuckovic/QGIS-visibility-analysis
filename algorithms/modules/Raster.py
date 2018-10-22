@@ -1,3 +1,24 @@
+# -*- coding: utf-8 -*-
+
+"""
+/***************************************************************************
+ViewshedAnalysis
+A QGIS plugin
+begin : 2013-05-22
+copyright : (C) 2013 by Zoran Čučković
+email : /
+***************************************************************************/
+
+/***************************************************************************
+* *
+* This program is free software; you can redistribute it and/or modify *
+* it under the terms of the GNU General Public License as published by *
+* the Free Software Foundation version 2 of the License, or *
+* any later version. *
+* *
+***************************************************************************/
+"""
+
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import *
 import gdal
@@ -12,13 +33,12 @@ SINGLE = 0
 ADD = 1
 MIN = 2
 MAX = 3
-# ------------------------------------------
+
 
 """
 This class handles input and output of raster data.
 It doesn't do any calculations besides combining analysed patches. 
 """
-
 class Raster:
 
     
@@ -29,6 +49,8 @@ class Raster:
 
        
         self.crs = crs if crs else gdal_raster.GetProjection()
+
+        
         
         self.rst = gdal_raster #for speed, keep open raster ?
                         
@@ -91,9 +113,6 @@ class Raster:
 
         self.output = output
 
-        self.mode = SINGLE
-        
-
     def pixel_coords (self, x, y):
         
         x_min = self.extent[0]; y_max = self.extent[3]
@@ -126,6 +145,7 @@ class Raster:
         
         full_size = radius_pix *2 +1
         self.window = np.zeros((full_size, full_size))
+        # this is not mask value ! (self.fill)
         self.initial_value=background_value
         self.pad= pad
         
@@ -134,13 +154,13 @@ class Raster:
 
         self.error_matrices = ws.error_matrix( radius_pix, size_factor)
 
-        
         if curvature:
             self.curvature =  self.curvature_matrix(refraction)
         else:
             self.curvature = 0
 
-
+        self.angles = self.angular_matrix()
+        
     """
     Create the output file in memory and determine the mode of combining results
     (addition or min/max)
@@ -149,17 +169,18 @@ class Raster:
     otherwise it will have the size of master window. The latter apporach is 15 - 20% slower. 
     
     """
-    def set_buffer (self, mode, live_memory = False):
+    def set_buffer (self, mode = ADD, live_memory = False):
+
+        self.fill =0 if mode == ADD else np.nan
+
+        self.mode = mode 
 
         if live_memory:
 
             self.result = np.zeros(self.size)
-        else:
-            
-            self.result = None 
-        
-
-        self.mode = mode   
+            if mode != ADD : self.result [:] = np.nan
+                        
+        else: self.result = None           
         
 
     """
@@ -212,12 +233,31 @@ class Raster:
 
  
     """
-    TODO ....
+    Calculate a mask (can be set for each point)
     """
-    def set_mask (self, mask):
+    def set_mask (self,
+                  radius_out,
+                  radius_in=None,
+                  azimuth_north=None,
+                  azimuth_south=None ):
 
-        if mask.shape == self.window.shape: self.mask = mask
-        else : pass
+        #if not radius_out : radius_out = self.mx_dist.size[0]
+
+        mask = self.mx_dist < radius_out
+
+        if radius_in : mask *= self.mx_dist > radius_in 
+
+        if azimuth_north and azimutn_south:
+            
+            mask_az = np.logical_and( self.angles > azimuth_north ,
+                                      self.angles < azimuth_south)
+##  
+##                # masked areas are positive (1) = reverse!
+            if az1 < az2: mask_az = ~ mask_az
+##                
+            mask = np.logical_or (mask, mask_az)
+
+        self.mask = ~ mask
 
     """
     Return a map of distances from the central pixel.
@@ -236,6 +276,20 @@ class Raster:
             return np.sqrt(temp_x[:,None] + temp_y[None,:])
         # squared values
         else: return temp_x[:,None] + temp_y[None,:]
+
+
+    def angular_matrix (self):
+        r = self.radius_pix
+        window = self.window.shape[0]
+
+        temp_x= np.arange(window)[::-1] - r
+        temp_y= np.arange(window) - r
+
+        angles=np.arctan2(temp_y[None,:], temp_x[:,None]) * 180 / np.pi
+
+        angles[angles<0] += 360
+
+        return angles
 
     """
     Extract a quadrangular window from the raster file.
@@ -298,7 +352,7 @@ class Raster:
                 slice(*in_slice_y), slice(*in_slice_x)] -= self.curvature[
                 slice(*in_slice_y), slice(*in_slice_x)]
         # there is a problem with interpolation:
-        # if the analysis window stretches outside raster borders
+        # when the analysis window stretches outside raster borders
         # the last row/column will be interpolated with the fill value
         # the solution is to copy the same values or to catch these vaules (eg. by initialising to np.nan)
         if self.pad:
@@ -331,7 +385,9 @@ class Raster:
     All parameteres are copied from class properties
     because only one window is possible at a time.
     """
-    def add_to_buffer(self, in_array):
+    def add_to_buffer(self, in_array, report = False):
+
+        in_array[self.mask] = self.fill
 
         y_in = slice(*self.inside_window_slice[0])
         x_in = slice(*self.inside_window_slice[1])
@@ -345,9 +401,18 @@ class Raster:
             m = self.gdal_output.ReadAsArray(*self.gdal_slice).astype(float)
 
         if self.mode == SINGLE: m = m_in
-        # elif MIN/ MAX ... TODO
-        else:  m += m_in
-    
+        
+        elif self.mode == ADD:  m += m_in
+
+        else:
+            flt = m_in < m if self.mode == MIN else m_in > m
+            
+        #there is a problem to initialise a comparison without knowing min/max values
+##            # nan will always give False in any comarison
+##            # so make a trick with isnan()...
+            flt[np.isnan(m)]= True
+
+            m[flt]= m_in[flt]
         
         if not isinstance(self.result, np.ndarray): #write to file
             
@@ -362,6 +427,19 @@ class Raster:
             #         in_array [self.inside_window_slice], self.result [self.window_slice])      
             
 
+        if report:
+           # Count values outside mask (mask is True on the outside!)
+            crop = np.count_nonzero(self.mask[y_in, x_in])
+
+            c = np.count_nonzero(m_in)
+
+            # nans in the mask are non_zero
+            if self.fill != 0 : c -= crop
+                            #this is total area analysed 
+            return ( c , m_in.size - crop )
+    
+        
+    
     """
     Writing analysis result.
      - If there is no result assigned to the class, it will produce an empty file.
@@ -369,26 +447,27 @@ class Raster:
        
     """
     def write_output (self, file_name=None,
-                     fill = np.nan, no_data = np.nan,
+                     no_data = np.nan,
                      dataFormat = gdal.GDT_Float32):
 
         if file_name:
+            
+            
             driver = gdal.GetDriverByName('GTiff')
             ds = driver.Create(file_name, self.size[1], self.size[0], 1, dataFormat)
             ds.SetProjection(self.crs)
             ds.SetGeoTransform(self.rst.GetGeoTransform())
 
             ds.GetRasterBand(1).SetNoDataValue(no_data)           
-            ds.GetRasterBand(1).Fill(fill)
+            ds.GetRasterBand(1).Fill(self.fill)
             ds.FlushCache() #important, otherwise we need to delete ds, to force the flush!
 
             # for buffered operations (...hacky ...)
-            self.gdal_output = ds
-
-            
+            self.gdal_output = ds           
       
         else:
             ds = self.gdal_output
+            
 
         try:
             ds.GetRasterBand(1).WriteArray(self.result )

@@ -2,7 +2,7 @@
 
 """
 /***************************************************************************
- Senscape
+ QGIS Viewshed Analysis
                                  A QGIS plugin
  
                               -------------------
@@ -197,7 +197,7 @@ class ViewshedPoints(QgsProcessingAlgorithm):
                             crs = Points_layer.sourceCrs(),
                             project_crs = raster.crs()) 
 
-     
+         
           
         points.clean_parameters( observer_height, radius,
                            z_targ = target ,
@@ -213,9 +213,7 @@ class ViewshedPoints(QgsProcessingAlgorithm):
         
            # "Duplicate IDs!", str(success))
 
-       
-##        if move:
-##           points.move_top(raster.source(), move)
+
 
                 
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT,

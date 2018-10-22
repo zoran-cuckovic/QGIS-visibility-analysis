@@ -9,7 +9,7 @@ from qgis.core import *
 
 from os import path
 
-import gdal #ogr
+import gdal 
 
 import numpy as np
 
@@ -143,7 +143,8 @@ class Points:
             t = geom.asPoint()
 
             if self.project_crs:
-                t = transf.transform(t)
+                try: t = transf.transform(t)
+                except: continue #in case of wrong coords etc.. 
                 
             x_geog, y_geog= t
 
@@ -165,16 +166,16 @@ class Points:
             except: r=radius
                 
             # obligatory prarameters        
-            self.pt[id1]={"id":key, "z":z ,  "radius" : r,
+            self.pt[key]={"id":id1, "z":z ,  "radius" : r,
                           "x_geog":x_geog, "y_geog" : y_geog }
 
             # optional
             if z_targ or field_ztarg:
-                try : self.pt[id1]["z_targ"] = float(feat[field_ztarg])
-                except: self.pt[id1]["z_targ"]=z_targ
+                try : self.pt[key]["z_targ"] = float(feat[field_ztarg])
+                except: self.pt[key]["z_targ"]=z_targ
 
             if folder:
-                self.pt[id1]["path"] = path.join(folder, str(id1) + ".tif")
+                self.pt[key]["path"] = path.join(folder, str(id1) + ".tif")
                 
             
             if azim_1 or azim_2 or field_azim_1 or field_azim_2:
@@ -182,13 +183,13 @@ class Points:
                 try : a1 =  float(feat[field_azim_1])
                 except: a1 =azim_1
 
-                if 0 <= a1 <= 360: self.pt[id1]["azim_1"]=a1
+                if 0 <= a1 <= 360: self.pt[key]["azim_1"]=a1
                 else: errors.append(["Azimuth out of range:",a1, "Point:", id1])
 
                 try : a2 = float(feat[field_azim_2])
                 except: a2 =azim_2
 
-                if 0 <= a2 <= 360: self.pt[id1]["azim_2"]=a2
+                if 0 <= a2 <= 360: self.pt[key]["azim_2"]=a2
                 else: errors.append(["Azimuth out of range:",a2, "Point:", id1])
 
             if angle_down or angle_up or field_angle_down or field_angle_up:
@@ -196,13 +197,13 @@ class Points:
                 try : a1 = float(feat[field_angle_down])
                 except: a1 =angle_down
 
-                if -180 <= a1 <= 180: self.pt[id1]["angle_down"]=a1
+                if -180 <= a1 <= 180: self.pt[key]["angle_down"]=a1
                 else: errors.append(["Angle out of range:",a1, "Point:", id1])
 
                 try : a2 = float(feat[field_angle_up])
                 except: a2 =angle_up
 
-                if -180 <= a2 <= 180: self.pt[id1]["angle_up"]=a2
+                if -180 <= a2 <= 180: self.pt[key]["angle_up"]=a2
                 else: errors.append(["Angle out of range:",a2, "Point:", id1])
      
 
@@ -429,6 +430,7 @@ class Points:
             x_geog, y_geog= t
 
             id1= feat.id()
+          
 
              # !! SHOULD BE PARAMETRIZED - fiels are listed above
             # test_fileds ( FIELDS) and then map ...

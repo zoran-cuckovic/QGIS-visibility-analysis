@@ -39,6 +39,7 @@ from os import path
 from .algorithms.viewshed_points import ViewshedPoints
 from .algorithms.viewshed_raster import ViewshedRaster
 from .algorithms.viewshed_intervisibility import Intervisibility
+from .algorithms.viewshed_horizon_depth import HorizonDepth
 
 
 class VisibilityProvider(QgsProcessingProvider):
@@ -56,7 +57,7 @@ class VisibilityProvider(QgsProcessingProvider):
                                     'Activate', True))
         ProcessingConfig.addSetting(
             Setting(self.name(), 'MEMORY_BUFFER_SIZE',
-                                    'Memory buffer size (mega-pixels)', 300))
+                                    'Memory buffer size (mega-pixels)', 100))
 									
         ProcessingConfig.readSettings()
         self.refreshAlgorithms()
@@ -78,7 +79,8 @@ class VisibilityProvider(QgsProcessingProvider):
 
         
         if self.isActive():
-            for alg in [ViewshedPoints(), ViewshedRaster(), Intervisibility()
+            for alg in [ViewshedPoints(), ViewshedRaster(),
+                        Intervisibility(), HorizonDepth()
                          ]: self.addAlgorithm( alg )
             
     def isActive(self):

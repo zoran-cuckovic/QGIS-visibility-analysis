@@ -53,7 +53,8 @@ from .modules import Raster as rst
 import numpy as np
 import time
 
-class ViewshedRaster(QgsProcessingAlgorithm):
+
+class HorizonDepth(QgsProcessingAlgorithm):
 
     DEM = 'DEM'
     OBSERVER_POINTS = 'OBSERVER_POINTS'
@@ -61,19 +62,14 @@ class ViewshedRaster(QgsProcessingAlgorithm):
     USE_CURVATURE = 'USE_CURVATURE'
     REFRACTION = 'REFRACTION'
     PRECISION = 'PRECISION'
-    ANALYSIS_TYPE = 'ANALYSIS_TYPE'
     OPERATOR = 'OPERATOR'
     OUTPUT = 'OUTPUT'
    
 
     PRECISIONS = ['Coarse','Normal', 'Fine']
 
-    #not used yet
-    TYPES = ['Binary viewshed', 'Depth below horizon',
-             'Horizon', 'Horizon - intermediate', 'Projected horizon']
-
     # not used yet
-    OPERATORS = [ 'Addition', "Maximum", "Minimum"]
+    OPERATORS = [ "Addition", "Minimum","Maximum"]
 
     def __init__(self):
         super().__init__()
@@ -92,12 +88,6 @@ class ViewshedRaster(QgsProcessingAlgorithm):
             self.tr('Digital elevation model ')))
 
 
-##        self.addParameter(ParameterSelection(
-##            self.ANALYSIS_TYPE,
-##            self.tr('Analysis type'),
-##            self.TYPES,
-##            0))
-##
         self.addParameter(QgsProcessingParameterBoolean(
             self.USE_CURVATURE,
             self.tr('Take in account Earth curvature'),
@@ -114,11 +104,11 @@ class ViewshedRaster(QgsProcessingAlgorithm):
 ##            self.PRECISIONS,
 ##            defaultValue=1))
 
-##        self.addParameter(QgsProcessingParameterEnum (
-##            self.OPERATOR,
-##            self.tr('Combining multiple outputs'),
-##            self.OPERATORS,
-##            defaultValue=0))
+        self.addParameter(QgsProcessingParameterEnum (
+            self.OPERATOR,
+            self.tr('Combining multiple outputs'),
+            self.OPERATORS,
+            defaultValue=1))
 
         self.addParameter(
             QgsProcessingParameterRasterDestination(
@@ -145,31 +135,15 @@ class ViewshedRaster(QgsProcessingAlgorithm):
         useEarthCurvature = self.parameterAsBool(parameters,self.USE_CURVATURE,context)
         refraction = self.parameterAsDouble(parameters,self.REFRACTION,context)
         precision = 1#self.parameterAsInt(parameters,self.PRECISION,context)
-        analysis_type = 0#self.getParameterValue(self.ANALYSIS_TYPE)
-        operator = 1 #self.parameterAsInt(parameters,self.OPERATOR,context) + 1       
+        analysis_type = 1
+        operator = self.parameterAsInt(parameters,self.OPERATOR,context) + 1       
 
         output_path = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
  
 
-        #getTempFilenameInTempFolder(
-            #self.name + '.' + self.getDefaultFileExtension(alg)
-
-            
-        # output_dir = self.getOutputValue(self.OUTPUT_DIR)
-
-        # convert meters to layer distance units
-        # [this can be confusing when the module is used in a script,
-        #  and it's 3.0 function ]
-        #coef = QgsUnitTypes.fromUnitToUnitFactor(Qgis.DistanceMeters, dem.crs().mapUnits())
-		
-        #searchRadius = searchRadius * coef
-
-# --------------- verification of inputs ------------------
-
         raster_path= raster.source()
         dem = rst.Raster(raster_path, output=output_path)
-        # TODO: ADD MORE TESTS (raster rotated [projections ??], rectnagular pixels [OK?]
-                         
+                     
         points = pts.Points(observers)
        
         fields =["observ_hgt", "radius"]
@@ -195,47 +169,54 @@ class ViewshedRaster(QgsProcessingAlgorithm):
             live_memory = ( (dem.size[0] * dem.size[1]) / 1000000 <
                            float(ProcessingConfig.getSetting(
                                'MEMORY_BUFFER_SIZE')))
-
-        dem.set_buffer(operator, live_memory = live_memory)
             
         # prepare the output raster
         if not live_memory:
-            dem.write_output(output_path)
+            dem.write_output(output_path, fill = np.nan)
+
+        dem.set_buffer(operator, live_memory = live_memory)
+
 
         pt = points.pt #this is a dict of obs. points
 
-# --------------------- analysis ----------------------   
 
-        start = time.clock();  report=[]
+        start = time.clock(); report=[]
 
         
         #for speed and convenience, use maximum sized window for all analyses
-        
+        #this is not clear! should set using entire size, not radius !!
         dem.set_master_window(points.max_radius,
                             size_factor = precision ,
-                            background_value=0,
+                            background_value=np.nan,
                             pad = precision>0,
                             curvature =useEarthCurvature,
                             refraction = refraction )
         
 
-
         cnt = 0
        
-        for id1 in pt :     
+        for id1 in pt :
+
+            
 
             if feedback.isCanceled():  break
-          
 
+               
             matrix_vis = ws.viewshed_raster (analysis_type, pt[id1], dem,
                                           interpolate = precision > 0)
 
-            # must set the mask before writing the result!             
+            # the algorithm is giving angular difference
+            matrix_vis *= -dem.mx_dist 
+            matrix_vis[dem.radius_pix, dem.radius_pix ]=0
+        
+
+            # must set mask before writing the result!             
             dem.set_mask( pt[id1]["radius"])
 
             r = dem.add_to_buffer (matrix_vis, report = True)
             
             report.append([pt[id1]["id"],*r])
+
 
             cnt += 1
 
@@ -246,15 +227,16 @@ class ViewshedRaster(QgsProcessingAlgorithm):
         
         dem = None
 
+
         txt = ("\n Analysis time: " + str(
                             round( (time.clock() - start
                                     ) / 60, 2)) + " minutes."
-              " \n.      RESULTS \n Point_ID, visible pixels, total pixels" )
+              " \n.      RESULTS \n Point_ID, non-visible pixels, total pixels" )
         
         for l in report:
             txt = txt + "\n" + ' , '.join(str(x) for x in l)
 
-        # TODO : write to Results viewer !!
+        
         QgsMessageLog.logMessage( txt, "Viewshed info")
           
         results = {}
@@ -278,14 +260,14 @@ class ViewshedRaster(QgsProcessingAlgorithm):
         formatting characters.
         """
 
-        return 'Viewshed'
+        return 'horizon_depth'
     
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr(self.name())
+        return self.tr('Depth below horizon')
     
     def group(self):
         """

@@ -263,16 +263,6 @@ def viewshed_raster (option,point, dem, interpolate = True):
             #mx_vis [mx[mask], my[mask]]= v[mask] #np.absolute(mx_err[mask]) for errors
 
 
-    if option == ANGLE_DIFF:
-            # = OPTION ANGLE ZA ALGO : angle diff , angle incidence ???
-                
-        mx_vis *= distance_matrix 
-        # assign target height to the centre (not observer height !)
-        # = first neigbour that is always visible :)
-        mx_vis[center]=z_observer
-        
-   
-
     return mx_vis
 
 """
