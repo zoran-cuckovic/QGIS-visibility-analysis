@@ -10,7 +10,7 @@ First you need to locate your QGIS plugins folder. On Windows it would be 'C:\us
 
 Plugin code can then be extracted in a new folder inside the plugins folder (you should name the folder ViewshedAnalysis). Take care that the code is not inside a subfolder - the folder structure should be like this:  
 
-+ QGIS3\profiles\default\python\__plugins__
++ QGIS3\profiles\default\python\plugins\
     + [some QGIS plugin folders...] 
     + ViewshedAnalysis   
         + visibility_plugin.py
@@ -52,7 +52,7 @@ Intervisibility network
 
 The output of intervisibility network routine is a set of lines connecting viewpoints. 
 
-Intervisibility network
+Depth below horizon
 -----------------------
 **[ Work in progress ]** 
 
