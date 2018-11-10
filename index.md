@@ -39,6 +39,8 @@ Homepage: [zoran-cuckovic.from.hr](http://zoran-cuckovic.from.hr)
 
 ### Archive 
 
+- [October 23, 2018](https://landscapearchaeology.org/2018/depth-below-horizon): Depth below horizon analysis
+
 - [July 15, 2018]( https://landscapearchaeology.org/2018/visibility-test-nuraghi/): Testing perfomance of 0.6 version
 
 - [July 3, 2018](http://landscapearchaeology.org/2018/visibility-analysis-0-6/): 0.6 version - compatible with QGIS 3 
