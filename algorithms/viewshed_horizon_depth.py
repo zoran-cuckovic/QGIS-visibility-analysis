@@ -169,13 +169,14 @@ class HorizonDepth(QgsProcessingAlgorithm):
             live_memory = ( (dem.size[0] * dem.size[1]) / 1000000 <
                            float(ProcessingConfig.getSetting(
                                'MEMORY_BUFFER_SIZE')))
-            
+
+        #has to be assigned before write_outpur routine because the
+        #operator variable determines raster background value [opaque ...]
+        dem.set_buffer(operator, live_memory = live_memory)
+        
         # prepare the output raster
         if not live_memory:
-            dem.write_output(output_path, fill = np.nan)
-
-        dem.set_buffer(operator, live_memory = live_memory)
-
+            dem.write_output(output_path)
 
         pt = points.pt #this is a dict of obs. points
 
