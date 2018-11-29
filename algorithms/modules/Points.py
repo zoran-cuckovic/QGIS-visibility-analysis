@@ -377,7 +377,7 @@ class Points:
             
             for pt2, value in targets.pt.items():
 
-                id2 = self.pt[pt2]["id"]
+                id2 = targets.pt[pt2]["id"]
 
                 x2, y2 = value["pix_coord"]
 
