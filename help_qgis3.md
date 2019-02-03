@@ -29,8 +29,8 @@ Input data
 
 Modules
 =======
-Create observer points
------------------------
+## Create observer points
+
 This is the **first step** for the visibility analysis. The result will be written as a geopackage file with standardised field names and reprojected to match the elevation model used (if needed). Data inside the table can be changed manually - but the names and data types of fields should remain unchanged. 
 
 ### Parameters
