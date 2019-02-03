@@ -1,4 +1,3 @@
-Help qgis
 
 [go to main page](https://zoran-cuckovic.github.io/QGIS-visibility-analysis)
 
