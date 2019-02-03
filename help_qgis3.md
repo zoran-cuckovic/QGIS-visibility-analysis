@@ -48,7 +48,7 @@ Viewshed
 This module will produce a visibility map where each data point of a terrain model will be assigned a true/false value (visible/not visible). When multiple observer points are used, individual viewsheds will be combined into a cumulative viewshed model representing the number of positive results for each data point.
 
 ### Parameters
- -  *Earth cuvature*and *refraction*: see below.
+ -  *Earth cuvature* and *refraction*: see below.
 
 Intervisibility network
 -----------------------
