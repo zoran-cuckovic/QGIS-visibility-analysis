@@ -56,7 +56,7 @@ Intervisibility network
 The output of the intervisibility network routine is a network, in vector format, of visual relationships between two sets of points (or within a single set). For each link the depth below/above visible horizon is calculated, as in many cases only a portion of the specified target is visible. 
 
 ### Parameters
- - *Observer points* and *Target points* are vector layers created by the *create viewpoints* routine. Note that each point can be both, observer and target: the height *as* target is always stored in the ``target_hgt`` field.
+ - *Observer points* and *Target points* are vector layers created by the *create viewpoints* routine. Note that each point can be both, observer and target: the height *as* target is always stored in the ``target_hgt`` field. **(!)** Target height is defaulted to zero if not specified.
  - *Save negative links*: when allowed, non-visible relationships will be registered. These are recognisable as negative vaules of the ``TargetSize`` field.
  -  *Earth cuvature*and *refraction*: see below.
  
