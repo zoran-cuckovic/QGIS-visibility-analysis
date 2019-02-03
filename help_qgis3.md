@@ -86,7 +86,7 @@ Dist: The planimetric distance between the observation point and the target poin
 Refraction: The refractivity coefficient of light (normally it has the opposite, but smaller, effect than the curvature).  
 Diam: The diameter of the earth that is calculated as Semi-major axis + Semi-minor axis. These values are taken from the projection system assigned to the Raster by QGIS. In case of error or unrealistic values, the default Semi-major axis of 6378137 meters and flattening of 298.257 are used.
 
-For more explanation cf. [ArcGIS web page](http://webhelp.esri.com/arcgisdesktop/9.3/index.cfm?TopicName=How%20Visibility%20works)
+For more explanation see [ArcGIS web page](http://webhelp.esri.com/arcgisdesktop/9.3/index.cfm?TopicName=How%20Visibility%20works)
 
 ## General settings
 
@@ -95,7 +95,7 @@ These are acessed under Processing Options (search for Providers >> Visibility A
 - *Activate*: self explanatory...
 - *Maximum buffer size*: when working on multiple points, the algorithm can either hold all data in live memory (which is faster), or select, for each point, a smaller window corresponding to the specified radius (which is somewhat slower). The second approach will be used when the size of terrain model used (DEM) exceedes the specified buffer threshold. It is expressed in megapixels ([explained also here](https://landscapearchaeology.org/2018/visibility-analysis-0-6-4)).
 
-Dependencies:
+Dependencies
 -------------
 The plugin is coded in Python 3.6 and does not require any additional libraries than those provided by standard QGIS installation. These libraries include *numpy* and *gdal* for manipulating raster data, and *PyQt5* and *QGIS core libraries* for integration with QGIS.
 
