@@ -70,7 +70,7 @@ Rather than evaluating visibility as true/false, we can also calculate the depth
 
 Other parameters are the same as for the viewshed module.
 
-See tutorial on [LandscapeArchaeology.org/2018/depth-below-horizon](https://landscapearchaeology.org/2018/depth-below-horizon)
+See for more explanation on [LandscapeArchaeology.org/2018/depth-below-horizon](https://landscapearchaeology.org/2018/depth-below-horizon)
 
 
 ## Earth curvature and refraction
