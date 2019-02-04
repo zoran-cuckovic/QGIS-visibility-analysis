@@ -57,8 +57,8 @@ The output of the intervisibility network routine is a network, in vector format
 
 ### Parameters
  - *Observer points* and *Target points* are vector layers created by the *create viewpoints* routine. Note that each point can be both, observer and target: the height *as* target is always stored in the ``target_hgt`` field. **(!)** Target height is defaulted to zero if not specified.
- - *Save negative links*: when allowed, non-visible relationships will be registered. These are recognisable as negative vaules of the ``TargetSize`` field.
- -  *Earth cuvature*and *refraction*: see below.
+ - *Save negative links*: when allowed, non-visible relationships will be registered. These are recognisable as negative values of the ``TargetSize`` field.
+ -  *Earth curvature* and *refraction*: see below.
  
 Depth below horizon
 -----------------------
@@ -75,7 +75,7 @@ See for more explanation on [LandscapeArchaeology.org/2018/depth-below-horizon](
 
 ## Earth curvature and refraction
 
-Similar to other viewshed algorithms available, it is possible to account for effects of the Earth's curvature and refraction of the light when travelling through the atmosphere. The latter effect is due to differences in density and in composition between layers of the athmosphere, as for instance between air an water. These parameters are insignificant over smaller distances, especially for cuarse grained terrain models. 
+Similar to other viewshed algorithms available, it is possible to account for effects of the Earth's curvature and refraction of the light when travelling through the atmosphere. The latter effect is due to differences in density and in composition between layers of the atmosphere, as for instance between air an water. These parameters are insignificant over smaller distances, especially for coarse grained terrain models. 
 
  Following formula is used to adjust height values in the DEM:
 
@@ -90,10 +90,10 @@ For more explanation see [ArcGIS web page](http://webhelp.esri.com/arcgisdesktop
 
 ## General settings
 
-These are acessed under Processing Options (search for Providers >> Visibility Analysis)
+These are accessed under Processing Options (search for Providers >> Visibility Analysis)
 
 - *Activate*: self explanatory...
-- *Maximum buffer size*: when working on multiple points, the algorithm can either hold all data in live memory (which is faster), or select, for each point, a smaller window corresponding to the specified radius (which is somewhat slower). The second approach will be used when the size of terrain model used (DEM) exceedes the specified buffer threshold. It is expressed in megapixels ([explained also here](https://landscapearchaeology.org/2018/visibility-analysis-0-6-4)).
+- *Maximum buffer size*: when working on multiple points, the algorithm can either hold all data in live memory (which is faster), or select, for each point, a smaller window corresponding to the specified radius (which is somewhat slower). The second approach will be used when the size of terrain model used (DEM) exceeds the specified buffer threshold. It is expressed in megapixels ([explained also here](https://landscapearchaeology.org/2018/visibility-analysis-0-6-4)).
 
 Dependencies
 -------------
