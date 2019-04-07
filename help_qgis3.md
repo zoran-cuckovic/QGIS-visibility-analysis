@@ -108,3 +108,5 @@ Tutorials
 Raster module: [LandscapeArchaeology.org/2018/visibility-analysis-0-6/](https://landscapearchaeology.org/2018/visibility-analysis-0-6/)
 
 Depth below horizon: [LandscapeArchaeology.org/2018/depth-below-horizon](https://landscapearchaeology.org/2018/depth-below-horizon)
+
+Intervisibility: [LandscapeArchaeology.org/2019/intervisibility-qgis/](https://landscapearchaeology.org/2019/intervisibility-qgis/)
