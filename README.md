@@ -1,7 +1,7 @@
 ﻿Advanced viewshed analysis for QGIS 
 ===================================
 
-**Version: 0.6.0**
+**Version: 0.6.x**
 
 **Supported QGIS version: 3.x**
 
@@ -40,6 +40,6 @@ This project is released with a Contributor Code of Conduct (Contributor_code.md
 
 More information:
 --------------
-Tutorials and other stuff can be found on the plugin's webpage:  [https://zoran-cuckovic.github.io/QGIS-visibility-analysis](https://zoran-cuckovic.github.io/QGIS-visibility-analysis)  
+Documentation, tutorials and other stuff can be found on the plugin's webpage:  [https://zoran-cuckovic.github.io/QGIS-visibility-analysis](https://zoran-cuckovic.github.io/QGIS-visibility-analysis)  
 Data for testing purposes can be found at [test data branch](https://github.com/zoran-cuckovic/QGIS-visibility-analysis/tree/test-data).  
 
