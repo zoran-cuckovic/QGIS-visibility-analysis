@@ -4,7 +4,7 @@
 name=Visibility Analysis
 qgisMinimumVersion=3.0
 description=Visibility analysis over raster DEM
-version=0.6.6
+version=1.0
 author=Zoran Čučković
 email=contact@zoran-cuckovic.from.hr
 
@@ -26,7 +26,7 @@ homepage=https://zoran-cuckovic.github.io/QGIS-visibility-analysis/
 category=Raster Analysis
 icon=icon.png
 # experimental flag
-experimental=True
+experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
