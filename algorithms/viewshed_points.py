@@ -213,7 +213,10 @@ class ViewshedPoints(QgsProcessingAlgorithm):
         
            # "Duplicate IDs!", str(success))
 
-
+	if not len(points.pt):
+            err= " \n ****** \n ERROR! \n No points were found, possibly a projection error!"
+            feedback.reportError(err, fatalError = True)
+            raise QgsProcessingException(err)
 
                 
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT,
