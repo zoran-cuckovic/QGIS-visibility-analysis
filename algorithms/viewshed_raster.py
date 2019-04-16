@@ -125,9 +125,23 @@ class ViewshedRaster(QgsProcessingAlgorithm):
                 self.OUTPUT,
             self.tr("Output file")))
 
-##    def shortHelpString(self):
-##        return ("Viewshed maps are made over an elevation model,"
-##               "from viewpoints created by the “Create viewpoints” routine.")
+    def shortHelpString(self):
+
+        h = ("""
+            Produces a visibility map where each data point of a terrain model will be assigned a true/false value (visible/not visible). When multiple observer points are used, individual viewsheds will be combined into a cumulative viewshed model representing the number of positive results for each data point.
+
+            <h3>Parameters</h3>
+
+            <ul>
+                <li> <em>Observer locations</em>: viewpoints created by the "Create viewpoints" routine.</li>
+                <li> <em>Digital elevation model</em>: DEM in the same projection system as viepoints file (preferably the one used in "Create viewpoints" routine).</li>
+            </ul>
+
+            For more see <a href="http://www.zoran-cuckovic.from.hr/QGIS-visibility-analysis/help_qgis3.html">help online</a>.
+        
+            """)
+
+        return h            
 
     #---------- not working ---------------- 
     def helpUrl(self):
