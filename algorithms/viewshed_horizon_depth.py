@@ -115,9 +115,25 @@ class HorizonDepth(QgsProcessingAlgorithm):
                 self.OUTPUT,
             self.tr("Output file")))
 
-##    def shortHelpString(self):
-##        return ("Viewshed maps are made over an elevation model,"
-##               "from viewpoints created by the “Create viewpoints” routine.")
+
+    def shortHelpString(self):
+
+        h = ("""
+             Calculate the depth at which lay invisible portions of a terrain, considerning theoretical horizon.
+
+            <h3>Parameters</h3>
+
+            <ul>
+                <li> <em>Observer locations</em>: viewpoints created by the "Create viewpoints" routine.</li>
+                <li> <em>Digital elevation model</em>: DEM in the same projection system as viepoints file (preferably the one used in "Create viewpoints" routine).</li>
+                <li> <em>Combining multiple outputs</em>: filter for minimum or maximum values when combining multiple visibility models.</li>
+            </ul>
+
+            For more see <a href="http://www.zoran-cuckovic.from.hr/QGIS-visibility-analysis/help_qgis3.html">help online</a>.
+        
+            """)
+
+        return h
 
     #---------- not working ---------------- 
     def helpUrl(self):
@@ -173,10 +189,11 @@ class HorizonDepth(QgsProcessingAlgorithm):
         #has to be assigned before write_outpur routine because the
         #operator variable determines raster background value [opaque ...]
         dem.set_buffer(operator, live_memory = live_memory)
-        
+            
         # prepare the output raster
         if not live_memory:
-            dem.write_output(output_path)
+            dem.write_output(output_path, fill = np.nan)
+
 
         pt = points.pt #this is a dict of obs. points
 
