@@ -122,7 +122,23 @@ class Intervisibility(QgsProcessingAlgorithm):
                 self.OUTPUT,
                 self.tr('Output layer')) )
 
+    def shortHelpString(self):
 
+        h = ("""
+             Constructs a network, in vector format, of visual relationships between two sets of points (or within a single set). For each link the depth below/above visible horizon is also calculated.
+
+            <h3>Parameters</h3>
+
+            <ul>
+                <li> <em>Observer points</em> and <em>Target points</em> are vector layers created by the create viewpoints routine.</li>                <li> <em>Observer height</em>: in meters.</li>
+                <li> <em>Save negative links</em>: when allowed, non-visible relationships will be registered. </li>
+            </ul>
+
+            For more see <a href="http://www.zoran-cuckovic.from.hr/QGIS-visibility-analysis/help_qgis3.html">help online</a>.
+        
+            """)
+
+        return h
 
     def processAlgorithm(self, parameters, context, feedback):
 
