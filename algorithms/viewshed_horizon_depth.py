@@ -192,7 +192,7 @@ class HorizonDepth(QgsProcessingAlgorithm):
             
         # prepare the output raster
         if not live_memory:
-            dem.write_output(output_path, fill = np.nan)
+            dem.write_output(output_path) #, fill = np.nan [not needed]
 
 
         pt = points.pt #this is a dict of obs. points
