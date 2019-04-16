@@ -79,8 +79,8 @@ class ViewshedPoints(QgsProcessingAlgorithm):
 
     
 
-    def help(self):
-        return False, 'http://zoran-cuckovic.github.io/senscape/help/points'
+#    def help(self):
+#        return False, 'http://zoran-cuckovic.github.io/senscape/help/points'
         
     
     def initAlgorithm(self, config):
@@ -148,6 +148,25 @@ class ViewshedPoints(QgsProcessingAlgorithm):
                 self.OUTPUT,
                 self.tr('Output layer')) )
 
+    def shortHelpString(self):
+
+        h = ("""
+            This is the first step for the visibility analysis. The result will be written as a geopackage file with standardised field names and reprojected to match the elevation model used (if needed).
+
+            <h3>Parameters</h3>
+
+            <ul>
+                <li> <em>Observer IDs</em>: viewpoints can be assigned individual names or id numbers, stored in the associated table. Otherwise, internal ids will be used (sequential numbers).</li>
+                <li> <em>Observer height</em>: in meters.</li>
+                <li> <em>Target height</em>: height value to be added to all terrain areas checked for visibility from the observer point.</li>
+                <li> <em>Radius of analysis</em>: maximum distance for visibility testing, in meters.</li>
+            </ul>
+
+            For more see <a href="http://www.zoran-cuckovic.from.hr/QGIS-visibility-analysis/help_qgis3.html">help online</a>
+        
+            """)
+
+        return h
 
     def processAlgorithm(self, parameters, context, feedback):
 
