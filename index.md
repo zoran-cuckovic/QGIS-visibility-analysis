@@ -12,13 +12,11 @@ Viewshed analysis plugin for QGIS calculates visible surface from a given observ
 - Supported QGIS version: 3.x
 - [**Help & documentation**](https://zoran-cuckovic.github.io/QGIS-visibility-analysis/help_qgis3.html)
 
-Archived at: [![10.5281/zenodo.56664](https://zenodo.org/badge/22929/zoran-cuckovic/QGIS-visibility-analysis.svg)](https://zenodo.org/badge/latestdoi/22929/zoran-cuckovic/QGIS-visibility-analysis)
-
-
 ## Deprecated version: 0.5 
 - Supported QGIS version: 2.x
 - [**Help & documentation**](https://zoran-cuckovic.github.io/QGIS-visibility-analysis/help_qgis2.html)
   
+Archived at: [![10.5281/zenodo.56664](https://zenodo.org/badge/22929/zoran-cuckovic/QGIS-visibility-analysis.svg)](https://zenodo.org/badge/latestdoi/22929/zoran-cuckovic/QGIS-visibility-analysis)
 
 ## Publication
 
