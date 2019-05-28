@@ -224,7 +224,7 @@ class HorizonDepth(QgsProcessingAlgorithm):
                                           interpolate = precision > 0)
 
             # the algorithm is giving angular difference
-            matrix_vis *= dem.mx_dist 
+            matrix_vis *= - dem.mx_dist 
             matrix_vis[dem.radius_pix, dem.radius_pix ]=0
         
 
