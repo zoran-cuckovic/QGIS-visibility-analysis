@@ -1,7 +1,7 @@
 ﻿Advanced viewshed analysis for QGIS 
 ===================================
 
-**Version: 1.0
+**Version: 1.0**
 
 **Supported QGIS version: 3.x**
 
