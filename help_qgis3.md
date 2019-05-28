@@ -4,7 +4,7 @@
 
 Installation:
 ------------
-The plugin is installed as any other from the official QGIS repository (In QGIS go to Plugins -> Manage and install ... ). Be sure to **enable experimental versions**.  
+The plugin is installed as any other from the official QGIS repository (In QGIS go to Plugins -> Manage and install ... ). Be sure to enable experimental versions if you're looking for the latest version.  
 
 In case the usual install doesn't work, the plugin can be installed manually:  
 First you need to locate your QGIS plugins folder. On Windows it would be 'C:\users\username\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins' (do a file search for 'QGIS3' ...)
