@@ -8,16 +8,16 @@ Quantum GIS plugin for visibility analysis
 Viewshed analysis plugin for QGIS calculates visible surface from a given observer point over a digital elevation model. The plugin is intended for more complex modelling, such as the depth below the visible horizon or generation of intervisibilty networks between groups of points. It is particularly performant for multiple viewshed calculations form a set of fixed points.
 **Licence: GNU GPL v.3**  
 
-## Current stable version: 0.5.4 
-- Supported QGIS version: 2.x
-- [**Help & documentation**](https://zoran-cuckovic.github.io/QGIS-visibility-analysis/help_qgis2.html)
+## Current stable version: 0.1
+- Supported QGIS version: 3.x
+- [**Help & documentation**](https://zoran-cuckovic.github.io/QGIS-visibility-analysis/help_qgis3.html)
 
 Archived at: [![10.5281/zenodo.56664](https://zenodo.org/badge/22929/zoran-cuckovic/QGIS-visibility-analysis.svg)](https://zenodo.org/badge/latestdoi/22929/zoran-cuckovic/QGIS-visibility-analysis)
 
 
-## Current experimental version: 0.6.x 
-- Supported QGIS version: 3.x
-- [**Help & documentation**](https://zoran-cuckovic.github.io/QGIS-visibility-analysis/help_qgis3.html)
+## Deprecated version: 0.5 
+- Supported QGIS version: 2.x
+- [**Help & documentation**](https://zoran-cuckovic.github.io/QGIS-visibility-analysis/help_qgis2.html)
   
 
 ## Publication
