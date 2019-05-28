@@ -11,13 +11,13 @@
 1\. Installation
 ----------------
 
-The plugin is installed as any other from the official QGIS repository (In QGIS go to _Plugins -> Manage and install_ ... ). Be sure to enable experimental versions if the latest plugin version is labelled as experimental.
+The plugin **cannot** be installed from the official QGIS repository (the QGIS 3 version is hosted there...); you will need to do a manual install. 
 
-In case the usual install doesn't work, the plugin can be installed manually:
+1. Find the QGIS 2 version in the repository [branch QGIS-2](https://github.com/zoran-cuckovic/QGIS-visibility-analysis/tree/QGIS-2), and download the code. 
 
-First you need to locate your QGIS plugins folder. On windows it would be `C:\users\username\.qgis2\python\plugins` and on Linux something like `~/home/.qgis2/python/plugins`. (do a file search for `.qgis2`)
+2. Locate your QGIS plugins folder. On Windows it would be `C:\users\username\.qgis2\python\plugins` and on Linux something like `~/home/.qgis2/python/plugins`. (do a file search for `.qgis2`)
 
-Plugin code can then be extracted in a new folder inside the plugins folder (you should name the folder ViewshedAnalysis). Take care that the code is not inside a subfolder - the folder structure should be like this:
+3. Plugin code can then be extracted in a new folder inside the plugins folder (you should name the folder ViewshedAnalysis). Take care that the code is not inside a subfolder - the folder structure should be like this:
 
 .qgis2\\python\\plugins  
 ├─── \[some QGIS plugin folders...\]  
@@ -25,9 +25,7 @@ Plugin code can then be extracted in a new folder inside the plugins folder (you
 .       ├── viewshedanalysis.py  
 .       ├── \[other files and folders...\]  
 
-Click above to download the latest version (older versions can be found at [QGIS plugins repository](https://plugins.qgis.org/plugins/ViewshedAnalysis/) ).
-
-Be sure to enable the plugin in Plugins manager: it should then be visible in **Plugins menu**. ![enable plugin screenshot](images/enable_plugin.jpg)
+4. Be sure to enable the plugin in Plugins manager: it should then be visible in **Plugins menu**. ![enable plugin screenshot](images/enable_plugin.jpg)
 
 2\. Input and features
 ----------------------
