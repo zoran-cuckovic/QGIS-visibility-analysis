@@ -75,11 +75,11 @@ See for more explanation on [LandscapeArchaeology.org/2018/depth-below-horizon](
 
 ## Earth curvature and refraction
 
-Similar to other viewshed algorithms available, it is possible to account for effects of the Earth's curvature and refraction of the light when travelling through the atmosphere. The latter effect is due to differences in density and in composition between layers of the atmosphere, as for instance between air an water. These parameters are insignificant over smaller distances, especially for coarse grained terrain models. 
+Similar to other viewshed algorithms available, it is possible to account for effects of the Earth's curvature and refraction of the light when travelling through the atmosphere. The latter effect is due to differences in density and in composition between layers of the atmosphere, as for instance between air and water. These parameters are insignificant over smaller distances, especially for coarse grained terrain models. 
 
  Following formula is used to adjust height values in the DEM:
 
-z adjusted = z - (Dist 2 / Diam Earth ) \* (1 - Refraction)
+z adjusted = z - (Dist² / Diam Earth ) * (1 - Refraction)
 
 Where:  
 Dist: The planimetric distance between the observation point and the target point.  
