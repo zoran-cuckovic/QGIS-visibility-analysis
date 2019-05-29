@@ -84,7 +84,7 @@ z adjusted = z - (Dist² / Diam Earth ) * (1 - Refraction)
 Where:  
 Dist: The planimetric distance between the observation point and the target point.  
 Refraction: The refractivity coefficient of light (normally it has the opposite, but smaller, effect than the curvature).  
-Diam: The diameter of the earth that is calculated as Semi-major axis + Semi-minor axis. These values are taken from the projection system assigned to the Raster by QGIS. In case of error or unrealistic values, the default Semi-major axis of 6378137 meters and flattening of 298.257 are used.
+Diam: The diameter of the Earth that is estimated as Equatorial radius + Polar radius. These values are taken from the projection system assigned to the Raster by QGIS. In case of error or unrealistic values, the default radius of 6378.137 kilometers and flattening of 298.257 are used.
 
 For more explanation see [ArcGIS web page](http://webhelp.esri.com/arcgisdesktop/9.3/index.cfm?TopicName=How%20Visibility%20works)
 
