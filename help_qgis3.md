@@ -101,7 +101,7 @@ The plugin is coded in Python 3.6 and does not require any additional libraries 
 
 Repository and download
 ------------------------
-[https://github.com/zoran-cuckovic/QGIS-visibility-analysis/tree/experimental](https://github.com/zoran-cuckovic/QGIS-visibility-analysis/tree/experimental)
+[https://github.com/zoran-cuckovic/QGIS-visibility-analysis](https://github.com/zoran-cuckovic/QGIS-visibility-analysis)
 
 Tutorials
 ---------
