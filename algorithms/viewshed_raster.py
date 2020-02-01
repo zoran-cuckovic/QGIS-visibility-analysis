@@ -134,7 +134,7 @@ class ViewshedRaster(QgsProcessingAlgorithm):
                 <li> Horizon: outer edges of a viewshed. </li>
             </ul>
 
-            Terrain model used should be in the same projection system as viepoints file (preferably the one used in "Create viewpoints" routine).
+            Terrain model used should be in the same projection system as viewpoints file (preferably the one used in "Create viewpoints" routine).
             
             When multiple observer points are used, individual viewsheds will be combined according to the Combinig multiple ouptuts option.
           
