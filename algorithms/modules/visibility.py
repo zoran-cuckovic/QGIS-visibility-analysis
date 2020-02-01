@@ -34,19 +34,18 @@ from math import sqrt
 from . import Points as pts
 from . import Raster as rst
 
+from qgis.core import QgsMessageLog # for testing
 
 
-BINARY_VIEWSHED = 0
-ANGLE_DIFF = 1
-INVISIBILITY_DEPTH = ANGLE_DIFF #synonyms ..
+BINARY = 0
+DEPTH = 1
 HORIZON = 2
 HORIZON_FULL = 3
-HORIZON_PROJECTION = 4
+ANGLE = 4
+INTERVISIBILITY = 5 # not used: separate function!
 
-# not used: separate function!
-INTERVISIBILITY = 5
-
-ANGULAR_SIZE = 6
+HORIZON_PROJECTION = 6
+ANGULAR_SIZE = 7
 
 
 
@@ -149,7 +148,7 @@ in : point class, raster
 
     
 """ 
-def viewshed_raster (option,point, dem, interpolate = True):
+def viewshed_raster (option, point, dem, interpolate = True):
 
 
     distance_matrix = dem.mx_dist    
@@ -157,7 +156,7 @@ def viewshed_raster (option,point, dem, interpolate = True):
     error_matrix, error_mask, indices, indices_interpolation = dem.error_matrices
     
     dem.open_window (point["pix_coord"])
-    data= dem.window
+    data = dem.window
     
     z_observer = point["z"]
     
@@ -185,7 +184,7 @@ def viewshed_raster (option,point, dem, interpolate = True):
     
 
      #if np.ones then the centre gets True val
-    if option == BINARY_VIEWSHED: mx_vis = np.ones(data.shape)
+    if option == BINARY: mx_vis = np.ones(data.shape)
     
     else: mx_vis = np.zeros(data.shape)
 
@@ -199,9 +198,9 @@ def viewshed_raster (option,point, dem, interpolate = True):
     if option in [HORIZON, HORIZON_FULL]:
         data [distance_matrix >= point["radius"] + 2] = np.nan #np.min(data)
    
-    mx = indices[: ,:, 1]; my = indices[: ,:, 0]
+    mx, my = indices[: ,:, 1], indices[: ,:, 0]
 
-    mx_best = mx[error_mask]; my_best = my[error_mask] 
+    mx_best, my_best = mx[error_mask], my[error_mask] 
 
     me_x, me_y = mx, indices_interpolation #me_x = mx !
 
@@ -250,19 +249,36 @@ def viewshed_raster (option,point, dem, interpolate = True):
             # non-interpolated, normal                  
            # v = data[mx,my] == np.maximum.accumulate(data[mx,my], axis=1)
 
-            if option == BINARY_VIEWSHED :  v = interp >= test_val
-            
-           # in fact, angle diff is more useful than binary, but it requires masking for output...
-            elif option == ANGLE_DIFF : v = interp - test_val
+            if option == DEPTH: v = interp - test_val
+            else: v = interp >= test_val
 
-                            
+            if option == HORIZON:
+            #select last pixel (find max value in a reversed array (last axis!)
+                #argmax stops at first occurence
+                #indices have to be re-reversed :)
+                #gives a flat array of 1 index for each row (axis=1)
+                
+                rev_max = dem.radius_pix - np.argmax(v[:, ::-1], axis=1) -1
+                               
+                v[:] = False
+
+                #radius = row n° for fancy index (should be some nicer way...               
+
+                v[ np.arange(dem.radius_pix +1), rev_max.flat ] = True
+
 
             #np.compress faster than simple boolean mask.. ??
             view_o [mx_best, my_best] = v[error_mask]         
             
             #mx_vis [mx[mask], my[mask]]= v[mask] #np.absolute(mx_err[mask]) for errors
+    if option == DEPTH:
+        mx_vis *= - distance_matrix # - dist to get positive values for depth
+        mx_vis[center, center]=0
 
-
+    elif option == ANGLE:
+        # data has already been divides by distances
+        mx_vis = np.atan(data) * mx_vis
+        mx_vis[center, center]= np.nan #THIS IS BAD : should handle better noData !!
     return mx_vis
 
 """
@@ -441,6 +457,9 @@ def intervisibility (point_class, raster_class, interpolate = False):
         
         tgs[id2]["depth"]= z_targ if depth >= 0 else depth + z_targ
     
+
+
+
 
 
 
