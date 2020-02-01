@@ -39,7 +39,7 @@ from os import path
 from .algorithms.viewshed_points import ViewshedPoints
 from .algorithms.viewshed_raster import ViewshedRaster
 from .algorithms.viewshed_intervisibility import Intervisibility
-from .algorithms.viewshed_horizon_depth import HorizonDepth
+
 
 
 class VisibilityProvider(QgsProcessingProvider):
@@ -80,8 +80,7 @@ class VisibilityProvider(QgsProcessingProvider):
         
         if self.isActive():
             for alg in [ViewshedPoints(), ViewshedRaster(),
-                        Intervisibility(), HorizonDepth()
-                         ]: self.addAlgorithm( alg )
+                        Intervisibility()  ]: self.addAlgorithm( alg )
             
     def isActive(self):
         """Return True if the provider is activated and ready to run algorithms"""
