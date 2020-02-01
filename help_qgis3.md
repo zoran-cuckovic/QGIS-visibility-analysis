@@ -58,7 +58,7 @@ When multiple observer points are used, individual viewsheds will be combined in
 
 - *Observer points* are vector layers created by the *Create viewpoints* routine.
 
-- *Combining multiple outputs*: when multiple observer points are used, individual viewsheds will be combined in a single model, either by an addition of values or by selecting lowest oh hihest values. Note that addition is appropriate for binary (true/false) output. Depth values, on the other hand, may be filtered for the highest or the lowest ones.  
+- *Combining multiple outputs*: when multiple observer points are used, individual viewsheds will be combined in a single model, either by an addition of values or by selecting the lowest or the highest values. Note that addition is appropriate for binary (true/false) output. Depth values, on the other hand, may be filtered for the highest or the lowest ones.  
 
  -  *Earth cuvature* and *Refraction*: see below.
 
