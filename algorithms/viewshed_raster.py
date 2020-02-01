@@ -68,17 +68,22 @@ class ViewshedRaster(QgsProcessingAlgorithm):
 
     PRECISIONS = ['Coarse','Normal', 'Fine']
 
-    #not used yet
-    TYPES = ['Binary viewshed', 'Depth below horizon',
-             'Horizon', 'Horizon - intermediate', 'Projected horizon']
+   
+    TYPES = ['Binary viewshed', 'Depth below horizon','Horizon' ]
+#              'Horizon - intermediate', 'Projected horizon']
 
-    # not used yet
-    OPERATORS = [ 'Addition', "Maximum", "Minimum"]
+  
+    OPERATORS = [ 'Addition', "Minimum", "Maximum"]
 
     def __init__(self):
         super().__init__()
 
     def initAlgorithm(self, config):
+
+        self.addParameter(QgsProcessingParameterEnum(
+            self.ANALYSIS_TYPE,
+            self.tr('Analysis type'),
+            self.TYPES, defaultValue=0))
 
         self.addParameter(
             QgsProcessingParameterFeatureSource(
@@ -92,12 +97,6 @@ class ViewshedRaster(QgsProcessingAlgorithm):
             self.tr('Digital elevation model ')))
 
 
-##        self.addParameter(ParameterSelection(
-##            self.ANALYSIS_TYPE,
-##            self.tr('Analysis type'),
-##            self.TYPES,
-##            0))
-##
         self.addParameter(QgsProcessingParameterBoolean(
             self.USE_CURVATURE,
             self.tr('Take in account Earth curvature'),
@@ -114,11 +113,11 @@ class ViewshedRaster(QgsProcessingAlgorithm):
 ##            self.PRECISIONS,
 ##            defaultValue=1))
 
-##        self.addParameter(QgsProcessingParameterEnum (
-##            self.OPERATOR,
-##            self.tr('Combining multiple outputs'),
-##            self.OPERATORS,
-##            defaultValue=0))
+        self.addParameter(QgsProcessingParameterEnum (
+            self.OPERATOR,
+            self.tr('Combining multiple outputs'),
+            self.OPERATORS,
+            defaultValue=0))
 
         self.addParameter(
             QgsProcessingParameterRasterDestination(
@@ -128,16 +127,25 @@ class ViewshedRaster(QgsProcessingAlgorithm):
     def shortHelpString(self):
 
         h = ("""
-            Produces a visibility map where each data point of a terrain model will be assigned a true/false value (visible/not visible). When multiple observer points are used, individual viewsheds will be combined into a cumulative viewshed model representing the number of positive results for each data point.
+            Produces a visibility map where each observer point on a terrain model. The output can be:
+            <ul>
+                <li> Binary viewshed: visible/not visible (1/0).</li>
+                <li> Depth below horizon: height that each location should attain in order to become visible.</li>
+                <li> Horizon: outer edges of a viewshed. </li>
+            </ul>
 
+            Terrain model used should be in the same projection system as viepoints file (preferably the one used in "Create viewpoints" routine).
+            
+            When multiple observer points are used, individual viewsheds will be combined according to the Combinig multiple ouptuts option.
+          
             <h3>Parameters</h3>
 
             <ul>
                 <li> <em>Observer locations</em>: viewpoints created by the "Create viewpoints" routine.</li>
-                <li> <em>Digital elevation model</em>: DEM in the same projection system as viepoints file (preferably the one used in "Create viewpoints" routine).</li>
+                <li> <em>Digital elevation model</em>: DEM in the same projection system as viewpoints file.</li>
             </ul>
 
-            For more see <a href="http://www.zoran-cuckovic.from.hr/QGIS-visibility-analysis/help_qgis3.html">help online</a>.
+            For more see <a href="http://zoran-cuckovic.github.io/QGIS-visibility-analysis/help_qgis3.html">help online</a>.
         
             """)
 
@@ -159,8 +167,8 @@ class ViewshedRaster(QgsProcessingAlgorithm):
         useEarthCurvature = self.parameterAsBool(parameters,self.USE_CURVATURE,context)
         refraction = self.parameterAsDouble(parameters,self.REFRACTION,context)
         precision = 1#self.parameterAsInt(parameters,self.PRECISION,context)
-        analysis_type = 0#self.getParameterValue(self.ANALYSIS_TYPE)
-        operator = 1 #self.parameterAsInt(parameters,self.OPERATOR,context) + 1       
+        analysis_type = self.parameterAsInt(parameters,self.ANALYSIS_TYPE, context)
+        operator = self.parameterAsInt(parameters,self.OPERATOR,context) +1       
 
         output_path = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
  
@@ -185,14 +193,15 @@ class ViewshedRaster(QgsProcessingAlgorithm):
         # TODO: ADD MORE TESTS (raster rotated [projections ??], rectnagular pixels [OK?]
                          
         points = pts.Points(observers)
-       
-        fields =["observ_hgt", "radius"]
-        miss = points.test_fields(fields)
+           
+        miss = points.test_fields(["observ_hgt", "radius"])
         
         if miss:
             err= " \n ****** \n ERROR! \n Missing fields: \n" + "\n".join(miss)
             feedback.reportError(err, fatalError = True)
             raise QgsProcessingException(err)
+
+        miss_params = points.test_fields(["radius_in", "azim_1", "azim_2"])
 
         points.take(dem.extent, dem.pix)
 
@@ -209,7 +218,7 @@ class ViewshedRaster(QgsProcessingAlgorithm):
             live_memory = ( (dem.size[0] * dem.size[1]) / 1000000 <
                            float(ProcessingConfig.getSetting(
                                'MEMORY_BUFFER_SIZE')))
-
+        
         dem.set_buffer(operator, live_memory = live_memory)
             
         # prepare the output raster
@@ -244,10 +253,20 @@ class ViewshedRaster(QgsProcessingAlgorithm):
             matrix_vis = ws.viewshed_raster (analysis_type, pt[id1], dem,
                                           interpolate = precision > 0)
 
-            # must set the mask before writing the result!             
-            dem.set_mask( pt[id1]["radius"])
+            # must set the mask before writing the result!
+            mask = [pt[id1]["radius"]]
+
+            if "radius_in" not in miss_params:
+                mask += [ pt[id1]["radius_in"] ] 
+            
+            if  "azim_1" not in miss_params and  "azim_2" not in miss_params: 
+                mask += [ pt[id1]["azim_1"], pt[id1]["azim_2"] ]
+                print (mask)
+
+            dem.set_mask(*mask)
 
             r = dem.add_to_buffer (matrix_vis, report = True)
+            
             
             report.append([pt[id1]["id"],*r])
 
