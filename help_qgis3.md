@@ -27,7 +27,7 @@ Input data
 - *Digital elevation model*: terrain model in a raster format (a pixel grid such as .tiff). Only **projected raster data** can be used. Latitude/longitude "projections", such as WGS84 are not allowed.
 - *Observer/target points* have to be stored in a shapefile or other recognised vector formats. Lines or polygons cannot be used (unless broken up in points). Multi-point shapefiles will not work, neither. In case when point's coordinate system differ from the elevation model used, the vector data will be reprojected to match.
 
-[**I repeat** : do not use unprojected data in degrees (Lat/lon, WGS 84), such data is inappropriate for precision calculation. Be sure to understand GIS projections before mailing me...] 
+[I repeat: do not use **unprojected data** in degrees (Lat/lon, WGS 84), such data is inappropriate for precision calculation. Be sure to understand GIS projections before mailing me...] 
 
 Modules
 =======
