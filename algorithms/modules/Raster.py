@@ -166,7 +166,7 @@ class Raster:
     (addition or min/max)
 
     If live_memory is True, a buffer will be the same size as the entire raster,
-    otherwise it will have the size of master window. The latter apporach is 15 - 20% slower. 
+    otherwise it will have the size of master window. The latter approach is 15 - 20% slower. 
     
     """
     def set_buffer (self, mode = ADD, live_memory = False):
@@ -222,6 +222,7 @@ class Raster:
 
         
     def curvature_matrix(self, refraction=0):
+        #see https://www.usna.edu/Users/oceano/pguth/md_help/html/demb30q0.htm
     
         dist_squared = self.distance_matrix(squared=True)
         # all distances are in pixels in doViewshed module !!
@@ -238,8 +239,8 @@ class Raster:
     def set_mask (self,
                   radius_out,
                   radius_in=None,
-                  azimuth_north=None,
-                  azimuth_south=None ):
+                  azimuth_1=None,
+                  azimuth_2=None ):
 
         #if not radius_out : radius_out = self.mx_dist.size[0]
 
@@ -247,16 +248,16 @@ class Raster:
 
         if radius_in : mask *= self.mx_dist > radius_in 
 
-        if azimuth_north and azimutn_south:
-            
-            mask_az = np.logical_and( self.angles > azimuth_north ,
-                                      self.angles < azimuth_south)
-##  
-##                # masked areas are positive (1) = reverse!
-            if az1 < az2: mask_az = ~ mask_az
-##                
-            mask = np.logical_or (mask, mask_az)
+        if azimuth_1 != None and azimuth_2 != None:
 
+            operator = np.logical_and if azimuth_1 < azimuth_2 else np.logical_or
+
+            mask_az = operator(self.angles > azimuth_1, self.angles < azimuth_2)
+
+         
+                
+            mask *= mask_az
+    
         self.mask = ~ mask
 
     """
@@ -387,7 +388,8 @@ class Raster:
     """
     def add_to_buffer(self, in_array, report = False):
 
-        in_array[self.mask] = self.fill
+        try: in_array[self.mask] = self.fill
+        except: pass #an array may be unmasked 
 
         y_in = slice(*self.inside_window_slice[0])
         x_in = slice(*self.inside_window_slice[1])
@@ -428,15 +430,19 @@ class Raster:
             
 
         if report:
-           # Count values outside mask (mask is True on the outside!)
-            crop = np.count_nonzero(self.mask[y_in, x_in])
+            try:
+               # Count values outside mask (mask is True on the outside!)
+                crop = np.count_nonzero(self.mask[y_in, x_in])
 
-            c = np.count_nonzero(m_in)
+                c = np.count_nonzero(m_in)
 
-            # nans in the mask are non_zero
-            if self.fill != 0 : c -= crop
-                            #this is total area analysed 
-            return ( c , m_in.size - crop )
+                # nans in the mask are non_zero
+                if self.fill != 0 : c -= crop
+                                #this is total area analysed 
+                return ( c ,  - crop )
+
+            except: #unmasked array
+                return (np.count_nonzero(m_in), m_in.size) 
     
         
     
