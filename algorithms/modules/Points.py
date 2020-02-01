@@ -36,6 +36,7 @@ FIELDS = {"id" : ["ID", 255,0],
           "z": ["observ_hgt", 10,4],
           "z_targ":["target_hgt", 10, 4],
           "radius":["radius", 10, 2],
+          "radius_in":["radius_in", 10, 2],
           "path":["file", 255,0],
           "azim_1":["azim_1", 8, 5],
           "azim_2":["azim_2", 8, 5],
@@ -115,12 +116,14 @@ class Points:
     # enable to set a default in case there is a problem, eg z = float(None)
     def clean_parameters(self, z_obs, radius ,
                         z_targ=0,
+                        radius_in =0,
                         azim_1 = 0, azim_2=0,
                         angle_down =0, angle_up=0,
                         field_ID = None,
                         field_zobs = None,
                         field_ztarg=None,
                         field_radius=None,
+                        field_radius_in=None,
                         folder = None,
                         field_azim_1 = None,
                         field_azim_2=None,
@@ -176,7 +179,10 @@ class Points:
 
             if folder:
                 self.pt[key]["path"] = path.join(folder, str(id1) + ".tif")
-                
+
+            if radius_in:
+                try: self.pt[key]["radius_in"] = float(feat[field_radius_in])
+                except: self.pt[key]["radius_in"] = radius_in
             
             if azim_1 or azim_2 or field_azim_1 or field_azim_2:
                 
@@ -454,6 +460,9 @@ class Points:
             try: self.pt[ id1 ]["z_targ"]  = feat["target_hgt"]
             except : pass
 
+            try: self.pt[ id1 ]["radius_in"]  = feat["radius_in"]/ pix_size
+            except : pass
+            
             try: self.pt[ id1 ]["file"] = feat["file"]
             except: pass
 
