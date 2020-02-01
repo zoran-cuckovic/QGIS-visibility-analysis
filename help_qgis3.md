@@ -47,10 +47,20 @@ All parameters (observer/target height, point ID, radius of analysis) are read f
 Viewshed
 -------------
 
-This module will produce a visibility map where each data point of a terrain model will be assigned a true/false value (visible/not visible). When multiple observer points are used, individual viewsheds will be combined into a cumulative viewshed model representing the number of positive results for each data point.
+This module performs a visibility calcualtion for individual points over a terrain model (in a raster grid format). Three output types are available:
+- Binary viewshed will produce a visibility map where each data point of a terrain model will be assigned a true/false value (visible/not visible).
+- Depth below horizon will provide the depth at which lay invisible portions of a terrain. The value produced by this module can be understood as the theoretical height a construction should attain in order to appear on the horizon, as visible from the chosen observer point.
+- Horizon option will trace the outer edges of a viewshed, which represents points that appear on the horizon from a chosen observer point.  
+
+When multiple observer points are used, individual viewsheds will be combined into a cumulative viewshed model representing the number of positive results for each data point.
 
 ### Parameters
- -  *Earth cuvature* and *refraction*: see below.
+
+- *Observer points* are vector layers created by the *Create viewpoints* routine.
+
+- *Combining multiple outputs*: when multiple observer points are used, individual viewsheds will be combined in a single model, either by an addition of values or by selecting lowest oh hihest values. Note that addition is appropriate for binary (true/false) output. Depth values, on the other hand, may be filtered for the highest or the lowest ones.  
+
+ -  *Earth cuvature* and *Refraction*: see below.
 
 Intervisibility network
 -----------------------
@@ -58,22 +68,10 @@ Intervisibility network
 The output of the intervisibility network routine is a network, in vector format, of visual relationships between two sets of points (or within a single set). For each link the depth below/above visible horizon is calculated, as in many cases only a portion of the specified target is visible. 
 
 ### Parameters
- - *Observer points* and *Target points* are vector layers created by the *create viewpoints* routine. Note that each point can be both, observer and target: the height *as* target is always stored in the ``target_hgt`` field. **(!)** Target height is defaulted to zero if not specified.
+ - *Observer points* and *Target points* are vector layers created by the *Create viewpoints* routine. Note that each point can be both, observer and target: the height *as* target is always stored in the ``target_hgt`` field. **(!)** Target height is defaulted to zero if not specified.
  - *Save negative links*: when allowed, non-visible relationships will be registered. These are recognisable as negative values of the ``TargetSize`` field.
- -  *Earth curvature* and *refraction*: see below.
+ -  *Earth curvature* and *Refraction*: see below.
  
-Depth below horizon
------------------------
-Rather than evaluating visibility as true/false, we can also calculate the depth at which lay invisible portions of the terrain. The value produced by this module can be understood as the theoretical height a construction should attain in order to appear on the horizon, as visible from the chosen observer point.
-
-### Parameters
-
-- *combining multiple outputs*: unlike simple true/false viewshed maps, depths under the horizon are not cumulative (in typical situations). For instance, if a same building is evaluated from different observing points, we would be interested in a best or worst case scenario: which height would be visible to all observers or, conversely, to none of the observers. Therefore we would search for minimum / maximum values, which is obtained by setting this parameter.      
-
-Other parameters are the same as for the viewshed module.
-
-See for more explanation on [LandscapeArchaeology.org/2018/depth-below-horizon](https://landscapearchaeology.org/2018/depth-below-horizon)
-
 
 ## Earth curvature and refraction
 
