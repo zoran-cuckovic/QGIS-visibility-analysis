@@ -37,6 +37,12 @@ Homepage: [zoran-cuckovic.from.hr](http://zoran-cuckovic.from.hr)
 
 ### Archive 
 
+- [March 15, 2020](https://landscapearchaeology.org/2020/viewshed-tutorial): Basic tutorial for QGIS 3
+
+- [December 6, 2019](https://landscapearchaeology.org/2019/visual-impact-analysis/): Analysing visual impact of high buildings
+
+- [April 7, 2019](https://landscapearchaeology.org/2019/intervisibility-qgis/): Intervisibility analysis 
+
 - [October 23, 2018](https://landscapearchaeology.org/2018/depth-below-horizon): Depth below horizon analysis
 
 - [July 15, 2018]( https://landscapearchaeology.org/2018/visibility-test-nuraghi/): Testing perfomance of 0.6 version
