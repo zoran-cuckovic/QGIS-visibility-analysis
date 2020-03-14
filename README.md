@@ -5,4 +5,4 @@ This folder contains shapefiles with different observation points and an extract
 
 Projection system: EPSG:31275 (MGI / Balkans zone 5).
 
-For tutorials check [zoran-cuckovic.from.hr](zoran-cuckovic.from.hr/landscape_analysis/visibility) 
+For tutorials check [LandscapeArchaeology.org](https://landscapearchaeology.org) 
