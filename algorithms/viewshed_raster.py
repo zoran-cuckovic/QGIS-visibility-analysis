@@ -229,7 +229,8 @@ class ViewshedRaster(QgsProcessingAlgorithm):
 
 # --------------------- analysis ----------------------   
 
-        start = time.clock();  report=[]
+        start = time.process_time()
+        report = []
 
         
         #for speed and convenience, use maximum sized window for all analyses
@@ -280,7 +281,7 @@ class ViewshedRaster(QgsProcessingAlgorithm):
         dem = None
 
         txt = ("\n Analysis time: " + str(
-                            round( (time.clock() - start
+            round((time.process_time() - start
                                     ) / 60, 2)) + " minutes."
               " \n.      RESULTS \n Point_ID, visible pixels, total pixels" )
         
