@@ -17,7 +17,7 @@ Plugin code can then be extracted in a new folder inside the plugins folder (you
         + visibility_plugin.py
 		+ visibility_provider.py
         + [other files and folders...]  
-	
+
 Workflow
 =======
 Visibility analysis is broken down in two steps: first a set of observer points is created using *Create observer points* module, which are then fed to other modules. 
@@ -105,8 +105,4 @@ Repository and download
 
 Tutorials
 ---------
-Raster module: [LandscapeArchaeology.org/2018/visibility-analysis-0-6/](https://landscapearchaeology.org/2018/visibility-analysis-0-6/)
-
-Depth below horizon: [LandscapeArchaeology.org/2018/depth-below-horizon](https://landscapearchaeology.org/2018/depth-below-horizon)
-
-Intervisibility: [LandscapeArchaeology.org/2019/intervisibility-qgis/](https://landscapearchaeology.org/2019/intervisibility-qgis/)
+See [main page](http://www.zoran-cuckovic.from.hr/QGIS-visibility-analysis/).
