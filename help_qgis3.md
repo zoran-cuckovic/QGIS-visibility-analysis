@@ -61,6 +61,12 @@ When multiple observer points are used, individual viewsheds will be combined in
 - *Combining multiple outputs*: when multiple observer points are used, individual viewsheds will be combined in a single model, either by an addition of values or by selecting the lowest or the highest values. Note that addition is appropriate for binary (true/false) output. Depth values, on the other hand, may be filtered for the highest or the lowest ones.  
 
  -  *Earth cuvature* and *Refraction*: see below.
+ 
+ ### Distance ad direction filter
+ 
+ ![mask](https://landscapearchaeology.org/figures/20-03-30-shema.png)
+ 
+ Individual viewsheds can be masked in order to select desired view direction and radius: see more on [LandscapeArchaeology.org]( https://landscapearchaeology.org/2020/direction-viewshed/).  
 
 Intervisibility network
 -----------------------
