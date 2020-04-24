@@ -505,7 +505,7 @@ def visibility_index (raster, obs_height,
                 #create a copy !!
                 #perhaps not smart, but fool-proof ...
                 out = np.zeros(raster.shape)
-                raster[view_in] = diff
+                out[view_in] = diff
             else:
                 out = np.copy(raster)
                 out[view_in] += diff * abs(offset)
@@ -617,11 +617,11 @@ def visibility_index (raster, obs_height,
              
             # this is clumsy : curvature is assigned to master window
             # (set before calling this function)
-            try:  heights -= raster.curvature[d + y, d + x]
-            except: pass
-
+            try: curv = raster.curvature[d + y, d + x]
+            except: curv = 0
+            
            # a is shifted, b is the origin point    
-            heights -= data[b] + obs_height 
+            heights -= data[b] + ( obs_height + curv )
             
             heights /= dist
             
