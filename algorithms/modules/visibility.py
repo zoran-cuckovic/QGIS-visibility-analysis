@@ -461,6 +461,210 @@ def intervisibility (point_class, raster_class, interpolate = False):
 
 
 
+def visibility_index (raster, obs_height,
+                       target_height = 0,
+                       sample = 0,
+                       direction=0,
+                       interpolate = 0,
+                       mask = None,
+                       feedback = None,
+                       option = None):
+
+    """
+    Calculate visual exposition/control for all terrain locations (DEM pixels).
+    Uses matrix translations, no viewpoints need to be specified. 
+    (aka Total viewshed)
+    """
+    
+
+    # find two matching matrix views
+    def slice_crop (flip, point, size, crop_border = False):
+
+        start, sf = (1, 1) if crop_border else (0,0)
+        
+        a = slice(point , size - sf) 
+        b = slice(start, size - point)
+
+        return (b, a ) if flip else (a, b)      
+                    
+
+    def interpolate_heights(raster, offset, x_axis = False, difference_only = False):
+            """
+            We use raster offset where y axis is descending  
+            (positive offset = down or right)
+            """
+                  
+            if x_axis:  view_in, view_off = np.s_[: , :-1], np.s_[ : , 1 :]
+            else:       view_in, view_off = np.s_[:-1 , :],np.s_[ 1 : , :] 
+                        
+            if offset < 0: view_in, view_off = view_off, view_in
+
+            diff = raster[view_off] - raster[view_in]
+                                    
+            if difference_only:  
+                #create a copy !!
+                #perhaps not smart, but fool-proof ...
+                out = np.zeros(raster.shape)
+                raster[view_in] = diff
+            else:
+                out = np.copy(raster)
+                out[view_in] += diff * abs(offset)
+
+            return out               
+                    
+    start = time.process_time()
+    
+    data = raster.open_raster()
+ 
+    ysize, xsize = data.shape
+    
+    # pixel distances
+    radius = raster.radius / raster.pix
+
+    d = int(radius)
+
+    # precalculated distances 
+    # must be in pixel distances!    
+    mx_dist = raster.mx_dist [d:, d:]
+
+    step = radius / (sample / 8)
+    
+    # border targets (without one corner pix)    
+    # attention! +d is never included - to avoid duplicates on corners
+    b = np.arange(-d, d, step)
+    #add a dimension for x
+    b= np.stack((b, np.zeros(b.size)), axis = -1)
+    b[:,1] = d # x targets
+
+    end_offsets = np.vstack(( b,
+                b[:, ::-1] * [1, -1],
+                b *[-1, -1],
+                b[:, ::-1] * [-1, 1] )).astype(int)
+  
+    
+    out = np.zeros(data.shape)
+    temp_z1 = np.zeros(data.shape)
+    temp_z2 = np.zeros(data.shape)
+
+    mx_norm = np.zeros(data.shape) #not ones !
+        
+    cnt = 0 #progress tracking
+
+    for p in end_offsets:
+         
+        y2,x2 = p
+               
+        flip_x, flip_y, steep = x2 < 0, y2 < 0, abs(y2) > abs(x2)
+                        
+        temp_z2 [:] = -999999999999
+        
+        line, neighbours, errors = rasterised_line (0,0, x2, y2,
+                                                           interpolation = True)              
+        
+        if interpolate:
+            
+            # APPROXIMATION - average error (except for sample 16 - all errs = 0,5)
+            # TO TEST :  err = errors.sum() / np.count_nonzero(errors)
+            
+            err =  1 # offset only ! 
+            # positive error : down/right
+            interp_down = interpolate_heights(np.copy(data),  err,  steep, difference_only = True )
+            interp_up = interpolate_heights(np.copy(data),  - err ,  steep, difference_only= True)
+            # true interpolation needs to be hardcoded - can be done for 16 lines (min 2 matrices - max 4),
+            # but for 32 we need min 4 - max 8 matrices  
+            
+            if (flip_x and steep) or (flip_y and not steep):
+                interp_up, interp_down = interp_down, interp_up
+
+        """
+        Absolute values are used !
+        We are only interested in relative shifts, not in actual coords.
+        In fact, we can only use 1/8th of targets and then flip axes.
+        (... but then the LOS can't be customised...)
+    
+        """        
+        for y,x in np.abs(line): 
+
+            dist = mx_dist [y, x] 
+             
+            i= max(x,y)-1 #index inside the line
+            e= errors[i]      
+
+            if x> xsize or y> ysize or dist > radius : break
+       
+            # a= slice(sy_a, sx_a); b=slice(sy_b, sx_b) -- not working!
+            y_a, y_b = slice_crop (flip_y, y, ysize)
+            x_a, x_b = slice_crop (flip_x, x, xsize)
+            
+            a = np.s_[y_a, x_a]
+            b = np.s_[y_b, x_b]
+            
+            heights = temp_z1[a] # it's a view, reusing the matrix !
+            heights[:] = data[a]
+            
+            old_heights = temp_z2[b] # same
+            
+            if interpolate and e :
+                
+                y_i, x_i = np.abs(neighbours[i])
+                
+                if (y_i- y) + (x_i - x)  > 0 : 
+                #   one of the two is always 0 !
+                # ! when x or y rises : go down or right
+                    heights += interp_down[a] * e 
+                else:
+                    heights += interp_up[a] * e 
+             
+            # this is clumsy : curvature is assigned to master window
+            # (set before calling this function)
+            try:  heights -= raster.curvature[d + y, d + x]
+            except: pass
+
+           # a is shifted, b is the origin point    
+            heights -= data[b] + obs_height 
+            
+            heights /= dist
+            
+            visib = heights > old_heights
+                   
+            old_heights[visib] = heights [visib]
+                
+            # a = incoming, viewshed             
+            # b = outgoing, observer perspective
+            view, anti_view = (b, a) if direction else (a, b)
+  
+            f = (i + 1) * (8/ sample) # i begins with 0...
+            """ 
+            each step is representative of a vertical column of pixels
+            for four lines (sample = 4) we cover step distance times 2, and so on...
+            Remark that this is the same as dist * slope * 2
+            where slope = np.tan(np.radians(360/sample))
+            """
+            out[view][visib] += f
+            # this can (should) be precalculated ...
+            mx_norm[view] += f        
+            
+            if feedback.isCanceled(): sys.exit()
+            # line loop
+
+        cnt += 1
+        t = time.process_time()
+        end = start + ( t - start) * (sample/cnt)
+        info = '  \r{0} minutes left'.format(round((end-t)/60, 1)) 
+        try:
+            feedback.setProgressText(info)
+            feedback.setProgress(cnt/sample * 100)
+        except: pass    
+
+    try: 
+        QgsMessageLog.logMessage(" Finished: " + str( round( (time.clock() - start) / 60, 2)) +
+                                 " minutes."  ,   "Viewshed info 2")
+    except: pass
+
+    out /= mx_norm
+
+    return out
+
 
 
 
