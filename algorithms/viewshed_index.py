@@ -5,17 +5,6 @@ Created on Thu Apr  9 16:39:35 2020
 @author: zcuckovi
 """
 
-# -*- coding: utf-8 -*-
-
-
-"""
-BUGS :
- output has borders --> because of NoData on input raster borders!
- (handle NoData !?)
- 
- Earth curvature : not convincing = calculation on pixel sizes, to adjust !!
-"""
-
 from PyQt5.QtCore import QCoreApplication
 
 from plugins.processing.gui import MessageBarProgress
@@ -104,7 +93,7 @@ class VisibilityIndex(QgsProcessingAlgorithm):
         
         self.addParameter(QgsProcessingParameterBoolean(
             self.INTERPOLATE,
-            self.tr('Use height interpolation'), False))
+            self.tr('Use height interpolation'), True))
 
 
         self.addParameter(QgsProcessingParameterBoolean(
@@ -147,21 +136,23 @@ class VisibilityIndex(QgsProcessingAlgorithm):
         refraction=self.parameterAsDouble(parameters,self.REFRACTION, context)
         
         
-        raster = rst.Raster(input_raster.source())
+    
         
         # this code is replicated from Create points routine 
-        if raster.crs().mapUnits() != 0 :
+        if input_raster.crs().mapUnits() != 0 :
             err= " \n ****** \n ERROR! \n Raster data has to be projected in a metric system!"
             feedback.reportError(err, fatalError = True)
             raise QgsProcessingException(err)
 
-        if  round(abs(raster.rasterUnitsPerPixelX()), 2) !=  round(abs(raster.rasterUnitsPerPixelY()),2):    
+        if  round(abs(input_raster.rasterUnitsPerPixelX()), 2) !=  round(
+                abs(input_raster.rasterUnitsPerPixelY()),2):    
             err= (" \n ****** \n ERROR! \n Raster pixels are irregular in shape " +
                   "(probably due to incorrect projection)!")
             feedback.reportError(err, fatalError = True)
             raise QgsProcessingException(err)
 
-
+        raster = rst.Raster(input_raster.source())
+        
         raster.set_master_window(radius,
                                  curvature = curvature,
                                  refraction = refraction)
