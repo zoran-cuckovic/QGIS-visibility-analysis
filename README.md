@@ -1,13 +1,13 @@
 ﻿Advanced viewshed analysis for QGIS 
 ===================================
 
-**Version: 1.0**
+**Version: 1.2**
 
 **Supported QGIS version: 3.x**
 
 **Licence: GNU GPLv3**
 
-**Documentation**: [www.zoran-cuckovic.from.hr/QGIS-visibility-analysis/](http://www.zoran-cuckovic.from.hr/QGIS-visibility-analysis/)
+**Documentation**: [zoran-cuckovic.github.io/QGIS-visibility-analysis/](zoran-cuckovic.github.io/QGIS-visibility-analysis/)
 
 **Author: Zoran Čučković ([web page](http://zoran-cuckovic.from.hr))** 
 
