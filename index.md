@@ -8,7 +8,7 @@ Quantum GIS plugin for visibility analysis
 Viewshed analysis plugin for QGIS calculates visible surface from a given observer point over a digital elevation model. The plugin is intended for more complex modelling, such as the depth below the visible horizon or generation of intervisibilty networks between groups of points. It is particularly performant for multiple viewshed calculations form a set of fixed points.
 **Licence: GNU GPL v.3**  
 
-If you encounter problems, please read on [geographic projections](https://landscapearchaeology.org/2020/wgs/) before submitting an issue. 
+If you encounter problems, please read on **[geographic projections](https://landscapearchaeology.org/2020/wgs/)** before submitting an issue. 
 
 ## Current stable version: 1.0
 - Supported QGIS version: 3.x
