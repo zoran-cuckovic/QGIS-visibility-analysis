@@ -38,6 +38,9 @@ Homepage: [zoran-cuckovic.from.hr](http://zoran-cuckovic.from.hr)
 
 
 ### Archive 
+
+- [May 1, 2020](https://landscapearchaeology.org/2020/visibility-index/): Visibility index / total viewshed
+
 - [March 30, 2020](https://landscapearchaeology.org/2020/direction-viewshed/): Direction and angle filters for viewsheds
 
 - [March 15, 2020](https://landscapearchaeology.org/2020/viewshed-tutorial): Basic tutorial for QGIS 3
