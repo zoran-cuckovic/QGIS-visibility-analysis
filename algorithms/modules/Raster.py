@@ -460,7 +460,7 @@ class Raster:
             
             
             driver = gdal.GetDriverByName('GTiff')
-            ds = driver.Create(file_name, self.size[1], self.size[0], 1, dataFormat)
+            ds = driver.Create(file_name, self.size[1], self.size[0], 1, dataFormat, ['COMPRESS=LZW'])
             ds.SetProjection(self.crs)
             ds.SetGeoTransform(self.rst.GetGeoTransform())
 
