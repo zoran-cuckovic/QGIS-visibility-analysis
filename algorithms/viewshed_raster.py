@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
+TODO: cancelling on feedback
 /***************************************************************************
 ViewshedAnalysis
 A QGIS plugin
