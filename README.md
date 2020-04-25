@@ -7,7 +7,7 @@
 
 **Licence: GNU GPLv3**
 
-**Documentation**: [zoran-cuckovic.github.io/QGIS-visibility-analysis/](zoran-cuckovic.github.io/QGIS-visibility-analysis/)
+**Documentation**: [https://zoran-cuckovic.github.io/QGIS-visibility-analysis/](zoran-cuckovic.github.io/QGIS-visibility-analysis/)
 
 **Author: Zoran Čučković ([web page](http://zoran-cuckovic.from.hr))** 
 
