@@ -43,7 +43,7 @@ Homepage: [zoran-cuckovic.from.hr](http://zoran-cuckovic.from.hr)
 
 - [March 30, 2020](https://landscapearchaeology.org/2020/direction-viewshed/): Direction and angle filters for viewsheds
 
-- [March 15, 2020](https://landscapearchaeology.org/2020/viewshed-tutorial): Basic tutorial for QGIS 3
+- [March 15, 2020](https://landscapearchaeology.org/2020/viewshed-tutorial): Basic **tutorial** for QGIS 3
 
 - [December 6, 2019](https://landscapearchaeology.org/2019/visual-impact-analysis/): Analysing visual impact of high buildings
 
@@ -55,11 +55,9 @@ Homepage: [zoran-cuckovic.from.hr](http://zoran-cuckovic.from.hr)
 
 - [July 3, 2018](http://landscapearchaeology.org/2018/visibility-analysis-0-6/): 0.6 version - compatible with QGIS 3 
 
-- [December 22, 2016](http://www.zoran-cuckovic.from.hr/2016/qgis-visibility-054/) : Visibility analysis, release 0.5.4: modelling the horizon
+- [December 22, 2016](http://landscapearchaeology.org/2018/qgis-visibility-054/) : Visibility analysis, release 0.5.4: modelling the horizon
 
-- [July 30, 2016](http://www.zoran-cuckovic.from.hr/2016/qgis-visibility-analysis-algorithm/): QGIS visibility analysis algorithm
-
-- [July 27, 2016](http://www.zoran-cuckovic.from.hr/2016/qgis-viewshed-plugin-a-tutorial/ ): QGIS viewshed plugin: a tutorial
+- [July 30, 2016](http://landscapearchaeology.org/2018/qgis-visibility-analysis-algorithm/): QGIS visibility analysis algorithm
 
 
 ## Community guidelines and feedback
