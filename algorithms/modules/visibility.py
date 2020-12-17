@@ -254,7 +254,7 @@ def viewshed_raster (option, point, dem, interpolate = True):
 
             if option == HORIZON:
             #select last pixel (find max value in a reversed array (last axis!)
-                #argmax stops at first occurence
+                #argmax stops at the first occurence
                 #indices have to be re-reversed :)
                 #gives a flat array of 1 index for each row (axis=1)
                 
@@ -271,6 +271,13 @@ def viewshed_raster (option, point, dem, interpolate = True):
             view_o [mx_best, my_best] = v[error_mask]         
             
             #mx_vis [mx[mask], my[mask]]= v[mask] #np.absolute(mx_err[mask]) for errors
+            
+    # delete areas of the DEM that are outside max/min view angles.         
+    try :
+        mx_vis[np.logical_and(data > point["angle_up"], data < point["angle_down"])] = 0 
+    except : pass
+                              
+                              
     if option == DEPTH:
         mx_vis *= - distance_matrix # - dist to get positive values for depth
         mx_vis[center, center]=0
@@ -279,6 +286,9 @@ def viewshed_raster (option, point, dem, interpolate = True):
         # data has already been divides by distances
         mx_vis = np.atan(data) * mx_vis
         mx_vis[center, center]= np.nan #THIS IS BAD : should handle better noData !!
+                   
+            
+    except: pass
     return mx_vis
 
 """
