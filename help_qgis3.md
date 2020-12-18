@@ -33,16 +33,25 @@ Modules
 =======
 ## Create observer points
 
-This is the **first step** for the visibility analysis. The result will be written as a geopackage file with standardised field names and reprojected to match the elevation model used (if needed). Data inside the table can be changed manually - but the names and data types of fields should remain unchanged. 
+This is the **first step** for the visibility analysis. The observer points in the input will be processed and  written as a geopackage file with standardised field names. Data will be reprojected to match the elevation model used, if needed. Data inside the table can be changed manually - but the names and data types of fields should remain unchanged. 
 
 ### Parameters
 
+Mandatory parameters can be set as fixed values, while all parameters may be read from table fields. The latter method is prone to errors : in case of a problem (e.g. an empty field) the fixed value specified in the text box will be applied, or a default value. If in doubt, check the generated file and Log Messages (Viewshed info).
 - *observer IDs*: viewpoints can be assigned individual names or id numbers, stored in the associated table. Otherwise, internal ids will be used (sequential numbers).
 - *Observer height*: in meters
 - *Target height*: height value to be added to all terrain areas checked for visibility from the observer point.
 - *Radius of analysis*: maximum distance for visibility testing, in meters
 
-All parameters (observer/target height, point ID, radius of analysis) are read from the associated data table for each view-point. In case of error (eg. an empty field) the fixed value specified in the text box will be applied. Note that input parameters are stored in the accompanying table and can be changed manually. Field names and formats need to remain as assigned, however.
+
+ 
+ ![mask](https://landscapearchaeology.org/figures/20-03-30-shema.png)
+ 
+Five additional parameters can be used to mask out specific areas. 
+- *Inner Radius* will exclude a circular area round the observer point, up to the specified distance. 
+- *Azimuth start/stop* will exclude the area that does not lay between two specified azimuths. Note that the start azimuth does not need to have a lower value than the end azimuth. Both 10 to 30 degree range and 30 to 10 are valid, but the latter will allow all directions *except* the 10 to 30 range. 
+- *Upper/lower angle* determines the maximum/minimum angule of vision. Areas above/below these values will be excluded, that is registered as not visible. The lower angle has to be smaller thhan the upper angle.    
+ 
 
 Viewshed
 -------------
@@ -62,11 +71,7 @@ When multiple observer points are used, individual viewsheds will be combined in
 
  -  *Earth cuvature* and *Refraction*: see below.
  
- ### Distance and direction filter
- 
- ![mask](https://landscapearchaeology.org/figures/20-03-30-shema.png)
- 
- Individual viewsheds can be masked in order to select a desired view direction and radius: see more on [LandscapeArchaeology.org]( https://landscapearchaeology.org/2020/direction-viewshed/).  
+
 
 Intervisibility network
 -----------------------
