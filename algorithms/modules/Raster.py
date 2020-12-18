@@ -242,7 +242,8 @@ class Raster:
                   azimuth_1=None,
                   azimuth_2=None ):
 
-        #if not radius_out : radius_out = self.mx_dist.size[0]
+        #angular mask is set in visibility routine : it needs angular data, curvature etc. 
+
 
         mask = self.mx_dist < radius_out
 
@@ -254,8 +255,6 @@ class Raster:
 
             mask_az = operator(self.angles > azimuth_1, self.angles < azimuth_2)
 
-         
-                
             mask *= mask_az
     
         self.mask = ~ mask
@@ -431,20 +430,17 @@ class Raster:
 
         if report:
             try:
-               # Count values outside mask (mask is True on the outside!)
-                crop = np.count_nonzero(self.mask[y_in, x_in])
-
+                if self.fill != 0 :  m_in[self.mask[y_in, x_in]]=0
                 c = np.count_nonzero(m_in)
+                
+                 # Count values outside mask (mask is True on the outside !)
+                total = m_in.size - np.count_nonzero(self.mask[y_in, x_in])
 
-                # nans in the mask are non_zero
-                if self.fill != 0 : c -= crop
-                                #this is total area analysed 
-                return ( c ,  - crop )
+                return ( c ,  total )
 
             except: #unmasked array
                 return (np.count_nonzero(m_in), m_in.size) 
     
-        
     
     """
     Writing analysis result.
