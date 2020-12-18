@@ -4,7 +4,7 @@
 name=Visibility Analysis
 qgisMinimumVersion=3.0
 description=Visibility analysis over raster DEM
-version=1.2
+version=1.3
 author=Zoran Čučković
 email=contact@zoran-cuckovic.from.hr
 
@@ -17,7 +17,7 @@ repository=https://github.com/zoran-cuckovic/QGIS-visibility-analysis/tree/exper
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-changelog=Versoin 1.2: new algorithm for visibility index calculation.
+changelog=Version 1.3: better handling of input parameters, in the Create Points routine
 
 # Tags are comma separated with spaces allowed
 tags=Viewshed, Visibility, Raster
