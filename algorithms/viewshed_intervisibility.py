@@ -135,6 +135,8 @@ class Intervisibility(QgsProcessingAlgorithm):
             </ul>
 
             For more see <a href="http://www.zoran-cuckovic.from.hr/QGIS-visibility-analysis/help_qgis3.html">help online</a>.
+            
+            You can buy the developer a coffee at <a href=https://ko-fi.com/zoran>ko-fi.com</a>.
         
             """)
 
