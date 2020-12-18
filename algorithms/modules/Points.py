@@ -116,9 +116,6 @@ class Points:
     # enable to set a default in case there is a problem, eg z = float(None)
     def clean_parameters(self, z_obs, radius ,
                         z_targ=0,
-                        radius_in =0,
-                        azim_1 = 0, azim_2=0,
-                        angle_down =0, angle_up=0,
                         field_ID = None,
                         field_zobs = None,
                         field_ztarg=None,
@@ -126,7 +123,7 @@ class Points:
                         field_radius_in=None,
                         folder = None,
                         field_azim_1 = None,
-                        field_azim_2=None,
+                        field_azim_2= None,
                         field_angle_down = None,
                         field_angle_up = None):
        
@@ -180,37 +177,48 @@ class Points:
             if folder:
                 self.pt[key]["path"] = path.join(folder, str(id1) + ".tif")
 
-            if radius_in:
+            if field_radius_in:
                 try: self.pt[key]["radius_in"] = float(feat[field_radius_in])
-                except: self.pt[key]["radius_in"] = radius_in
+                except: self.pt[key]["radius_in"] = 0
             
-            if azim_1 or azim_2 or field_azim_1 or field_azim_2:
+            if  field_azim_1 and field_azim_2:
                 
-                try : a1 =  float(feat[field_azim_1])
-                except: a1 =azim_1
+                a1, a2 = 0, 360 #default values
+                
+                try : 
+                    t1, t2 =  float(feat[field_azim_1]), float(feat[field_azim_2])
+                except: errors.append(["Data error for azimuth, point ", id1])        
+                
+            
+                if 0 <= t1 <= 360 and 0 <= t2 <= 360: a1, a2 = t1, t2 
+                else: errors.append(["Azimuth angle out of range, point ", id1])       
+                        
+        
+                self.pt[key]["azim_1"], self.pt[key]["azim_2"] =a1, a2
 
-                if 0 <= a1 <= 360: self.pt[key]["azim_1"]=a1
-                else: errors.append(["Azimuth out of range:",a1, "Point:", id1])
 
-                try : a2 = float(feat[field_azim_2])
-                except: a2 =azim_2
+            if  field_angle_down and field_angle_up:
+                
+                a1, a2 = -90, 90 #default values
 
-                if 0 <= a2 <= 360: self.pt[key]["azim_2"]=a2
-                else: errors.append(["Azimuth out of range:",a2, "Point:", id1])
+                try : 
+                    t1, t2 = float(feat[field_angle_down]), float(feat[field_angle_up])
+                except: errors.append(["Data error for angular mask, point ", id1])   
+                
+                if not -90 <= t1 <= 90 or not -90 <= t2 <= 90:
+                    errors.append(["Angular mask out of range, point ", id1])   
+                elif t1 > t2 : 
+                    errors.append(["Angles not compatible", t1, " and", t2, "Point:", id1])
+                else: a1, a2 = t1, t2 
+                
+                
+                #perhaps the reversed angles could be useful, e.g. an obstacle  ?
+                
+                self.pt[key]["angle_down"], self.pt[key]["angle_up"] = a1, a2
 
-            if angle_down or angle_up or field_angle_down or field_angle_up:
+                
+                
 
-                try : a1 = float(feat[field_angle_down])
-                except: a1 =angle_down
-
-                if -180 <= a1 <= 180: self.pt[key]["angle_down"]=a1
-                else: errors.append(["Angle out of range:",a1, "Point:", id1])
-
-                try : a2 = float(feat[field_angle_up])
-                except: a2 =angle_up
-
-                if -180 <= a2 <= 180: self.pt[key]["angle_up"]=a2
-                else: errors.append(["Angle out of range:",a2, "Point:", id1])
      
 
             #else: errors.append(["duplicate ID:",id1])
@@ -474,9 +482,6 @@ class Points:
             
             try:
                 self.pt[ id1 ]["angle_down"] =  feat["angle_down"]
-            except: pass
-            
-            try:
                 self.pt[ id1 ]["angle_up"] =  feat["angle_up"]
 
             except: pass
