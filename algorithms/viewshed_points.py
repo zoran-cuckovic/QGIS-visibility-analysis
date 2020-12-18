@@ -66,16 +66,23 @@ class ViewshedPoints(QgsProcessingAlgorithm):
 
     RADIUS = 'RADIUS'
     RADIUS_FIELD = 'RADIUS_FIELD'
+    RADIUS_IN_FIELD = 'RADIUS_IN_FIELD'
     
     OBS_HEIGHT = 'OBS_HEIGHT'
     OBS_HEIGHT_FIELD = 'OBS_HEIGHT_FIELD'
 
     TARGET_HEIGHT = 'TARGET_HEIGHT'
     TARGET_HEIGHT_FIELD = 'TARGET_HEIGHT_FIELD'
+    
+    AZIM_1_FIELD = 'AZIM_1_FIELD'
+    AZIM_2_FIELD = 'AZIM_2_FIELD'
+    
+    ANGLE_UP_FIELD = 'ANGLE_UP_FIELD'
+    ANGLE_DOWN_FIELD = 'ANGLE_DOWN_FIELD'
+    
+   # MOVE_TOP = 'MOVE_TOP'
 
-    MOVE_TOP = 'MOVE_TOP'
-
-    OUTPUT_DIR = 'OUTPUT_DIR'
+    #OUTPUT_DIR = 'OUTPUT_DIR'
 
     
 
@@ -117,6 +124,7 @@ class ViewshedPoints(QgsProcessingAlgorithm):
             self.tr('Field value for analysis radius'),
             parentLayerParameterName = self.OBSERVER_POINTS,
             optional=True))
+        
 
         self.addParameter(QgsProcessingParameterNumber(
             self.OBS_HEIGHT,
@@ -141,7 +149,36 @@ class ViewshedPoints(QgsProcessingAlgorithm):
             self.tr('Field value for target height, meters'),
             parentLayerParameterName =self.OBSERVER_POINTS,
             optional=True))
-
+        
+        self.addParameter(QgsProcessingParameterField(
+            self.RADIUS_IN_FIELD,
+            self.tr('Inner radius'),
+            parentLayerParameterName = self.OBSERVER_POINTS,
+            optional=True))
+        
+        self.addParameter(QgsProcessingParameterField(
+            self.AZIM_1_FIELD,
+            self.tr('Azimuth mask - start'),
+            parentLayerParameterName = self.OBSERVER_POINTS,
+            optional=True))
+         
+        self.addParameter(QgsProcessingParameterField(
+            self.AZIM_2_FIELD,
+            self.tr('Azimuth mask - end'),
+            parentLayerParameterName = self.OBSERVER_POINTS,
+            optional=True))
+        
+        self.addParameter(QgsProcessingParameterField(
+            self.ANGLE_UP_FIELD,
+            self.tr('Upper angle mask'),
+            parentLayerParameterName = self.OBSERVER_POINTS,
+            optional=True))
+         
+        self.addParameter(QgsProcessingParameterField(
+            self.ANGLE_DOWN_FIELD,
+            self.tr('Lower angle mask'),
+            parentLayerParameterName = self.OBSERVER_POINTS,
+            optional=True))
      
         self.addParameter(
             QgsProcessingParameterFeatureSink(
@@ -163,6 +200,8 @@ class ViewshedPoints(QgsProcessingAlgorithm):
             </ul>
 
             For more see <a href="http://www.zoran-cuckovic.from.hr/QGIS-visibility-analysis/help_qgis3.html">help online</a>
+            
+            You can buy the developer a coffee at <a href=https://ko-fi.com/zoran>ko-fi.com</a>.
         
             """)
 
@@ -187,6 +226,14 @@ class ViewshedPoints(QgsProcessingAlgorithm):
         target= self.parameterAsDouble(parameters,self.TARGET_HEIGHT, context)
         target_field= self.parameterAsString(parameters,self.TARGET_HEIGHT_FIELD, context)
 
+
+        radius_in =  target_field= self.parameterAsString(parameters,self.RADIUS_IN_FIELD, context)
+        azim1 = self.parameterAsString(parameters,self.AZIM_1_FIELD, context)
+        azim2= self.parameterAsString(parameters,self.AZIM_2_FIELD, context)
+        angle_down = self.parameterAsString(parameters,self.ANGLE_DOWN_FIELD , context)
+        angle_up = self.parameterAsString(parameters,self.ANGLE_UP_FIELD, context)
+    
+        
     #    move = self.parameterAsRasterLayer(parameters,self.MOVE_TOP, context).source()
 
         
@@ -216,14 +263,18 @@ class ViewshedPoints(QgsProcessingAlgorithm):
                             crs = Points_layer.sourceCrs(),
                             project_crs = raster.crs()) 
 
-         
-          
+     
         points.clean_parameters( observer_height, radius,
                            z_targ = target ,
                            field_ID = observer_id,
                            field_zobs = observer_height_field,
                            field_ztarg= target_field,
-                           field_radius= radius_field)
+                           field_radius= radius_field, 
+                           field_radius_in=radius_in,
+                        field_azim_1 = azim1,
+                        field_azim_2 = azim2,
+                        field_angle_down = angle_down,
+                        field_angle_up = angle_up)
                            #folder = output_dir)
         
 ##        if success != 0 :
