@@ -48,8 +48,8 @@ Mandatory parameters can be set as fixed values, while all parameters may be rea
  ![mask](https://landscapearchaeology.org/figures/20-03-30-shema.png)
  
 Five additional parameters can be used to mask out specific areas. 
-- *Inner Radius* will exclude a circular area round the observer point, up to the specified distance. 
-- *Azimuth start/stop* will exclude the area that does not lay between two specified azimuths. Note that the start azimuth does not need to have a lower value than the end azimuth. Both 10 to 30 degree range and 30 to 10 are valid, but the latter will allow all directions *except* the 10 to 30 range. 
+- *Inner radius* will exclude the circular area around the observer point, up to the specified distance. 
+- *Azimuth start/stop* will exclude the area that does not lay between two specified azimuths. Note that the start azimuth may have a lower value than the end azimuth. Both 10 to 30 degree range and 30 to 10 are valid, but the latter option will allow all directions *except* the 10 to 30 range. 
 - *Upper/lower angle* determines the maximum/minimum angle of vision. Areas above/below these values will be excluded, that is registered as not visible. The lower angle has to be smaller thhan the upper angle.    
  
 
