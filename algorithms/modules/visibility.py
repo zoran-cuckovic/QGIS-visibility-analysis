@@ -27,7 +27,6 @@ import os
 
 import time
 
-
 import numpy as np
 from math import sqrt
 
@@ -230,7 +229,7 @@ def viewshed_raster (option, point, dem, interpolate = True):
             if interpolate:
                 interp += (view_d[me_x, me_y] - interp) * error_matrix  
                            
-            # do it here so we can subsitute target below!
+            # do it here so we can subsitute targets below!
             test_val = np.maximum.accumulate(interp, axis=1)
             
             
@@ -272,24 +271,27 @@ def viewshed_raster (option, point, dem, interpolate = True):
             
             #mx_vis [mx[mask], my[mask]]= v[mask] #np.absolute(mx_err[mask]) for errors
             
-    # delete areas of the DEM that are outside max/min view angles.         
-    try :
-        mx_vis[np.logical_and(data > point["angle_up"], data < point["angle_down"])] = 0 
+    # delete areas that are outside max/min view angles (on the basis of the DEM).
+    # we need to adjust for pixel based values
+    # ( This is not the most efficient approach, 
+    #  np.maximum.accumulate has already sorted angles, but these values are not conserved...)
+    try: 
+        a1 = np.tan(np.radians(point["angle_up"])) * dem.pix   
+        a2 = np.tan(np.radians(point["angle_down"])) * dem.pix
+        mx_vis[np.logical_or(data > a1, data < a2)] = 0 
     except : pass
-                              
-                              
+    
+
     if option == DEPTH:
         mx_vis *= - distance_matrix # - dist to get positive values for depth
         mx_vis[center, center]=0
 
     elif option == ANGLE:
-        # data has already been divides by distances
+        # data has already been divided by distances
         mx_vis = np.atan(data) * mx_vis
         mx_vis[center, center]= np.nan #THIS IS BAD : should handle better noData !!
-                   
-            
-    except: pass
-    return mx_vis
+
+    return mx_vis #np.degrees(np.arctan(data)) 
 
 """
 Calculate intervisibilty lines from the observer point (always in the centre of the matrix)
