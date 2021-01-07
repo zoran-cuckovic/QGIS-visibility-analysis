@@ -86,7 +86,7 @@ The output of the intervisibility network routine is a network, in vector format
 Visibility index (total viewshed)
 ---------------------------------
  
-This module calculates the visual exposition of each data point - a pixel - for a given terrain model. The Index is calculated as the proportion of positive views yielding 1.0 when all views are positive. Note that this is a **very complex calculation** which may take up to a couple of hours for moderately large datasets. In order to reduce execution time, only a sample of lines of sight is taken into account (between 8 and 64). 
+This module calculates the visual exposition of each data point - a pixel - for a given terrain model. The Index is calculated as the proportion of positive views, returning 1.0 when all views are positive. Note that this is a **very complex calculation** which may take up to a couple of hours for moderately large datasets. In order to reduce execution time, only a sample of lines of sight is taken into account (between 8 and 64). 
 
 ## Parameters
 - *Sample* : the number of lines of sight that radiate from each observation point. Higher numbers always result in significant increase in execution time. It is advisable to experiment with varying sampling schemes over a smaller area, prior to execute the analysis over the entire dataset. 
