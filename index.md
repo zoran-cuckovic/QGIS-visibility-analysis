@@ -10,7 +10,7 @@ Viewshed analysis plugin for QGIS calculates visible surface from a given observ
 
 If you encounter problems, please read on **[geographic projections](https://landscapearchaeology.org/2020/wgs/)** before submitting an issue. 
 
-## Current stable version: 1.0
+## Current stable version: 1.4 (January 2021)
 - Supported QGIS version: 3.x
 - [**Help & documentation**](https://zoran-cuckovic.github.io/QGIS-visibility-analysis/help_qgis3.html)
 
