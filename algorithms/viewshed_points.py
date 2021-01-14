@@ -29,6 +29,7 @@ __copyright__ = '(C) 2018 by Zoran Čučković'
 
 __revision__ = '$Format:%H$'
 
+from os import path 
 
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (QgsProcessing,
@@ -186,6 +187,8 @@ class ViewshedPoints(QgsProcessingAlgorithm):
                 self.tr('Output layer')) )
 
     def shortHelpString(self):
+        
+        curr_dir = path.dirname(path.realpath(__file__))
 
         h = ("""
             This is the first step for the visibility analysis. The result will be written as a geopackage file with standardised field names and reprojected to match the elevation model used (if needed).
@@ -199,11 +202,14 @@ class ViewshedPoints(QgsProcessingAlgorithm):
                 <li> <em>Radius of analysis</em>: maximum distance for visibility testing, in meters.</li>
             </ul>
 
-            For more see <a href="http://www.zoran-cuckovic.from.hr/QGIS-visibility-analysis/help_qgis3.html">help online</a>
+            For other parameters, see <a href="http://www.zoran-cuckovic.from.hr/QGIS-visibility-analysis/help_qgis3.html">help online</a>
             
-            You can buy the developer a coffee at <a href=https://ko-fi.com/zoran>ko-fi.com</a>.
+            If you find this tool useful, consider to :
+                 
+             <a href='https://ko-fi.com/D1D41HYSW' target='_blank'><img height='30' style='border:0px;height:36px;' src='%s/kofi2.webp' /></a>
+            """) % curr_dir
         
-            """)
+            
 
         return h
 
@@ -225,9 +231,8 @@ class ViewshedPoints(QgsProcessingAlgorithm):
         
         target= self.parameterAsDouble(parameters,self.TARGET_HEIGHT, context)
         target_field= self.parameterAsString(parameters,self.TARGET_HEIGHT_FIELD, context)
-
-
-        radius_in =  target_field= self.parameterAsString(parameters,self.RADIUS_IN_FIELD, context)
+    
+        radius_in = self.parameterAsString(parameters,self.RADIUS_IN_FIELD, context)
         azim1 = self.parameterAsString(parameters,self.AZIM_1_FIELD, context)
         azim2= self.parameterAsString(parameters,self.AZIM_2_FIELD, context)
         angle_down = self.parameterAsString(parameters,self.ANGLE_DOWN_FIELD , context)
@@ -263,7 +268,6 @@ class ViewshedPoints(QgsProcessingAlgorithm):
                             crs = Points_layer.sourceCrs(),
                             project_crs = raster.crs()) 
 
-     
         points.clean_parameters( observer_height, radius,
                            z_targ = target ,
                            field_ID = observer_id,
