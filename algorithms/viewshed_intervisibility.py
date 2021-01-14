@@ -28,6 +28,8 @@ __copyright__ = '(C) 2018 by Zoran Čučković'
 
 __revision__ = '$Format:%H$'
 
+from os import path
+
 from PyQt5.QtCore import QCoreApplication, QVariant
 from qgis.core import (QgsWkbTypes,
                        QgsFields, QgsField, QgsPoint, QgsFeature,QgsGeometry,
@@ -124,6 +126,7 @@ class Intervisibility(QgsProcessingAlgorithm):
 
     def shortHelpString(self):
 
+        curr_dir = path.dirname(path.realpath(__file__))
         h = ("""
              Constructs a network, in vector format, of visual relationships between two sets of points (or within a single set). For each link the depth below/above visible horizon is also calculated.
 
@@ -136,9 +139,10 @@ class Intervisibility(QgsProcessingAlgorithm):
 
             For more see <a href="http://www.zoran-cuckovic.from.hr/QGIS-visibility-analysis/help_qgis3.html">help online</a>.
             
-            You can buy the developer a coffee at <a href=https://ko-fi.com/zoran>ko-fi.com</a>.
-        
-            """)
+            If you find this tool useful, consider to :
+                 
+             <a href='https://ko-fi.com/D1D41HYSW' target='_blank'><img height='30' style='border:0px;height:36px;' src='%s/kofi2.webp' /></a>
+            """) % curr_dir
 
         return h
 
@@ -245,6 +249,7 @@ class Intervisibility(QgsProcessingAlgorithm):
      
             cnt +=1
             feedback.setProgress(int((cnt/o.count) *100))
+            if feedback.isCanceled(): return {}
 
         feedback.setProgressText("*3* Drawing the network")
 
