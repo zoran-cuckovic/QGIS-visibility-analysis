@@ -273,7 +273,7 @@ def viewshed_raster (option, point, dem, interpolate = True):
             
     # delete areas that are outside max/min view angles (on the basis of the DEM).
     # we need to adjust for pixel based values
-    # ( This is not the most efficient approach, 
+    # (This is not the most efficient approach, 
     #  np.maximum.accumulate has already sorted angles, but these values are not conserved...)
     try: 
         a1 = np.tan(np.radians(point["angle_up"])) * dem.pix   
@@ -656,7 +656,7 @@ def visibility_index (raster, obs_height,
             # this can (should) be precalculated ...
             mx_norm[view] += f        
             
-            if feedback.isCanceled(): sys.exit()
+            if feedback.isCanceled(): return None
             # line loop
 
         cnt += 1
