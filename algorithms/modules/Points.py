@@ -168,7 +168,7 @@ class Points:
             # obligatory prarameters        
             self.pt[key]={"id":id1, "z":z ,  "radius" : r,
                           "x_geog":x_geog, "y_geog" : y_geog }
-
+        
             # optional
             if z_targ or field_ztarg:
                 try : self.pt[key]["z_targ"] = float(feat[field_ztarg])
@@ -187,13 +187,13 @@ class Points:
                 
                 try : 
                     t1, t2 =  float(feat[field_azim_1]), float(feat[field_azim_2])
-                except: errors.append(["Data error for azimuth, point ", id1])        
+                    
+                    if 0 <= t1 <= 360 and 0 <= t2 <= 360: a1, a2 = t1, t2 
+                    else: errors.append("Azimuth angle out of range, point " + str(id1))  
+                    
+                except: errors.append("Data error for azimuth, point " + str(id1))        
                 
-            
-                if 0 <= t1 <= 360 and 0 <= t2 <= 360: a1, a2 = t1, t2 
-                else: errors.append(["Azimuth angle out of range, point ", id1])       
-                        
-        
+ 
                 self.pt[key]["azim_1"], self.pt[key]["azim_2"] =a1, a2
 
 
@@ -203,23 +203,19 @@ class Points:
 
                 try : 
                     t1, t2 = float(feat[field_angle_down]), float(feat[field_angle_up])
-                except: errors.append(["Data error for angular mask, point ", id1])   
-                
-                if not -90 <= t1 <= 90 or not -90 <= t2 <= 90:
-                    errors.append(["Angular mask out of range, point ", id1])   
-                elif t1 > t2 : 
-                    errors.append(["Angles not compatible", t1, " and", t2, "Point:", id1])
-                else: a1, a2 = t1, t2 
-                
+                    
+                    if not -90 <= t1 <= 90 or not -90 <= t2 <= 90:
+                        errors.append("Angular mask out of range, point " + str(id1))   
+                    elif t1 > t2 : 
+                        errors.append("Angles not compatible" + str(t1) + " and" + str(t2) + "Point:" + str(id1))
+                    else: a1, a2 = t1, t2 
+                                
+                except: errors.append("Data error for angular mask, point " + str(id1))   
                 
                 #perhaps the reversed angles could be useful, e.g. an obstacle  ?
                 
                 self.pt[key]["angle_down"], self.pt[key]["angle_up"] = a1, a2
 
-                
-                
-
-     
 
             #else: errors.append(["duplicate ID:",id1])
        #TODO : testing for duplicates --> network etc ...
@@ -228,17 +224,21 @@ class Points:
          
        # self.max_radius = max(x, key=lambda i: x[i])
 
-    """
-        
-    Find the highest point in a perimeter around each observer point.
-    Note that it always moves the point to the center of the highest pixel
+        if errors:
+            txt = "ERRORS in observer point parameters :\n."
+            for l in errors: txt += "\n" + l
 
-    This is duplicating functions from take_points (selection inside a frame)!
-    to reorganise !! (should be independent function, could be useful elsewhere...)
-       
-    """
+            QgsMessageLog.logMessage( txt, "Viewshed info")
+    
     def move_top(self,  raster_path, search_radius):
-
+        """
+            Find the highest point in a perimeter around each observer point.
+            Note that it always moves the point to the center of the highest pixel
+        
+            This is duplicating functions from take_points (selection inside a frame)!
+            to reorganise !! (should be independent function, could be useful elsewhere...)
+            
+        """
   
         r = rst.Raster(raster_path)
         pix = r.pix; half_pix = pix/2
