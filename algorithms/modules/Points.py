@@ -9,7 +9,10 @@ from qgis.core import *
 
 from os import path
 
-import gdal 
+try:
+    from osgeo import gdal
+except ImportError:
+    import gdal 
 
 import numpy as np
 
