@@ -50,7 +50,7 @@ Mandatory parameters can be set as fixed values, while all parameters may be rea
 Five additional parameters can be used to mask out specific areas. 
 - *Inner radius* will exclude the circular area around the observer point, up to the specified distance. 
 - *Azimuth start/stop* will exclude the area that does not lay between two specified azimuths. Note that the start azimuth may have a higher value than the end azimuth. Both 10 to 30 degree range and 30 to 10 are valid, but the latter option will allow all directions *except* the 10 to 30 range. 
-- *Upper/lower angle* determines the maximum/minimum angle of vision. Areas above/below these values will be excluded, that is, registered as not visible. The lower angle has to be smaller than the upper angle.    
+- *Upper/lower angle* determines the maximum/minimum angle of vision. Areas above/below these values will be excluded, that is, registered as not visible. Horizontal (eye) level is at 0 degrees, angles below the hor. level can reach up to -90 degrees, and above the hor. level up to +90 deg. The specified lower angle has to be smaller than the upper angle.    
  
 
 Viewshed
