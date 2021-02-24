@@ -21,7 +21,11 @@ email : /
 
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import *
-import gdal
+try:
+    from osgeo import gdal
+except ImportError:
+    import gdal
+
 import numpy as np
 
 from os import path
