@@ -19,13 +19,6 @@ import numpy as np
 from . import Raster as rst
 
 
-"""
-Points class is creating a clean shapefile with analysis parameteres in
-the associated table. It is also taking care of geometries (filtering
-points outside raster, searching for neighbours in a specified radius etc.)
-The idea is to move all the mess of handling vector input and output
-in a single class.
-"""
 
 """
 
@@ -49,6 +42,11 @@ FIELDS = {"id" : ["ID", 255,0],
 
             
 class Points:
+    """
+    Points class is creating a clean shapefile with analysis parameteres in
+    the associated table. It is also taking care of geometries (filtering
+    points outside raster, searching for neighbours in a specified radius etc.)
+    """
     
     def __init__(self, layer, crs=None, project_crs=None):
     #layer = qgis layer,  bounding_box = QgsRectangle,   field_id= string)
