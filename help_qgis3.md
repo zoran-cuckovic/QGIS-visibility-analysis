@@ -88,7 +88,7 @@ Visibility index (total viewshed)
  
 This module calculates the visual exposition of each data point - a pixel - for a given terrain model. The Index is calculated as the proportion of positive views, returning 1.0 when all views are positive. Note that this is a **very complex calculation** which may take up to a couple of hours for moderately large datasets. In order to reduce execution time, only a sample of lines of sight is taken into account (between 8 and 64). 
 
-## Parameters
+### Parameters
 - *Sample* : the number of lines of sight that radiate from each observation point. Higher numbers always result in significant increase in execution time. It is advisable to experiment with varying sampling schemes over a smaller area, prior to execute the analysis over the entire dataset. 
 
 - *Direction* :  For each analysed point, we can record either incoming views (how many people can see me?), or outgoing views (how many people can I see ?). Note that cumulative viewshed may be used to produce the model of incoming views, but not the outgoing ones. 
@@ -116,7 +116,7 @@ For more explanation see [ArcGIS web page](http://webhelp.esri.com/arcgisdesktop
 These are accessed under Processing Options (search for Providers >> Visibility Analysis)
 
 - *Activate*: self explanatory...
-- *Maximum buffer size*: when working on multiple points, the algorithm can either hold all data in live memory (which is faster), or select, for each point, a smaller window corresponding to the specified radius (which is somewhat slower). The second approach will be used when the size of terrain model used (DEM) exceeds the specified buffer threshold. It is expressed in megapixels ([explained also here](https://landscapearchaeology.org/2018/visibility-analysis-0-6-4)).
+- *Maximum buffer size*: when working on multiple points, the algorithm can either hold all data in live memory (which is faster), or select, for each point, a smaller window corresponding to the specified radius (which is *significantly* slower). The second approach will be used when the size of terrain model used (DEM) exceeds the specified buffer threshold. It is expressed in megapixels ([explained also here](https://landscapearchaeology.org/2018/visibility-analysis-0-6-4)).
 
 Dependencies
 -------------
