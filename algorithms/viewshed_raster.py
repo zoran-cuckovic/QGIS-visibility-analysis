@@ -229,7 +229,9 @@ class ViewshedRaster(QgsProcessingAlgorithm):
             
         # prepare the output raster
         if not live_memory:
-            dem.write_output(output_path)
+            # !! we cannot use compression because of a strange memory bloat 
+            # produced by GDAL
+            dem.write_output(output_path, compression = False)
 
         pt = points.pt #this is a dict of obs. points
 
