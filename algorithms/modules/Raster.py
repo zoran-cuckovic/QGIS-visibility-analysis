@@ -404,7 +404,7 @@ class Raster:
             m = self.result[self.window_slice]
         else :
             m = self.gdal_output.ReadAsArray(*self.gdal_slice).astype(float)
-
+    
         if self.mode == SINGLE: m = m_in
         
         elif self.mode == ADD:  m += m_in
@@ -454,13 +454,14 @@ class Raster:
     """
     def write_output (self, file_name=None,
                      no_data = np.nan,
-                     dataFormat = gdal.GDT_Float32):
+                     dataFormat = gdal.GDT_Float32, 
+                     compression = True):
 
-        if file_name:
-            
-            
+        if file_name:  # create a file
+                                
             driver = gdal.GetDriverByName('GTiff')
-            ds = driver.Create(file_name, self.size[1], self.size[0], 1, dataFormat, ['COMPRESS=LZW'])
+            ds = driver.Create(file_name, self.size[1], self.size[0], 1, 
+                               dataFormat, ['COMPRESS=LZW' if compression else ''])
             ds.SetProjection(self.crs)
             ds.SetGeoTransform(self.rst.GetGeoTransform())
 
@@ -473,7 +474,6 @@ class Raster:
       
         else:
             ds = self.gdal_output
-            
 
         try:
             ds.GetRasterBand(1).WriteArray(self.result )
