@@ -274,7 +274,7 @@ def viewshed_raster (option, point, dem, interpolate = True):
 
             #np.compress faster than simple boolean mask.. ??
                
-            view_o [mx_best, my_best] = =v[error_mask] #       np.absolute(error_matrix[error_mask]) # for errors
+            view_o [mx_best, my_best] = v[error_mask] #       np.absolute(error_matrix[error_mask]) # for errors
             
     # delete areas that are outside max/min view angles (on the basis of the DEM).
     # we need to adjust for pixel based values
