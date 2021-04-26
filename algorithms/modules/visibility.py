@@ -74,11 +74,9 @@ def error_matrix(radius, size_factor=1):
     mx_err = np.zeros((radius_large +1 , radius))
     mx_mask = np.zeros(mx_err.shape).astype(bool)
 
-    min_err = {}
-
     j=0 #keep 0 line empty
-
-    for m in range (0, radius_large+1 ): # 45 deg line is added (+1) 
+    
+    for m in range (radius_large+1 ): # 45 deg line is added (+1) 
 
         x_f, y_f = radius, radius #x0,y0
 
@@ -87,10 +85,10 @@ def error_matrix(radius, size_factor=1):
 
     
         #x and y = delta x and y but y is steep!
-        #fist line is min y then it ascends till 45°
+        #first line is min y then it ascends till 45°
 
         D=0
-        for i in range (0, radius ):   #restrict iteration to actual radius!     
+        for i in range (radius ):   #restrict iteration to actual radius!     
             x_f += 1
             if 2* (D + dy) < dx:
                 D += dy # y_f remains
@@ -107,25 +105,33 @@ def error_matrix(radius, size_factor=1):
 
             mx_err[j,i]=e
           # keep pixel dictionary to sort out best pixels
-            try:
-                err_old = min_err[yx][0] 
-                if err < err_old: min_err[yx]=[err,j,i]
-            except:
-                min_err[yx]=[err,j,i]
-   
+#             
         j+=1
-    
-
-    #check-out minimum errors
-    # numpy style would be np.argmin.at(  ) !
-    for key in min_err:
-        ix=min_err[key][1:3]
-        er = min_err[key][0]
-        mx_mask[ix[0], ix[1]]= 1
-
+        
+    # find minimum errors per pixel
+    old_pixel, min_value =mx_index[0,0] , 1 # initalise 
+    # iterate column-wise !
+    for i in range ( radius ): 
+        for j in range (radius_large+1): 
+            
+            index = (j,i)
+        
+            pixel = mx_index[index]
+                
+            if np.any(pixel != old_pixel): 
+                mx_mask[min_index] = True
+                min_value = 1
+                
+            old_pixel = pixel
+            
+            v = abs(mx_err[index])
+            if v < min_value : 
+                min_value, min_index = v, index
+        
+        
     mx_err_dir = np.where(mx_err > 0, 1, -1)
     mx_err_dir[mx_err == 0]=0 #should use some multiple criteria in where... 
-
+    
 
     #take the best pixels  
     #cannot simply use indices as pairs [[x,y], [...]]- np thing...
@@ -267,9 +273,8 @@ def viewshed_raster (option, point, dem, interpolate = True):
 
 
             #np.compress faster than simple boolean mask.. ??
-            view_o [mx_best, my_best] = v[error_mask]         
-            
-            #mx_vis [mx[mask], my[mask]]= v[mask] #np.absolute(mx_err[mask]) for errors
+               
+            view_o [mx_best, my_best] = =v[error_mask] #       np.absolute(error_matrix[error_mask]) # for errors
             
     # delete areas that are outside max/min view angles (on the basis of the DEM).
     # we need to adjust for pixel based values
