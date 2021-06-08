@@ -265,10 +265,13 @@ class ViewshedRaster(QgsProcessingAlgorithm):
             # must set the mask before writing the result!
             mask = [pt[id1]["radius"]]
 
-            if "radius_in" not in miss_params:
-                mask += [ pt[id1]["radius_in"] ] 
-            
-            if  "azim_1" not in miss_params and  "azim_2" not in miss_params: 
+            inner_radius_specified = "radius_in" not in miss_params
+            if inner_radius_specified:
+                mask += [ pt[id1]["radius_in"] ]
+
+            if  "azim_1" not in miss_params and  "azim_2" not in miss_params:
+                if not inner_radius_specified:
+                    mask += [ None ]
                 mask += [ pt[id1]["azim_1"], pt[id1]["azim_2"] ]
                 print (mask)
 
