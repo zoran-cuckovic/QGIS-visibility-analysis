@@ -4,7 +4,7 @@
 name=Visibility Analysis
 qgisMinimumVersion=3.0
 description=Visibility analysis over raster DEM
-version=1.6
+version=1.7
 author=Zoran Čučković
 email=contact@zoran-cuckovic.from.hr
 
@@ -22,7 +22,7 @@ changelog=Version 1.7: Fixed a bug with parameters (inner radius - thanks to Eri
 # Tags are comma separated with spaces allowed
 tags=Viewshed, Visibility, Raster
 
-homepage=https://zoran-cuckovic.github.io/QGIS-visibility-analysis/
+homepage=https://landscapearchaeology.org/qgis-visibility-analysis/
 category=Raster Analysis
 icon=icon.png
 # experimental flag
