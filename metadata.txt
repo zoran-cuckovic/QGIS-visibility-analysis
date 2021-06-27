@@ -17,7 +17,7 @@ repository=https://github.com/zoran-cuckovic/QGIS-visibility-analysis/tree/exper
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-changelog=Version 1.6: Fixed a bug with memory bloat when working with large rasters.
+changelog=Version 1.7: Fixed a bug with parameters (inner radius - thanks to Eric Peach !)
 
 # Tags are comma separated with spaces allowed
 tags=Viewshed, Visibility, Raster
