@@ -1,4 +1,6 @@
-
+---
+canonical_url: https://landscapearchaeology.org/qgis-terrain-shading/
+---
 Quantum GIS plugin for visibility analysis
 ======================
 
