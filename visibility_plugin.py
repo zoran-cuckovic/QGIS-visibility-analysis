@@ -46,12 +46,13 @@ class VisibilityPlugin:
 
     def __init__(self, iface):
         self.iface = iface
-        self.provider = None
-        
-
-    def initGui(self):
         self.provider = VisibilityProvider()
-        QgsApplication.processingRegistry().addProvider(self.provider)
+        
+    def initGui(self):
+        self.initProcessing()
 
     def unload(self):
         QgsApplication.processingRegistry().removeProvider(self.provider)
+        
+    def initProcessing(self):
+        QgsApplication.processingRegistry().addProvider(self.provider)
