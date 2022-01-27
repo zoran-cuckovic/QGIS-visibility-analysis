@@ -178,7 +178,7 @@ class VisibilityIndex(QgsProcessingAlgorithm):
 
     def name(self):
         
-        return "visibility_index"
+        return "visibilityindex"
 
     def displayName(self):
     
