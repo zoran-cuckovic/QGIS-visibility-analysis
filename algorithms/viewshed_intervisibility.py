@@ -264,7 +264,7 @@ class Intervisibility(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'Intervisibility'
+        return 'intervisibility'
     
     def displayName(self):
         """
