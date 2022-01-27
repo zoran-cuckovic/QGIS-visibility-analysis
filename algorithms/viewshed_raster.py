@@ -324,7 +324,7 @@ class ViewshedRaster(QgsProcessingAlgorithm):
         formatting characters.
         """
 
-        return 'Viewshed'
+        return 'viewshed'
     
     def displayName(self):
         """
