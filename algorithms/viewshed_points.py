@@ -319,7 +319,7 @@ class ViewshedPoints(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'create_viewpoints'
+        return 'createviewpoints'
     
     def displayName(self):
         """
