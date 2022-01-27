@@ -16,6 +16,7 @@ repository=https://github.com/zoran-cuckovic/QGIS-visibility-analysis/tree/exper
 
 # Recommended items:
 
+hasProcessingProvider=yes
 # Uncomment the following line and add your changelog:
 changelog=Version 1.7: Fixed a bug with parameters (inner radius - thanks to Eric Peach !)
 

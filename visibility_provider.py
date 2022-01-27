@@ -78,10 +78,8 @@ class VisibilityProvider(QgsProcessingProvider):
         
         """
 
-        
-        if self.isActive():
-            for alg in [ViewshedPoints(), ViewshedRaster(),
-                        Intervisibility() , VisibilityIndex()]: self.addAlgorithm( alg )
+        for alg in [ViewshedPoints(), ViewshedRaster(),
+                    Intervisibility() , VisibilityIndex()]: self.addAlgorithm( alg )
             
     def isActive(self):
         """Return True if the provider is activated and ready to run algorithms"""
