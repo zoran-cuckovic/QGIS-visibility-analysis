@@ -127,7 +127,7 @@ class Intervisibility(QgsProcessingAlgorithm):
     def shortHelpString(self):
 
         curr_dir = path.dirname(path.realpath(__file__))
-        h = ("""
+        h = (f"""
              Constructs a network, in vector format, of visual relationships between two sets of points (or within a single set). For each link the depth below/above visible horizon is also calculated.
 
             <h3>Parameters</h3>
@@ -141,8 +141,12 @@ class Intervisibility(QgsProcessingAlgorithm):
             
             If you find this tool useful, consider to :
                  
-             <a href='https://ko-fi.com/D1D41HYSW' target='_blank'><img height='30' style='border:0px;height:36px;' src='%s/kofi2.webp' /></a>
-            """) % curr_dir
+             <a href='https://ko-fi.com/D1D41HYSW' target='_blank'><img height='30' style='border:0px;height:36px;' src='{curr_dir}/kofi2.webp' /></a>
+            
+			This GIS tool is intended for peaceful use !
+			<img height='80' style='border:0px;height:36px;' src='{curr_dir}/ukraine.png'/>
+			
+			""") 
 
         return h
 
