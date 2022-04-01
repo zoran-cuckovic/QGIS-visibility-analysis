@@ -7,7 +7,7 @@
 
 **Licence: GNU GPLv3**
 
-**Documentation**: [LandscapeArchaeology.org/qgis-visibility-analysis](https:/landscapearchaeology.org/qgis-visibility-analysis/)
+**Documentation**: [LandscapeArchaeology.org/qgis-visibility-analysis](https://landscapearchaeology.org/qgis-visibility-analysis/)
 
 **Author: Zoran Čučković ([web page](http://zoran-cuckovic.from.hr))** 
 
