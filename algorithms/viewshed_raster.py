@@ -129,7 +129,7 @@ class ViewshedRaster(QgsProcessingAlgorithm):
     def shortHelpString(self):
         
         curr_dir = path.dirname(path.realpath(__file__))
-        h = ("""
+        h = (f"""
             Produces a visibility map where each observer point on a terrain model. The output can be:
             <ul>
                 <li> Binary viewshed: visible/not visible (1/0).</li>
@@ -152,8 +152,12 @@ class ViewshedRaster(QgsProcessingAlgorithm):
             
             If you find this tool useful, consider to :
                  
-             <a href='https://ko-fi.com/D1D41HYSW' target='_blank'><img height='30' style='border:0px;height:36px;' src='%s/kofi2.webp' /></a>
-            """) % curr_dir
+             <a href='https://ko-fi.com/D1D41HYSW' target='_blank'><img height='30' style='border:0px;height:36px;' src='{curr_dir}/kofi2.webp' /></a>
+            
+			This GIS tool is intended for peaceful use !
+			<img height='80' style='border:0px;height:36px;' src='{curr_dir}/ukraine.png'/>
+			
+			""") 
 
         return h            
 
@@ -331,7 +335,7 @@ class ViewshedRaster(QgsProcessingAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr(self.name())
+        return 'Viewshed'
     
     def group(self):
         """
