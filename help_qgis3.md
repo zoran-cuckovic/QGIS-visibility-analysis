@@ -1,4 +1,6 @@
-
+---
+canonical_url: https://landscapearchaeology.org/qgis-visibility-analysis-manual/
+---
 [go to main page](https://zoran-cuckovic.github.io/QGIS-visibility-analysis)
 
 
