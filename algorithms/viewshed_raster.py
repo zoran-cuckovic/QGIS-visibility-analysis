@@ -105,7 +105,7 @@ class ViewshedRaster(QgsProcessingAlgorithm):
             False))
         self.addParameter(QgsProcessingParameterNumber(
             self.REFRACTION,
-            self.tr('Atmoshpheric refraction'),
+            self.tr('Atmospheric refraction'),
             1, 0.13, False, 0.0, 1.0))
         
         
