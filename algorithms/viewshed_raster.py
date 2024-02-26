@@ -106,7 +106,8 @@ class ViewshedRaster(QgsProcessingAlgorithm):
         self.addParameter(QgsProcessingParameterNumber(
             self.REFRACTION,
             self.tr('Atmoshpheric refraction'),
-            1, 0.13, False, 0.0, 1.0))
+            QgsProcessingParameterNumber.Type.Double,
+            0.13, False, 0.0, 1.0))
         
         
 ##        self.addParameter(QgsProcessingParameterEnum (
