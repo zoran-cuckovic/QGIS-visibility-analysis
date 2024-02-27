@@ -4,7 +4,7 @@
 name=Visibility Analysis
 qgisMinimumVersion=3.0
 description=Visibility analysis over raster DEM
-version=1.8
+version=1.9
 author=Zoran Čučković
 email=contact@zoran-cuckovic.from.hr
 
@@ -18,7 +18,7 @@ repository=https://github.com/zoran-cuckovic/QGIS-visibility-analysis/tree/exper
 
 hasProcessingProvider=yes
 # Uncomment the following line and add your changelog:
-changelog=Version 1.8: Ukrainian flag
+# changelog=
 
 # Tags are comma separated with spaces allowed
 tags=Viewshed, Visibility, Raster
