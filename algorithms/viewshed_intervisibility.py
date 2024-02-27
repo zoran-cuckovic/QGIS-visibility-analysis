@@ -210,7 +210,7 @@ class Intervisibility(QgsProcessingAlgorithm):
         
         (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT, context,
                             qfields,
-                            QgsWkbTypes.LineString,
+                            QgsWkbTypes.LineStringZ, #We store Z Geometry now
                             o.crs)
 
         
@@ -225,13 +225,20 @@ class Intervisibility(QgsProcessingAlgorithm):
                             refraction = refraction )
         
         cnt = 0
-
+        
         feedback.setProgressText("*2* Testing visibility")   
         for key, ob in o.pt.items():
 
             ws.intervisibility(ob, dem, interpolate = precision)
-
-            p1 = QgsPoint(float(ob["x_geog"]), float(ob["y_geog"] ))
+            
+            #Get altitude abs for observer
+            x,y= ob["pix_coord"];
+            radius_pix = dem.radius_pix
+            dem.open_window ((x,y))
+            data= dem.window
+            z_abs =   ob["z"] + data [radius_pix,radius_pix]
+            #3D point         
+            p1 = QgsPoint(float(ob["x_geog"]), float(ob["y_geog"] ), float(ob["z"]+data [radius_pix,radius_pix]))
 
             for key, tg in ob["targets"].items():
                 
@@ -239,8 +246,17 @@ class Intervisibility(QgsProcessingAlgorithm):
                 
                 if not write_negative:
                     if h<0: continue
-               
-                p2 = QgsPoint(float(tg["x_geog"]), float(tg["y_geog"] ))
+                #Get altitude abs for target
+                x,y= tg["pix_coord"];                
+                dem.open_window ((x,y))
+                data= dem.window
+                z =   data [radius_pix,radius_pix]
+                try: z_targ = tg["z_targ"]
+                except : 
+                    try: z_targ = tg["z"] 
+                    except : z_targ = 0
+                
+                p2 = QgsPoint(float(tg["x_geog"]), float(tg["y_geog"] ), float(z+z_targ))
 
                 feat = QgsFeature()
                 feat.setGeometry(QgsGeometry.fromPolyline([p1, p2]))
