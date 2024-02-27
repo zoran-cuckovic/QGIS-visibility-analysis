@@ -8,9 +8,6 @@ from os import path
 
 from PyQt5.QtCore import QCoreApplication
 
-from plugins.processing.gui import MessageBarProgress
-
-
 from qgis.core import (QgsProcessing,
                        
                        QgsProcessingAlgorithm,
@@ -213,8 +210,8 @@ class VisibilityIndex(QgsProcessingAlgorithm):
               
             <a href='https://ko-fi.com/D1D41HYSW' target='_blank'><img height='30' style='border:0px;height:36px;' src='{curr_dir}/kofi2.webp' /></a>
          
-            This GIS tool is intended for peaceful use !
-            <img height='80' style='border:0px;height:36px;' src='{curr_dir}/ukraine.png'/>
+            
+            This GIS tool is intended for <b>peaceful use !
 
             """) 
 

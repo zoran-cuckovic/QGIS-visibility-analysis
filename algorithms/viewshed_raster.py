@@ -23,8 +23,6 @@ from os import path
 
 from PyQt5.QtCore import QCoreApplication
 
-from plugins.processing.gui import MessageBarProgress
-
 from qgis.core import (QgsProcessing,
                        
                        QgsProcessingAlgorithm,
@@ -155,9 +153,8 @@ class ViewshedRaster(QgsProcessingAlgorithm):
                  
              <a href='https://ko-fi.com/D1D41HYSW' target='_blank'><img height='30' style='border:0px;height:36px;' src='{curr_dir}/kofi2.webp' /></a>
             
-			This GIS tool is intended for peaceful use !
-			<img height='80' style='border:0px;height:36px;' src='{curr_dir}/ukraine.png'/>
-			
+			 <font size = "+3"> <b>&#9774;</b></font size>This GIS tool is intended for <b>peaceful use !
+						
 			""") 
 
         return h            
@@ -315,8 +312,8 @@ class ViewshedRaster(QgsProcessingAlgorithm):
                 
             if outputName in parameters :
                 results[outputName] = parameters[outputName]
-
-    
+                results["OUTPUT"] = output_path
+                
         return results
 
     

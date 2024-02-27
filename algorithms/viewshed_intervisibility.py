@@ -50,8 +50,6 @@ from qgis.core import (QgsWkbTypes,
                        QgsProcessingParameterEnum )
 
         
-from .modules import Points as pts
-from .modules import Raster as rst
 
 # from processing.tools import dataobjects
 
@@ -144,8 +142,7 @@ class Intervisibility(QgsProcessingAlgorithm):
                  
              <a href='https://ko-fi.com/D1D41HYSW' target='_blank'><img height='30' style='border:0px;height:36px;' src='{curr_dir}/kofi2.webp' /></a>
             
-			This GIS tool is intended for peaceful use !
-			<img height='80' style='border:0px;height:36px;' src='{curr_dir}/ukraine.png'/>
+			This GIS tool is intended for <b>peaceful use !
 			
 			""") 
 
@@ -178,7 +175,7 @@ class Intervisibility(QgsProcessingAlgorithm):
         o= pts.Points(observers)       
         t= pts.Points(targets)
 
-        required=["observ_hgt", "radius"]
+        required =["observ_hgt", "radius"]
 
         miss1 = o.test_fields (required)
         miss2 = t.test_fields (required)
@@ -273,6 +270,7 @@ class Intervisibility(QgsProcessingAlgorithm):
             if feedback.isCanceled(): return {}
 
         feedback.setProgressText("*3* Drawing the network")
+		
 
         return {self.OUTPUT: dest_id}
        

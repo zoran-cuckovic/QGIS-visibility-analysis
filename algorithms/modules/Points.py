@@ -409,6 +409,7 @@ class Points:
     """
     Returns a dict of points, prepared for visibilty analysis
     All values are expressed in pixel offsets.
+	
 
     To make it robust: everything is in try - except blocks,
     use test_fields( ..) to check!
@@ -421,12 +422,11 @@ class Points:
 
         
         bounding_box = QgsRectangle(*extent) #* unpacks an argument list     
+		
 
         if not spatial_index: #for intersect, not very helpful ...?
-            s_index = QgsSpatialIndex()
-            for f in self.layer.getFeatures():
-                s_index.insertFeature(f)
-            
+            s_index =  QgsSpatialIndex(self.layer.getFeatures())
+			            
         else: s_index = spatial_index
 
         ids = s_index.intersects(bounding_box)
@@ -436,7 +436,7 @@ class Points:
 ##        for fid in feature_ids:
 ##            feat = self.layer.getFeatures(
 ##                   QgsFeatureRequest().setFilterFid(fid)).next()
-
+ 
         for feat in self.layer.getFeatures(QgsFeatureRequest( ids)):
  
             geom = feat.geometry()
