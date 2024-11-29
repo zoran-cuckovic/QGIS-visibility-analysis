@@ -1,10 +1,12 @@
 ---
-canonical_url: "https://landscapearchaeology.org/qgis-terrain-shading/"
+canonical_url: "https://landscapearchaeology.org/qgis-visibility-analysis/"
 ---
 Quantum GIS plugin for visibility analysis
 ======================
 
 ![screenshot](images/screenshot.jpg)
+
+**NB. This page is no longer maintained, please go to (https://landscapearchaeology.org/qgis-visibility-analysis)[https://landscapearchaeology.org/qgis-visibility-analysis] for the up-to-date documentation.**
 
 ## Introduction
 Viewshed analysis plugin for QGIS calculates visible surface from a given observer point over a digital elevation model. The plugin is intended for more complex modelling, such as the depth below the visible horizon or generation of intervisibilty networks between groups of points. It is particularly performant for multiple viewshed calculations form a set of fixed points.
