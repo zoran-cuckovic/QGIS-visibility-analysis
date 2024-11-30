@@ -104,8 +104,8 @@ class ViewshedRaster(QgsProcessingAlgorithm):
         self.addParameter(QgsProcessingParameterNumber(
             self.REFRACTION,
             self.tr('Atmospheric refraction'),
-            QgsProcessingParameterNumber.Type.Double,
-            0.13, False, 0.0, 1.0))
+            QgsProcessingParameterNumber.Double,
+            defaultValue = 0.13, minValue= 0, maxValue= 1))
         
         
 ##        self.addParameter(QgsProcessingParameterEnum (
@@ -153,15 +153,16 @@ class ViewshedRaster(QgsProcessingAlgorithm):
                  
              <a href='https://ko-fi.com/D1D41HYSW' target='_blank'><img height='30' style='border:0px;height:36px;' src='{curr_dir}/kofi2.webp' /></a>
             
-			 <font size = "+3"> <b>&#9774;</b></font size>This GIS tool is intended for <b>peaceful use !
-						
+			 <b>This GIS tool is intended for peaceful use !</b>
+			<img height='80' style='border:0px;height:36px;' src='{curr_dir}/ukraine.png'/>
+			
 			""") 
 
         return h            
 
     #---------- not working ---------------- 
     def helpUrl(self):
-        return 'https://zoran-cuckovic.github.io/QGIS-visibility-analysis/help_qgis3.html'
+        return 'https://landscapearchaeology.org/QGIS-visibility-analysis/'
     # for local file : QUrl.fromLocalFile(os.path.join(helpPath, '{}.html'.format(self.grass7Name))).toString()
         
 
@@ -313,7 +314,7 @@ class ViewshedRaster(QgsProcessingAlgorithm):
             if outputName in parameters :
                 results[outputName] = parameters[outputName]
                 results["OUTPUT"] = output_path
-                
+    
         return results
 
     
