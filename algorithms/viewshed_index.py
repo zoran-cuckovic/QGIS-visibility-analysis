@@ -101,9 +101,8 @@ class VisibilityIndex(QgsProcessingAlgorithm):
         self.addParameter(QgsProcessingParameterNumber(
             self.REFRACTION,
             self.tr('Atmoshpheric refraction'),
-            QgsProcessingParameterNumber.Type.Double,
-            0.13, False, 0.0, 1.0))
-        
+            QgsProcessingParameterNumber.Double,
+            defaultValue = 0.13 , minValue= 0, maxValue= 1))
 
         self.addParameter(
             QgsProcessingParameterRasterDestination(
