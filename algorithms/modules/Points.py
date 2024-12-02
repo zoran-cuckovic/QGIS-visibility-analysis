@@ -22,8 +22,6 @@ from . import Raster as rst
 
 """
 
-TODO: find highest pt
-
 TODO : calculating coordinates in pixels ==> to Raster class !!
 
 """
@@ -231,132 +229,7 @@ class Points:
 
             QgsMessageLog.logMessage( txt, "Viewshed info")
     
-    def move_top(self,  raster_path, search_radius):
-        """
-            Find the highest point in a perimeter around each observer point.
-            Note that it always moves the point to the center of the highest pixel
-        
-            This is duplicating functions from take_points (selection inside a frame)!
-            to reorganise !! (should be independent function, could be useful elsewhere...)
-            
-        """
-  
-        r = rst.Raster(raster_path)
-        pix = r.pix; half_pix = pix/2
-
-        raster_x_min, raster_y_min, raster_x_max,raster_y_max = r.extent
-                
-        radius_pix = int(search_radius/pix)
-
-        win_size = radius_pix * 2 + 1
-
-        r.set_master_window(radius_pix, background_value=r.min)
-        
-        
-    #raster_y_min = raster_y_max - raster_y_size * pix
-    #raster_x_max = raster_x_min + raster_x_size * pix
-
-        for key in self.pt:
-           
-##            x, y = self.pt[key]["x_geog"], self.pt[key]["y_geog"]
-##
-##            #how to use Qgs functions?
-##            # ext = QgsRectangle(*extents)
-##            #pt = QgsPoint(x,y)
-##            # pt in ext ???
-##          
-##            if not raster_x_min < x < raster_x_max \
-##            or not raster_y_min < y < raster_y_max: continue
-##
-##
-##            # make a function for pixel coords !!!
-##            x_pix= int((x - raster_x_min) / pix)
-##            y_pix = int((raster_y_max - y) / pix) #reversed !
-
-            x_pix, y_pix = self.pt[key]["pix_coord"]
-
-            r.open_window(x_pix, y_pix, radius_pix)
-
-            #chunks are padded to be square (for viewsheds)
-            # x, y is always in the centre
-            
-            iy, ix=np.unravel_index( np.argmax(r.window),
-                                     r.window.shape )
-        
-            # unravel is giving offsets inside the window,
-            # we need to place it inside the entire raster
-            x_off , y_off, win_x, win_y = r.gdal_slice
-            # when the point is close to border, take into account window overlap!
-            x_off -= win_size - win_x
-            y_off -= win_size - win_y
-
-            self.pt[key]["x_geog"] = (ix + x_off) * pix + raster_x_min + half_pix
-            self.pt[key]["y_geog"] = raster_y_max - (iy + y_off) * pix  - half_pix
-
-#           
-##            if iy != radius_pix or ix != radius_pix:
-##        
-##                self.pt[key]["x_geog"] += (ix - x_pix)  * pix
-##                self.pt[key]["y_geog"] += (iy - y_pix)  * pix
-        
-
-    """
-                
-            # we cannot know the position of the observer! if it is not in the center ...
-            z_top = None
-            
-            for j in xrange(0, y_size): 
-                for i in xrange(0, x_size):
-                    try: k = dt [j, i] # it may be an empty cell or whatever...
-                    except: continue
-                    
-                    if k > z_top: x_top,y_top,z_top = i,j,k
-
-            if x_off1: x_top = pt_x + (x_top - search_top)
-            if y_off1: y_top = pt_y + (y_top - search_top)
-
-
-
-            #todo                 
-            x_geog += (x2 - x)  * pix
-            y_geog += (y2 - y) * pix
-    """
-
     
-    """ much faster with numpy ...
-
-    if not 0 <= x < raster_x_size or not 0 <= y < raster_y_size : continue
-       
-       #cropping from the front
-    if x <= radius_pix:   x_offset =0
-       #cropping from the back
-    else:      x_offset = x - radius_pix         
-      
-    if y <= radius_pix:  y_offset =0
-    else:   y_offset = y - radius_pix
-
-    x_offset2 = min(x + radius_pix +1, raster_x_size) #could be enormus radius, so check both ends always
-    y_offset2 = min(y + radius_pix + 1, raster_y_size )
-    
-    window_size_y = y_offset2 - y_offset
-    window_size_x = x_offset2 - x_offset
-
-    mx = r.ReadAsArray(x_offset, y_offset, window_size_x, window_size_y).astype(float)
-    m = np.argmax(mx)
-
-    iy, ix=np.unravel_index(m, mx.shape)
-    
-    #0.5 is to move to the center of corresp. pixel
-    x2_g = ( ix +0.5 + x_offset) * pix  + raster_x_min 
-    
-    y2_g = raster_y_max - (y_offset + iy + 0.5) * pix  
-
-    g= QgsGeometry.fromPoint(QgsPoint( x2_g, y2_g))
-    
-    inputLayer.dataProvider().changeGeometryValues({ pt_id : g })
-
-    """
-
     
     """
     Assign targets for each observer point. Targets are a class instance
