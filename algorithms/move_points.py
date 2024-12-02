@@ -31,7 +31,7 @@ __revision__ = '$Format:%H$'
 
 
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
+from qgis.core import (QgsProcessing, QgsProcessingException,
                        
                        QgsProcessingAlgorithm,
                        QgsProcessingParameterFeatureSource,
@@ -42,7 +42,7 @@ from qgis.core import (QgsProcessing,
                   
                        QgsProcessingParameterFile,
 
-                       QgsCoordinateTransform, QgsProject, QgsPoint )
+                       QgsCoordinateTransform, QgsProject, QgsPoint, QgsPointXY )
 
 import numpy as np 
        
@@ -113,8 +113,11 @@ class MovePoints(QgsProcessingAlgorithm):
         r.set_master_window(radius, background_value=r.min)
         win_size, _ = r.window.shape
         mask = r.mx_dist < radius/pix
-                            
+              
+        # this routine does *not* save reprojected coords, unlike create_points 
+        # it only adjusts coords for the search within the raster (messy, but more useful...)              
         transf = QgsCoordinateTransform(points_layer.sourceCrs(), dem.crs() , QgsProject.instance()) 
+        rev_transf = QgsCoordinateTransform( dem.crs(), points_layer.sourceCrs(), QgsProject.instance()) 
 
         for feat in points_layer.getFeatures():
         
@@ -122,11 +125,15 @@ class MovePoints(QgsProcessingAlgorithm):
 
             # try geom.transform(crsTransform)
             t = geom.asPoint()
-          
+            
             try: t = transf.transform(t)
-            except: continue #in case of wrong coords etc.. 
+            except:
+                err= " \n ****** \n ERROR! \n Cannot reproject points to raster projection ! "
+                feedback.reportError(err, fatalError = True)
+                raise QgsProcessingException(err)
+
                               
-        
+            
             #raster_y_min = raster_y_max - raster_y_size * pix
             #raster_x_max = raster_x_min + raster_x_size * pix
             
@@ -135,6 +142,7 @@ class MovePoints(QgsProcessingAlgorithm):
                 r.open_window(r.pixel_coords(*t)) #converts to pixel indices
                 
                 r.window *= mask #eliminate distant corners (circular radius)
+                
                 
                 #chunks are padded to be square (for viewsheds)
                 # x, y is always in the centre 
@@ -148,13 +156,15 @@ class MovePoints(QgsProcessingAlgorithm):
                 x_off -= win_size - win_x
                 y_off -= win_size - win_y
 
-                new_x = (ix + x_off) * pix + raster_x_min + half_pix
-                new_y = raster_y_max - (iy + y_off) * pix  - half_pix
+                new_point = QgsPointXY (
+                    (ix + x_off) * pix + raster_x_min + half_pix ,
+                    raster_y_max - (iy + y_off) * pix  - half_pix )
+                # ...crazy : transform needs QgsPointXY, while setGeometry needs QgsPoint !?
+                # now go back to the original CRS (shenaningan : QgsPoint / QgsPointXY)
+                feat.setGeometry(QgsPoint(rev_transf.transform (new_point)))
                 
-                feat.setGeometry(QgsPoint(new_x, new_y))
-            
             except: pass # do not skip features out of bounds
-
+            
             sink.addFeature(feat, QgsFeatureSink.FastInsert)
                 
         return {self.OUTPUT_VECTOR: dest_id}
