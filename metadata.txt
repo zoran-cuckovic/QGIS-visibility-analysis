@@ -3,8 +3,9 @@
 [general]
 name=Visibility Analysis
 qgisMinimumVersion=3.0
+supportsQt6=yes
 description=Visibility analysis over raster DEM
-version=1.9.1
+version=1.9.2
 author=Zoran Čučković
 email=contact@zoran-cuckovic.from.hr
 
@@ -18,7 +19,7 @@ repository=https://github.com/zoran-cuckovic/QGIS-visibility-analysis/tree/exper
 
 hasProcessingProvider=yes
 # Uncomment the following line and add your changelog:
-# changelog=
+changelog="Target height implemented for visibility index algorithm."
 
 # Tags are comma separated with spaces allowed
 tags=Viewshed, Visibility, Raster
