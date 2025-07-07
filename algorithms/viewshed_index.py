@@ -6,7 +6,9 @@ Created on Thu Apr  9 16:39:35 2020
 """
 from os import path
 
-from PyQt5.QtCore import QCoreApplication
+try: from PyQt5.QtCore import QCoreApplication
+except ImportError :from PyQt6.QtCore import QCoreApplication
+ 
 
 from qgis.core import (QgsProcessing,
                        
@@ -37,12 +39,11 @@ class VisibilityIndex(QgsProcessingAlgorithm):
 
     DEM = 'DEM'
     OBSERVER_HEIGHT='OBSERVER_HEIGHT'
-    
+    TARGET_HEIGHT='TARGET_HEIGHT'
     RADIUS='RADIUS'
-    DIRECTION='DIRECTION'
     INTERPOLATE = 'INTERPOLATE'
     SAMPLE = 'SAMPLE'
-    
+    DIRECTION = 'DIRECTION'
     OUTPUT = 'OUTPUT'
 
     USE_CURVATURE = 'USE_CURVATURE'
@@ -50,7 +51,8 @@ class VisibilityIndex(QgsProcessingAlgorithm):
 
 
     SAMPLES = ['8 lines', '16 lines', '32 lines','64 lines']
-    DIRECTIONS = ['Incoming views', 'Outgoing views']
+    DIRECTIONS = ['Incoming (target collects the views)', 
+                  'Outgoing (observer collects the views)']
 
     
     def __init__(self):
@@ -75,24 +77,28 @@ class VisibilityIndex(QgsProcessingAlgorithm):
             QgsProcessingParameterNumber.Double,
             defaultValue= 1.6))
 			
-
+        self.addParameter(QgsProcessingParameterNumber(
+            self.TARGET_HEIGHT,
+            self.tr('Target height, meters'),
+            QgsProcessingParameterNumber.Double,
+            defaultValue= 0))
+        
         self.addParameter(QgsProcessingParameterEnum (
             self.SAMPLE,
             self.tr('Sample'),
             self.SAMPLES,
             defaultValue=1))
-
-        self.addParameter(QgsProcessingParameterEnum (
-            self.DIRECTION,
-            self.tr('Direction'),
-            self.DIRECTIONS,
-            defaultValue=0))
-     
         
+        self.addParameter(QgsProcessingParameterEnum (
+          self.DIRECTION,
+          self.tr('Direction'),
+          self.DIRECTIONS,
+          defaultValue=0))
+
+       
         self.addParameter(QgsProcessingParameterBoolean(
             self.INTERPOLATE,
             self.tr('Use height interpolation'), True))
-
 
         self.addParameter(QgsProcessingParameterBoolean(
             self.USE_CURVATURE,
@@ -116,6 +122,7 @@ class VisibilityIndex(QgsProcessingAlgorithm):
         input_raster = self.parameterAsRasterLayer(parameters,self.DEM, context)
             
         obs_height = self.parameterAsDouble(parameters,self.OBSERVER_HEIGHT, context)
+        target_height = self.parameterAsDouble(parameters,self.TARGET_HEIGHT, context)
         
         radius = self.parameterAsDouble(parameters,self.RADIUS,context)
         
@@ -125,17 +132,17 @@ class VisibilityIndex(QgsProcessingAlgorithm):
         sample = self.parameterAsInt(parameters,self.SAMPLE,context)
         # 8, 16, 32, 64 lines
         sample = 2 ** (3 + sample)
-      
+        
+        
         direction = self.parameterAsInt(parameters,self.DIRECTION,context)
+        
         
         output_path = self.parameterAsOutputLayer(parameters,self.OUTPUT,context)
         
         curvature = self.parameterAsBool(parameters, self.USE_CURVATURE, context)    
         refraction=self.parameterAsDouble(parameters,self.REFRACTION, context)
         
-        
-    
-        
+                
         # this code is replicated from Create points routine 
         if input_raster.crs().mapUnits() != 0 :
             err= " \n ****** \n ERROR! \n Raster data has to be projected in a metric system!"
@@ -156,10 +163,10 @@ class VisibilityIndex(QgsProcessingAlgorithm):
                                  refraction = refraction)
 
        
-        out = ws.visibility_index(raster,
-                                   obs_height,          
+        out = ws.visibility_index(raster, obs_height, 
+                                  target_height =target_height,
+                                  outgoing_direction= direction,
                                    sample=sample,
-                                   direction = direction,
                                    interpolate = interpolate,
                                    feedback = feedback)
 
@@ -198,10 +205,13 @@ class VisibilityIndex(QgsProcessingAlgorithm):
 
             <ul>
                 <li> <em>Digital elevation model</em>: raster image projected in a metric coordinate system.</li>
-                <li> <em>Observer height</em>: eye level above ground.</li>
+                <li> <em>Observer height</em>: Observer's eye level above ground.</li>
+                <li> <em>Target height</em>: Above-ground height of the target.</li>
                  <li> <em>Sample</em>: number of lines of sight per point.</li>
-                 <li> <em>Direction</em>: map views to locations seen (incoming) or to the observer point (outgoing).</li>
+                 
             </ul>
+            
+            NB. Take care to understand the reversed viewshed in which the target is occupied by an observer. 
 
             For more see <a href="http://www.zoran-cuckovic.from.hr/QGIS-visibility-analysis/help_qgis3.html">help online</a>.
         
