@@ -481,7 +481,7 @@ def intervisibility (point_class, raster_class, interpolate = False):
 def visibility_index (raster, obs_height,
                        target_height = 0,
                        sample = 0,
-                       direction=0,
+                       outgoing_direction =0,
                        interpolate = 0,
                        mask = None,
                        feedback = None,
@@ -527,7 +527,36 @@ def visibility_index (raster, obs_height,
                 out = np.copy(raster)
                 out[view_in] += diff * abs(offset)
 
-            return out               
+            return out
+
+    def end_offsets (radius_float, sample):
+        """
+            Parameters
+        ----------
+        radius_float : float (not integer !)
+   
+        sample : int, number of lines/directions
+
+        Returns
+        -------
+        Pixels towards which the LOS will radiate 
+        
+        """
+        step = radius_float / (sample / 8)
+        d = int(radius)
+        # border targets (without one corner pix)    
+        # attention! +d is never included - to avoid duplicates on corners
+        b = np.arange(-d, d, step)
+        
+        #add a dimension for x
+        b= np.stack((b, np.zeros(b.size)), axis = -1)
+        b[:,1] = d # x targets
+
+        return np.vstack(( b,
+                    b[:, ::-1] * [1, -1],
+                    b *[-1, -1],
+                    b[:, ::-1] * [-1, 1] )).astype(int)
+               
                     
     start = time.process_time()
     
@@ -538,26 +567,9 @@ def visibility_index (raster, obs_height,
     # pixel distances
     radius = raster.radius / raster.pix
 
-    d = int(radius)
-
     # precalculated distances 
     # must be in pixel distances!    
-    mx_dist = raster.mx_dist [d:, d:]
-
-    step = radius / (sample / 8)
-    
-    # border targets (without one corner pix)    
-    # attention! +d is never included - to avoid duplicates on corners
-    b = np.arange(-d, d, step)
-    #add a dimension for x
-    b= np.stack((b, np.zeros(b.size)), axis = -1)
-    b[:,1] = d # x targets
-
-    end_offsets = np.vstack(( b,
-                b[:, ::-1] * [1, -1],
-                b *[-1, -1],
-                b[:, ::-1] * [-1, 1] )).astype(int)
-  
+    mx_dist = raster.mx_dist [int(radius):, int(radius):]
     
     out = np.zeros(data.shape)
     temp_z1 = np.zeros(data.shape)
@@ -567,7 +579,7 @@ def visibility_index (raster, obs_height,
         
     cnt = 0 #progress tracking
 
-    for p in end_offsets:
+    for p in end_offsets (radius, sample):
          
         y2,x2 = p
                
@@ -600,8 +612,10 @@ def visibility_index (raster, obs_height,
         (... but then the LOS can't be customised...)
     
         """        
+        # the observer's pixel is ignored 
+        # unlike the cumulative viewshed
         for y,x in np.abs(line): 
-
+            
             dist = mx_dist [y, x] 
              
             i= max(x,y)-1 #index inside the line
@@ -634,25 +648,34 @@ def visibility_index (raster, obs_height,
              
             # this is clumsy : curvature is assigned to master window
             # (set before calling this function)
-            try: curv = raster.curvature[d + y, d + x]
+            try: curv = raster.curvature[int(radius) + y, int(radius) + x]
             except: curv = 0
             
+    
            # a is shifted, b is the origin point    
-            heights -= data[b] + ( obs_height + curv )
+            heights -= data[b] + obs_height + curv  # curvature is negative ( hgt - + curv)
             
             heights /= dist
             
-            visib = heights > old_heights
-                   
+            horizon_depth = heights - old_heights
+                       
+            visib = horizon_depth > 0
+  
             old_heights[visib] = heights [visib]
+            
+            # rewrite the visib array
+            # target may be below horizon, cannot be used for horizon calc
+            if target_height: 
+               visib =  horizon_depth > -target_height/dist 
                 
             # a = incoming, viewshed             
             # b = outgoing, observer perspective
-            view, anti_view = (b, a) if direction else (a, b)
+            view, anti_view = (b, a) if outgoing_direction else (a, b)
   
-            f = (i + 1) * (8/ sample) # i begins with 0...
+            f = i * (8/ sample) 
+
             """ 
-            each step is representative of a vertical column of pixels
+            each step is representative of a wedge-shaped area
             for four lines (sample = 4) we cover step distance times 2, and so on...
             Remark that this is the same as dist * slope * 2
             where slope = np.tan(np.radians(360/sample))
