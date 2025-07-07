@@ -30,7 +30,9 @@ __copyright__ = '(C) 2018 by Zoran Čučković'
 __revision__ = '$Format:%H$'
 
 
-from PyQt5.QtCore import QCoreApplication
+try: from PyQt5.QtCore import QCoreApplication
+except ImportError :from PyQt6.QtCore import QCoreApplication
+ 
 from qgis.core import (QgsProcessing, QgsProcessingException,
                        
                        QgsProcessingAlgorithm,
