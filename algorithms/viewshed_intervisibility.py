@@ -30,7 +30,9 @@ __revision__ = '$Format:%H$'
 
 from os import path
 
-from PyQt5.QtCore import QCoreApplication, QVariant
+try : from PyQt5.QtCore import QCoreApplication, QVariant
+except ImportError:  from PyQt6.QtCore import QCoreApplication, QVariant
+
 from qgis.core import (QgsWkbTypes,
                        QgsFields, QgsField, QgsPoint, QgsFeature,QgsGeometry,
 
