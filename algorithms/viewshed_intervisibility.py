@@ -173,14 +173,15 @@ class Intervisibility(QgsProcessingAlgorithm):
 ##
         
         dem = rst.Raster(raster.source())
-       
-        o= pts.Points(observers)       
-        t= pts.Points(targets)
+
+        # Casting to custom Point objects
+        observer_Points = pts.Points(observers)       
+        target_Points = pts.Points(targets)
 
         required =["observ_hgt", "radius"]
 
-        miss1 = o.test_fields (required)
-        miss2 = t.test_fields (required)
+        miss1 = observer_Points.test_fields (required)
+        miss2 = target_Points.test_fields (required)
         
         if miss1 or miss2:
 
@@ -190,10 +191,10 @@ class Intervisibility(QgsProcessingAlgorithm):
                
             raise QgsProcessingException(msg)
                  
-        o.take(dem.extent, dem.pix)
-        t.take(dem.extent, dem.pix)
+        observer_Points.take(dem.extent, dem.pix)
+        target_Points.take(dem.extent, dem.pix)
 
-        if o.count == 0 or t.count == 0:
+        if observer_Points.count == 0 or target_Points.count == 0:
 
             msg = ("\n ********** \n ERROR! \n"
                 "\n No view points/target points in the chosen area!")
@@ -215,60 +216,66 @@ class Intervisibility(QgsProcessingAlgorithm):
         
         feedback.setProgressText("*1* Constructing the network")
                
-        o.network(t) #do this after .take which takes points within raster extents
+        observer_Points.network(target_Points) #do this after .take which takes points within raster extents
        
-        t = None
+        target_Points = None
        
-        dem.set_master_window(o.max_radius,
+        dem.set_master_window(observer_Points.max_radius,
                             curvature =useEarthCurvature,
                             refraction = refraction )
         
         cnt = 0
         
-        feedback.setProgressText("*2* Testing visibility")   
-        for key, ob in o.pt.items():
+        feedback.setProgressText("*2* Testing visibility") 
 
-            ws.intervisibility(ob, dem, interpolate = precision)
+        #For each observer  
+        for key, observer in observer_Points.pt.items():
+            
+            ws.intervisibility(observer, dem, interpolate = precision)
             
             #Get altitude abs for observer
-            x,y= ob["pix_coord"];
+            x,y= observer["pix_coord"]
             radius_pix = dem.radius_pix
             dem.open_window ((x,y))
             data= dem.window
-            z_abs =   ob["z"] + data [radius_pix,radius_pix]
+            
             #3D point         
-            p1 = QgsPoint(float(ob["x_geog"]), float(ob["y_geog"] ), float(ob["z"]+data [radius_pix,radius_pix]))
+            p1 = QgsPoint(float(observer["x_geog"]), float(observer["y_geog"] ), float(observer["z"]+data [radius_pix,radius_pix]))
 
-            for key, tg in ob["targets"].items():
+            #For each Target
+            for key, target in observer["targets"].items():
                 
-                h = tg["depth"]           
+                height = target["depth"]           
                 
                 if not write_negative:
-                    if h<0: continue
+                    if height<0: continue
+                    
                 #Get altitude abs for target
-                x,y= tg["pix_coord"];                
+                x,y= target["pix_coord"];                
                 dem.open_window ((x,y))
                 data= dem.window
+                z_abs =   observer["z"] + data [radius_pix,radius_pix]
+
                 z =   data [radius_pix,radius_pix]
-                try: z_targ = tg["z_targ"]
+                try: z_targ = target["z_targ"]
                 except : 
-                    try: z_targ = tg["z"] 
+                    try: z_targ = target["z"] 
                     except : z_targ = 0
                 
-                p2 = QgsPoint(float(tg["x_geog"]), float(tg["y_geog"] ), float(z+z_targ))
+                p2 = QgsPoint(float(target["x_geog"]), float(target["y_geog"] ), float(z+z_targ))
 
                 feat = QgsFeature()
                 feat.setGeometry(QgsGeometry.fromPolyline([p1, p2]))
 
                 feat.setFields(qfields)
-                feat['Source'] = ob["id"]
-                feat['Target'] = tg["id"]
+                feat['Source'] = observer["id"]
+                feat['Target'] = target["id"]
                 feat['TargetSize'] = float(h) #.                
            
                 sink.addFeature(feat, QgsFeatureSink.FastInsert) 
      
             cnt +=1
-            feedback.setProgress(int((cnt/o.count) *100))
+            feedback.setProgress(int((cnt/observer_Points.count) *100))
             if feedback.isCanceled(): return {}
 
         feedback.setProgressText("*3* Drawing the network")

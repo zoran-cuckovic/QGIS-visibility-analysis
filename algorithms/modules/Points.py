@@ -18,6 +18,9 @@ import numpy as np
 
 from . import Raster as rst
 
+from numba import cuda
+import numpy as np
+
 
 
 """
@@ -47,7 +50,7 @@ class Points:
     """
     
     def __init__(self, layer, crs=None, project_crs=None):
-    #layer = qgis layer,  bounding_box = QgsRectangle,   field_id= string)
+        #layer = qgis layer,  bounding_box = QgsRectangle,   field_id= string)
         self.pt={}
 
         # this is not a good apporach! not working with txt files...
@@ -67,6 +70,12 @@ class Points:
  
         
         self.count = 0 # only the take routine can determine the number of used points
+
+        self.ids = []
+        self.coords = []
+        self.radii = []
+        self.keys = []
+
 
         
     """
@@ -237,19 +246,26 @@ class Points:
 
     TODO : use spatial indexing ... == use .take ??
     """
+    
+    #Cuda speedup here
     def network (self,targets):
 
-         for pt1 in self.pt:
+        # For each observer point
+        for observer in self.pt:
 
-            id1 = self.pt[pt1]["id"]        
-            x,y = self.pt[pt1]["pix_coord"]
+            observer_id = self.pt[observer]["id"]        
+            observer_x, observer_y = self.pt[observer]["pix_coord"]
             
-            r = self.pt[pt1]["radius"] #it's pixelised after take !!
+            observer_radius = self.pt[observer]["radius"] #it's pixelised after take !!
 
-            radius_pix= int(r); r_sq = r**2
+            radius_pix= int(observer_radius); 
+            r_sq = observer_radius**2
             
-            max_x, min_x = x + radius_pix, x - radius_pix
-            max_y, min_y = y + radius_pix, y - radius_pix
+            max_x, min_x = observer_x + radius_pix, observer_x - radius_pix
+            max_y, min_y = observer_y + radius_pix, observer_y - radius_pix
+            
+            
+            
             #does not need cropping if target points match raster extent
 
 
@@ -258,25 +274,35 @@ class Points:
             #local coords :in intervisibilty
 
                 
-##                if z_target_field: #this is a clumsy addition so that each point might have it's own height
-##                    try: tg_offset = float(feat2[z_target_field])
-##                    except: pass
-            self.pt[pt1]["targets"]={}
+            # if z_target_field: #this is a clumsy addition so that each point might have it's own height
+            #     try: tg_offset = float(feat2[z_target_field])
+            #     except: pass
             
-            for pt2, value in targets.pt.items():
+            
+            self.pt[observer]["targets"]={}
+            
 
-                id2 = targets.pt[pt2]["id"]
 
-                x2, y2 = value["pix_coord"]
+            # For each target point i.e solar panel
+            for target, value in targets.pt.items():
 
-                if id1==id2 and x == x2 and y==y2 : continue
+                target_id = targets.pt[target]["id"]
+
+                target_x, target_y = value["pix_coord"]
+
+                if observer_id==target_id and observer_x == target_x and observer_y == target_y : continue
                 
-                if min_x <= x2 <= max_x and min_y <= y2 <= max_y:
-                    if  (x-x2)**2 + (y-y2)**2 <= r_sq:
-                          # this is inefficient for looping
-                          # need to open a window for each edge...
-##                        self.edges[id1,id2]={}
-                        self.pt[pt1]["targets"][pt2]=value
+                # If the targets x and y are within range of the observer
+                if min_x <= target_x <= max_x and min_y <= target_y <= max_y:
+                    
+                    # If target is in circular area centered around target
+                    if  (observer_x- target_x)**2 + (observer_y-target_y)**2 <= r_sq:
+                        # this is inefficient for looping
+                        # need to open a window for each edge...
+                        # self.edges[id1,id2]={}
+
+                        # Add target's value to observer
+                        self.pt[observer]["targets"][target]=value
 
 
     """
@@ -313,50 +339,63 @@ class Points:
         for feat in self.layer.getFeatures(QgsFeatureRequest( ids)):
  
             geom = feat.geometry()
-            t = geom.asPoint()
+            point_t = geom.asPoint()
             
-            x_geog, y_geog= t
+            x_geog, y_geog= point_t
 
-            id1= feat.id()
+            feat_id= feat.id()
           
 
              # !! SHOULD BE PARAMETRIZED - fiels are listed above
             # test_fileds ( FIELDS) and then map ...
 
             r=feat["radius"] 
-            if r > self.max_radius: self.max_radius=r
+            if r > self.max_radius:
+                self.max_radius=r
+
+
+            #vars for cuda speedup
+            cordinates = (int((x_geog - x_min) / pix_size), int((y_max - y_geog) / pix_size))
             
-            self.pt[ id1 ]={"id" : feat["ID"],
-                            "z" : feat["observ_hgt"],
-                            "radius" : r/ pix_size, #we use pixel distances !
-                            # not float !
-                            "pix_coord" : (int((x_geog - x_min) / pix_size), 
-                                           int((y_max - y_geog) / pix_size)), 
-                            # geog. coords are only used for writing vectors
-                            "x_geog" :x_geog, "y_geog": y_geog}
+            
+            self.ids.append(int(feat["ID"]))
+            self.coords.append(cordinates)
+            self.radii.append(float(r / pix_size))
+            self.keys.append(feat_id)
+            
+            self.pt[ feat_id ]={    
+                "id" : feat["ID"],
+                "z" : feat["observ_hgt"],
+                "radius" : r/ pix_size, #we use pixel distances !
+                # not float !
+                "pix_coord" : cordinates, 
+                # geog. coords are only used for writing vectors
+                "x_geog" :x_geog, 
+                "y_geog": y_geog
+            }
 
             
             # optional fields
           
             
-            try: self.pt[ id1 ]["z_targ"]  = feat["target_hgt"]
+            try: self.pt[ feat_id ]["z_targ"]  = feat["target_hgt"]
             except : pass
 
-            try: self.pt[ id1 ]["radius_in"]  = feat["radius_in"]/ pix_size
+            try: self.pt[ feat_id ]["radius_in"]  = feat["radius_in"]/ pix_size
             except : pass
             
-            try: self.pt[ id1 ]["file"] = feat["file"]
+            try: self.pt[ feat_id ]["file"] = feat["file"]
             except: pass
 
             try:
-                self.pt[ id1 ]["azim_1"] =  feat["azim_1"]
-                self.pt[ id1 ]["azim_2"] =  feat["azim_2"]
+                self.pt[ feat_id ]["azim_1"] =  feat["azim_1"]
+                self.pt[ feat_id ]["azim_2"] =  feat["azim_2"]
 
             except: pass
             
             try:
-                self.pt[ id1 ]["angle_down"] =  feat["angle_down"]
-                self.pt[ id1 ]["angle_up"] =  feat["angle_up"]
+                self.pt[ feat_id ]["angle_down"] =  feat["angle_down"]
+                self.pt[ feat_id ]["angle_up"] =  feat["angle_up"]
 
             except: pass
                 
