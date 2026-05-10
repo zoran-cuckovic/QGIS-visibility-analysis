@@ -32,8 +32,7 @@ __revision__ = '$Format:%H$'
 from qgis.core import QgsProcessingProvider
 from processing.core.ProcessingConfig import Setting, ProcessingConfig
 
-try : from PyQt5.QtGui import QIcon
-except ImportError: from PyQt6.QtGui import QIcon
+from PyQt6.QtGui import QIcon
 
 from os import path
 

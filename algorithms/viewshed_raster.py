@@ -21,8 +21,7 @@ email : /
 
 from os import path
 
-try: from PyQt5.QtCore import QCoreApplication
-except ImportError :from PyQt6.QtCore import QCoreApplication
+from PyQt6.QtCore import QCoreApplication
 
 from qgis.core import (QgsProcessing,
                        

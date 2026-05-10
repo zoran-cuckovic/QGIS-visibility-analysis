@@ -6,8 +6,7 @@ Created on Thu Apr  9 16:39:35 2020
 """
 from os import path
 
-try: from PyQt5.QtCore import QCoreApplication
-except ImportError :from PyQt6.QtCore import QCoreApplication
+from PyQt6.QtCore import QCoreApplication
  
 
 from qgis.core import (QgsProcessing,
